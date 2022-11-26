@@ -17,12 +17,12 @@ const Footer = () => {
                         <h2 className="mb-6 text-lg font-semibold text-gray-900 uppercase">Về Dodoris</h2>
                         <ul className="">
                             <li className="mb-4  text-base rounded md:bg-transparent md:p-0 hover:text-[#02b875]">
-                                <Link href="https://flowbite.com/" className="hover:underline">
+                                <Link to="https://flowbite.com/" className="hover:underline">
                                     Flowbite
                                 </Link>
                             </li>
                             <li className="mb-4  text-base rounded md:bg-transparent md:p-0 hover:text-[#02b875]">
-                                <Link href="https://tailwindcss.com/" className="hover:underline">
+                                <Link to="https://tailwindcss.com/" className="hover:underline">
                                     Tailwind CSS
                                 </Link>
                             </li>
@@ -32,12 +32,12 @@ const Footer = () => {
                         <h2 className="mb-6 text-lg font-semibold text-gray-900 uppercase">Chính sách</h2>
                         <ul className="">
                             <li className="mb-4  text-base rounded md:bg-transparent md:p-0 hover:text-[#02b875]">
-                                <Link href="https://github.com/themesberg/flowbite" className="hover:underline ">
+                                <Link to="https://github.com/themesberg/flowbite" className="hover:underline ">
                                     Github
                                 </Link>
                             </li>
                             <li className="mb-4  text-base rounded md:bg-transparent md:p-0 hover:text-[#02b875]">
-                                <Link href="https://discord.gg/4eeurUVvTy" className="hover:underline">
+                                <Link to="https://discord.gg/4eeurUVvTy" className="hover:underline">
                                     Discord
                                 </Link>
                             </li>
@@ -47,7 +47,7 @@ const Footer = () => {
                         <h2 className="mb-6 text-lg font-semibold text-gray-900 uppercase">Liên hệ</h2>
                         <ul className="">
                             <li className="mb-4  text-base rounded md:bg-transparent md:p-0 hover:text-[#02b875]">
-                                <Link href="#" className="hover:underline">
+                                <Link to="#" className="hover:underline">
                                     <span>
                                         <svg
                                             className="w-4 h-4 inline mr-2"
@@ -68,7 +68,7 @@ const Footer = () => {
                                 </Link>
                             </li>
                             <li className="mb-4  text-base rounded md:bg-transparent md:p-0 hover:text-[#02b875]">
-                                <Link href="#" className="hover:underline">
+                                <Link to="#" className="hover:underline">
                                     <span>
                                         <svg
                                             className="w-4 h-4 inline mr-2"
@@ -94,27 +94,18 @@ const Footer = () => {
                         <h2 className="mb-6 text-lg font-semibold text-gray-900 uppercase">Theo dõi chúng tôi tại</h2>
                         <ul className=" flex space-x-6 sm:justify-center sm:mt-0">
                             <li className="mb-4  text-base rounded md:bg-transparent md:p-0 hover:text-[#02b875]">
-                                <Link href="#" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
-                                            clipRule="evenodd"
-                                        />
-                                    </svg>
-                                    <span className="sr-only">Facebook page</span>
+                                <Link to="#" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                                    <img src="/images/facebook.png" className="sm:h-12" alt="Facebook Logo" />
                                 </Link>
                             </li>
                             <li className="mb-4  text-base rounded md:bg-transparent md:p-0 hover:text-[#02b875]">
-                                <Link href="#" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
-                                            clipRule="evenodd"
-                                        />
-                                    </svg>
-                                    <span className="sr-only">Facebook page</span>
+                                <Link to="#" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                                    <img src="/images/zalo.png" className="sm:h-12" alt="Zalo Logo" />
+                                </Link>
+                            </li>
+                            <li className="mb-4  text-base rounded md:bg-transparent md:p-0 hover:text-[#02b875]">
+                                <Link to="#" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                                    <img src="/images/youtube.png" className="sm:h-12" alt="Youtube Logo" />
                                 </Link>
                             </li>
                         </ul>
