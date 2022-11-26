@@ -70,7 +70,7 @@ const Header = () => {
                                     data-dropdown-placement="bottom"
                                 >
                                     <img
-                                        className="w-10 h-10 mt-4 rounded-full"
+                                        className="w-10 h-10 rounded-full"
                                         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLvPJKXmD3mIlfOVee-apUyIhjnkCDFLtLGpxUA5-8hA&s"
                                         alt="user photo"
                                     />
