@@ -6,12 +6,14 @@ import MainLayout from './layouts/main';
 import HomePage from './pages/Home';
 import AboutPage from './pages/About';
 import AdminLayout from './layouts/admin';
+import BookingPage from './pages/Booking';
 function App() {
     return (
         <Routes>
             <Route path="/" element={<MainLayout />}>
                 <Route index element={<HomePage />} />
                 <Route path="about" element={<AboutPage />} />
+                <Route path="dat-lich" element={<BookingPage />} />
             </Route>
             <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<HomePage />} />

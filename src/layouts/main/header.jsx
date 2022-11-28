@@ -13,7 +13,7 @@ const Header = () => {
                         <span className="self-center text-xl text-[#02b875] font-bold whitespace-nowrap">DODORIS</span>
                     </Link>
                     <div className="flex items-center md:order-2">
-                        <Dropdown
+                        {/* <Dropdown
                             className="relative"
                             menu={{ items }}
                             dropdownRender={(menu) => (
@@ -76,8 +76,8 @@ const Header = () => {
                                     />
                                 </button>
                             </Space>
-                        </Dropdown>
-                        {/* <div className="flex items-center">
+                        </Dropdown> */}
+                        <div className="flex items-center">
                             <div className="">
                                 <Link
                                     to="login"
@@ -104,7 +104,7 @@ const Header = () => {
                                     </Link>
                                 </button>
                             </div>
-                        </div> */}
+                        </div>
                     </div>
                     <div
                         className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
@@ -122,7 +122,7 @@ const Header = () => {
                             </li>
                             <li>
                                 <Link
-                                    to="#"
+                                    to="dat-lich"
                                     className="block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875]"
                                     aria-current="page"
                                 >
