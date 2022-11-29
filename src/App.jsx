@@ -7,6 +7,8 @@ import HomePage from './pages/Home';
 import AboutPage from './pages/About';
 import AdminLayout from './layouts/admin';
 import BookingPage from './pages/Booking';
+import Login from './pages/Login';
+import Register from './pages/Register';
 function App() {
     return (
         <Routes>
@@ -14,6 +16,8 @@ function App() {
                 <Route index element={<HomePage />} />
                 <Route path="about" element={<AboutPage />} />
                 <Route path="dat-lich" element={<BookingPage />} />
+                <Route path="dang-nhap" element={<Login />} />
+                <Route path="dang-ky" element={<Register />} />
             </Route>
             <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<HomePage />} />
