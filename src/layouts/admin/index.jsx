@@ -6,13 +6,13 @@ const { Header, Footer, Sider, Content } = Layout;
 const AdminLayout = () => {
     return (
         <Layout>
-            <Sider>Sider</Sider>
+            <Sider></Sider>
             <Layout>
-                <Header>Header</Header>
+                <Header></Header>
                 <Content>
                     <Outlet />
                 </Content>
-                <Footer>Footer</Footer>
+                <Footer></Footer>
             </Layout>
         </Layout>
     );
