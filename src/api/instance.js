@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-    baseURL: 'https://tên-miền-nào-đó.com/api/',
+    baseURL: import.meta.env.VITE_BASE_URL,
     timeout: 5000,
 });
 
