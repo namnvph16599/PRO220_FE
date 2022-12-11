@@ -1,22 +1,40 @@
 import { LockOutlined, PhoneOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, notification, Spin } from 'antd';
-
-import { Link, NavLink } from 'react-router-dom';
-import { login } from '../../api/login';
+import { useEffect, useRef} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate} from 'react-router-dom';
+import { loginAsync } from '../../slices/user';
 import { notifications } from '../../utils/notifications';
 const Login = () => {
     const [api, contextHolder] = notification.useNotification();
-    const onFinish = async (values) => {
-        const { data } = await login(values);
-        if (data.message == 'email chưa tồn tại' || data.message == 'mật khẩu sai vui lòng nhập lại') {
-            return notifications(api, 'error', data.message);
+    const user = useSelector((state)=>state.user)
+    const dispatch = useDispatch()
+    const countRef = useRef('')
+    const navigate = useNavigate()
+    useEffect(()=>{
+        if (user.errorLogin !== '') {
+            countRef.current= user.errorLogin
+            if (countRef.current !== '') {
+                notifications(api, 'error', countRef.current);
+            }
         }
-        notifications(api, 'success', 'Đăng Nhập Thành Công');
+    },[user.errorLogin])
+    useEffect(()=>{
+        if (user.currentUser.accessToken  !=='') {
+            notifications(api, 'success', 'Đăng Nhập Thành Công');
+            localStorage.setItem("accessToken",user.currentUser.accessToken);
+            setTimeout(() => {
+                navigate('/')
+              }, 1500);
+        } 
+    },[user.currentUser.accessToken])
+    const onFinish = async(values) => {
+        dispatch(loginAsync(values))
     };
 
     return (
         <>
-        <Spin tip="Loading" spinning={false} size="large">
+        <Spin tip="Loading" spinning={user.loading} size="large">
             <div className="flex h-[580px] items-center font-sans font-semibold text-2xl">
                 {contextHolder}
                 <Form

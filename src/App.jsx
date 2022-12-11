@@ -10,6 +10,7 @@ import BookingPage from './pages/Booking';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import BannerManage from './pages/Admin/Banner';
+import PrivateLayout from './pages/PrivateLayout';
 function App() {
     return (
         <Routes>
@@ -20,7 +21,7 @@ function App() {
                 <Route path="dang-nhap" element={<Login />} />
                 <Route path="dang-ky" element={<Register />} />
             </Route>
-            <Route path="/admin" element={<AdminLayout />}>
+            <Route path="/admin" element={<PrivateLayout><AdminLayout /></PrivateLayout>}>
                 <Route path="dang-ky" element={<Register />} />
                 <Route path="quan-ly-banner" element={<BannerManage />} />
             </Route>
