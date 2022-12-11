@@ -1,8 +1,10 @@
-.banner-content .ant-switch.ant-switch-checked {
+.banner-content .ant-switch.ant-switch-checked,
+.form-add-banner .ant-switch.ant-switch-checked {
     background: var(--primary-color) !important;
 }
 
-.banner-content .ant-switch {
+.banner-content .ant-switch,
+.form-add-banner .ant-switch {
     background: var(--btn-checkbox-disable) !important;
 }
 .banner-content .ant-btn-default:disabled {
@@ -11,4 +13,9 @@
 .banner-content .ant-btn-default:not(:disabled):hover {
     color: var(--primary-color) !important;
     border-color: var(--primary-color) !important;
+}
+.form-add-banner .btn-submit:hover,
+.form-add-banner .btn-submit:active {
+    color: var(--white-color) !important ;
+    border: none !important;
 }
