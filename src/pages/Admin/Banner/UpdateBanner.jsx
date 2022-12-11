@@ -1,18 +1,65 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
-import { Button, Drawer, Form, Input, Switch, Select } from 'antd';
-import './banner.css';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getBannerById } from '../../../api/banner';
+import useDocumentTitle from '../../../hooks/useDocumentTitle';
+import { Button, Form, Input, Spin, Switch, Select, notification } from 'antd';
 import UploadImage from '../../../components/UploadImage';
-import { createBannerAsync } from '../../../slices/banner';
 import { REDIRECT_BANNER } from '../../../constants/orther';
-const DrawerCreateBanner = ({ open, onClose }) => {
+import { NOTIFICATION_TYPE, UPLOAD_IMAGES_STATUS } from '../../../constants/status';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateBannerAsync } from '../../../slices/banner';
+
+const noti = (type, message, description) => {
+    notification[type]({
+        message,
+        description,
+    });
+};
+const UpdateBanner = () => {
+    useDocumentTitle('Cập nhật banner');
+    const { id } = useParams();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const loading = useSelector((state) => state.banner.create.loading);
+    const loading = useSelector((state) => state.banner.update.loading);
+
+    const [banner, setBanner] = useState({});
     const [url, setUrl] = useState(null);
     const [defaultList, setDefaultList] = useState([]);
-    const handleClose = () => {
-        onClose(false);
+    const [initialValues, setInitialValues] = useState({});
+
+    useEffect(() => {
+        (async () => {
+            const { data } = await getBannerById(id);
+            setBanner(data);
+            setUrl(data.url);
+            setDefaultList([
+                {
+                    name: data.name,
+                    url: data.url,
+                    status: 'done',
+                    thumbUrl: data.url,
+                },
+            ]);
+            setInitialValues(data);
+        })();
+    }, [id]);
+
+    const onFinish = (values) => {
+        const data = { ...values, url };
+        dispatch(
+            updateBannerAsync({
+                _id: banner._id,
+                data,
+            }),
+        )
+            .then((res) => {
+                noti(NOTIFICATION_TYPE.SUCCESS, 'Cập nhật banner thành công');
+                navigate('/admin/quan-ly-banner');
+            })
+            .catch((err) => {
+                noti(NOTIFICATION_TYPE.ERROR, 'Cập nhật banner thất bại', err.message || '');
+            });
     };
 
     const handleChangeUrl = (value) => {
@@ -22,27 +69,27 @@ const DrawerCreateBanner = ({ open, onClose }) => {
             {
                 name: 'Click để xem ảnh!',
                 url: value,
-                status: 'done',
+                status: UPLOAD_IMAGES_STATUS.DONE,
                 thumbUrl: value,
             },
         ]);
     };
 
-    const onFinish = (values) => {
-        const data = { ...values, url };
-        dispatch(createBannerAsync(data)).then((res) => handleClose());
-    };
     return (
-        <>
-            <Drawer title="Thêm banner" placement="right" width="40%" onClose={handleClose} open={open}>
+        <div>
+            {_.isEmpty(banner) ? (
+                <div className="absolute top-1/2 left-1/2">
+                    <Spin tip="" size="large">
+                        <div className="content" />
+                    </Spin>
+                </div>
+            ) : (
                 <Form
                     id="form-add-banner"
                     className="form-add-banner bg-white px-6 max-w-screen-lg mx-auto"
                     name="booking-form"
                     layout={'vertical'}
-                    initialValues={{
-                        remember: true,
-                    }}
+                    initialValues={initialValues}
                     onFinish={onFinish}
                     autoComplete="off"
                 >
@@ -66,7 +113,7 @@ const DrawerCreateBanner = ({ open, onClose }) => {
                     <Form.Item
                         label={<p className="text-base font-semibold">Trạng thái kích hoạt</p>}
                         name="enabled"
-                        initialValue={true}
+                        // initialValue={banner.enabled}
                         valuePropName="checked"
                     >
                         <Switch />
@@ -74,7 +121,6 @@ const DrawerCreateBanner = ({ open, onClose }) => {
                     <Form.Item
                         label={<p className="text-base font-semibold">Chuyển hướng</p>}
                         name="redirectTo"
-                        initialValue="#"
                         rules={[
                             {
                                 required: true,
@@ -84,16 +130,15 @@ const DrawerCreateBanner = ({ open, onClose }) => {
                     >
                         <Select className="h-10 text-base border-[#02b875]" placeholder="Nhập đường dẫn chuyển hướng">
                             {_.map(REDIRECT_BANNER, (item) => (
-                                <Option value={item.value} key={item.value}>
+                                <Select.Option value={item.value} key={item.value}>
                                     {item.label}
-                                </Option>
+                                </Select.Option>
                             ))}
                         </Select>
                     </Form.Item>
                     <Form.Item
                         label={<p className="text-base font-semibold">Độ ưu tiên</p>}
                         name="priority"
-                        initialValue={0}
                         rules={[
                             {
                                 required: true,
@@ -103,38 +148,27 @@ const DrawerCreateBanner = ({ open, onClose }) => {
                     >
                         <Input
                             type="number"
-                            value={0}
                             min={0}
                             className="h-10 text-base border-[#02b875]"
                             placeholder="Nhập số"
                         />
                     </Form.Item>
-                    <div className="absolute bottom-0 flex align-center">
+                    <div className="">
                         <Form.Item>
-                            {url ? (
-                                <button
-                                    htmltype="submit"
-                                    className="mr-4 h-10 text-white bg-[#02b875] hover:bg-[#09915f] hover:text-white focus:ring-4 font-medium rounded-lg text-base px-5 py-2"
-                                >
-                                    Thêm
-                                </button>
-                            ) : (
-                                <Button type="dashed" disabled size="large" loading={loading} className="mr-4">
-                                    Thêm
-                                </Button>
-                            )}
+                            <Button
+                                htmlType="submit"
+                                disabled={!url ? true : false}
+                                loading={loading}
+                                className="btn-submit mr-4 h-10 text-white bg-[#02b875] hover:bg-[#09915f] hover:text-white focus:ring-4 font-medium rounded-lg text-base px-5 py-2"
+                            >
+                                Cập nhật
+                            </Button>
                         </Form.Item>
-                        <button
-                            type="button"
-                            onClick={handleClose}
-                            className="h-10 text-[#ccc] bg-white hover:text-white hover:bg-[#02b875] border border-slate-300 border-solid focus:ring-4 font-medium rounded-lg text-base px-5 py-2"
-                        >
-                            Hủy
-                        </button>
                     </div>
                 </Form>
-            </Drawer>
-        </>
+            )}
+        </div>
     );
 };
-export default DrawerCreateBanner;
+
+export default UpdateBanner;
