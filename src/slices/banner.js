@@ -56,7 +56,7 @@ export const BannerSlice = createSlice({
             dataDeleted: null,
         },
         create: {
-            errors: null,
+             errors: null,
             message: null,
             loadding: false,
             status: null,
