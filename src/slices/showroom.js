@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getShowrooms, updateShowroom } from '../api/showroom';
+import { getShowrooms, updateShowroom, createShowroom } from '../api/showroom';
 
 export const getAllShowroomAsync = createAsyncThunk('getAllBShowroomAsync', async (filter,{rejectWithValue }) => {
     try {
@@ -30,7 +30,8 @@ export const removeShowroomByIdsAsync = createAsyncThunk('removeShowroomByIdsAsy
 
 export const createShowroomAsync = createAsyncThunk('createShowroomAsync', async (data, { rejectWithValue }) => {
     try {
-        const showroom = await createBanner(data);
+        const showroom = await createShowroom(data);
+        console.log(showroom);
         return showroom;
     } catch (error) {
         return rejectWithValue(error);
@@ -58,7 +59,7 @@ export const ShowroomSlice = createSlice({
         create: {
             errors: null,
             message: null,
-            loadding: false,
+            loading: false,
             status: null,
         },
     },
@@ -73,6 +74,18 @@ export const ShowroomSlice = createSlice({
        })
        builder.addCase(getAllShowroomAsync.rejected,(state,action)=>{
         state.showrooms.errors = action.payload
+       })
+
+       builder.addCase(createShowroomAsync.pending,(state,action)=>{
+        state.create.loading = true
+       })
+       builder.addCase(createShowroomAsync.fulfilled,(state,action)=>{
+        state.create.loading = false
+        state.create.values = action.payload.data
+       })
+       builder.addCase(createShowroomAsync.rejected,(state,action)=>{
+        state.create.loading = false
+        state.create.errors = action.payload
        })
     },
 });
