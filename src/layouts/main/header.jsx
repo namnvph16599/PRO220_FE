@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Dropdown, Empty, Space } from 'antd';
-import jwtDecode from 'jwt-decode';
+import { Dropdown, Space } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../slices/user';
 import { isEmpty } from 'lodash';
+import { JwtDecode } from '../../utils/auth';
 
 const Header = () => {
     const items = [];
@@ -22,9 +22,8 @@ const Header = () => {
     }, [user]);
     useEffect(() => {
         if (!isEmpty(localStorage.getItem('accessToken'))) {
-            const Admin = jwtDecode(localStorage.getItem('accessToken'));
+            const Admin = JwtDecode()
             setName(Admin.name)
-            console.log(Admin.role==1);
             if (Admin.role==1) {
                 setIsAdmin(true);
             }else{
@@ -92,7 +91,7 @@ const Header = () => {
                                             </div>
                                             <ul className="py-1" aria-labelledby="user-menu-button">
                                                 <li>
-                                                    <Link
+                                                    <Link 
                                                         to="#"
                                                         className="block py-2 px-4 text-sm text-gray-700 hover:bg-[#02b875] hover:text-white"
                                                     >

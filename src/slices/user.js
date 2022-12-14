@@ -17,7 +17,7 @@ const initialState={
         values:{},
         accessToken:""
     },
-    errorLogin:''
+    error:''
 }
 
 export const userSlice = createSlice({
@@ -32,19 +32,19 @@ export const userSlice = createSlice({
     extraReducers:(builder) =>{
         builder.addCase(loginAsync.pending,(state,action)=>{
             state.loading = true,
-            state.errorLogin = '',
+            state.error = '',
             state.currentUser.accessToken = ''
         })
         builder.addCase(loginAsync.fulfilled,(state,action)=>{
             if (action.payload.message == "email chưa tồn tại" || action.payload.message == "mật khẩu sai vui lòng nhập lại") {
-                state.errorLogin = action.payload.message,
+                state.error = action.payload.message,
                 state.currentUser.accessToken = '',
                 state.loading = false
             }else{
                 state.currentUser.values = jwtDecode(action.payload.accessToken)
                 state.loading = false,
                 state.currentUser.accessToken = action.payload.accessToken,
-                state.errorLogin = ''
+                state.error = ''
             }
         })
     },
