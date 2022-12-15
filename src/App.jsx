@@ -10,6 +10,8 @@ import BookingPage from './pages/Booking';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import BannerManage from './pages/Admin/Banner';
+import OrderManage from './pages/Admin/Order';
+import UpdateOrder from './pages/Admin/Order/UpdateOrder';
 function App() {
     return (
         <Routes>
@@ -23,6 +25,8 @@ function App() {
             <Route path="/admin" element={<AdminLayout />}>
                 <Route path="dang-ky" element={<Register />} />
                 <Route path="quan-ly-banner" element={<BannerManage />} />
+                <Route path="don-hang" element={<OrderManage />} />
+                <Route path="don-hang/:id" element={<UpdateOrder />} />
             </Route>
         </Routes>
     );
