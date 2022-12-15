@@ -1,12 +1,13 @@
 import { LockOutlined, PhoneOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, notification, Spin } from 'antd';
+import { Button, Checkbox, Form, Input, Spin } from 'antd';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import { Token } from '../../constants/auth';
+import { NOTIFICATION_TYPE } from '../../constants/status';
 import { loginAsync } from '../../slices/user';
-import { notifications } from '../../utils/notifications';
+import { Notification } from '../../utils/notifications';
 const Login = () => {
-    const [api, contextHolder] = notification.useNotification();
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const notificationRef = useRef('');
@@ -15,14 +16,14 @@ const Login = () => {
         if (user.error !== '') {
             notificationRef.current = user.error;
             if (notificationRef.current !== '') {
-                notifications(api, 'error', notificationRef.current);
+                Notification(NOTIFICATION_TYPE.ERROR, notificationRef.current);
             }
         }
     }, [user.error]);
     useEffect(() => {
         if (user.currentUser.accessToken !== '') {
-            notifications(api, 'success', 'Đăng Nhập Thành Công');
-            localStorage.setItem('accessToken', user.currentUser.accessToken);
+            Notification(NOTIFICATION_TYPE.SUCCESS, 'Đăng Nhập Thành Công');
+            localStorage.setItem(Token.accessToken, user.currentUser.accessToken);
             setTimeout(() => {
                 navigate('/');
             }, 1500);
@@ -36,7 +37,7 @@ const Login = () => {
         <>
             <Spin tip="Loading" spinning={user.loading} size="large">
                 <div className="flex h-[580px] items-center font-sans font-semibold text-2xl">
-                    {contextHolder}
+                    {/* {contextHolder} */}
                     <Form
                         name="normal_login"
                         className="login-form w-[360px] m-auto"

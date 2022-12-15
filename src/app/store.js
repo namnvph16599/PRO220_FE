@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import BannerReducer from '../slices/banner';
-import UserReducer from '../slices/user'
+import UserReducer from '../slices/user';
 const store = configureStore({
     reducer: {
         banner: BannerReducer,
-        user:UserReducer
+        user: UserReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

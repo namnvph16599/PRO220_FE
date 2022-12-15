@@ -10,10 +10,10 @@ import BookingPage from './pages/Booking';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import BannerManage from './pages/Admin/Banner';
-import PrivateLayout from './pages/PrivateLayout';
+import PrivateLayout from './components/Private/PrivateLayout';
 import PageNotFound from './pages/PageNotFound';
 import UpdateBanner from './pages/Admin/Banner/UpdateBanner';
-import PrivateRouter from './pages/PrivateRouter';
+import PrivateRouter from './components/Private/PrivateRouter';
 function App() {
     return (
         <Routes>

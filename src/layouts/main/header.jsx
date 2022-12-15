@@ -5,35 +5,36 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../slices/user';
 import { isEmpty } from 'lodash';
 import { JwtDecode } from '../../utils/auth';
+import { Role, Token } from '../../constants/auth';
 
 const Header = () => {
     const items = [];
-    const [open, setOpen] = useState(true);
+    const [isLogged, setIsLogged] = useState(true);
     const [isAdmin, setIsAdmin] = useState(Boolean);
     const [name, setName] = useState('');
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.currentUser.values);
     useEffect(() => {
-        if (Object.keys(user).length !== 0 || !isEmpty(localStorage.getItem('accessToken'))) {
-            setOpen(false);
+        if (Object.keys(user).length !== 0 || !isEmpty(localStorage.getItem(Token.accessToken))) {
+            setIsLogged(false);
         } else {
-            setOpen(true);
+            setIsLogged(true);
         }
     }, [user]);
     useEffect(() => {
-        if (!isEmpty(localStorage.getItem('accessToken'))) {
-            const Admin = JwtDecode()
-            setName(Admin.name)
-            if (Admin.role==1) {
+        if (!isEmpty(localStorage.getItem(Token.accessToken))) {
+            const Admin = JwtDecode();
+            setName(Admin.name);
+            if (Admin.role == Role.ADMIN) {
                 setIsAdmin(true);
-            }else{
+            } else {
                 setIsAdmin(false);
             }
         }
-    }, [open]);
+    }, [isLogged]);
     const hanldelogout = () => {
         dispatch(logout());
-        localStorage.removeItem('accessToken');
+        localStorage.removeItem(Token.accessToken);
     };
     return (
         <header>
@@ -44,7 +45,7 @@ const Header = () => {
                         <span className="self-center text-xl text-[#02b875] font-bold whitespace-nowrap">DODORIS</span>
                     </Link>
                     <div className="flex items-center md:order-2">
-                        {open ? (
+                        {isLogged ? (
                             <div className="flex items-center">
                                 <div className="">
                                     <Link
@@ -91,7 +92,7 @@ const Header = () => {
                                             </div>
                                             <ul className="py-1" aria-labelledby="user-menu-button">
                                                 <li>
-                                                    <Link 
+                                                    <Link
                                                         to="#"
                                                         className="block py-2 px-4 text-sm text-gray-700 hover:bg-[#02b875] hover:text-white"
                                                     >
