@@ -169,11 +169,12 @@ const ShowRoom = () => {
         },
         {
             title: 'Kho ảnh',
-            // render: (url) => (
-            //     <a target="_blank" href={url} className="text-[#02b875]">
-            //         <img src={url} alt="" />
-            //     </a>
-            // ),
+            render: (url) => (
+                // <a target="_blank" href={url} className="text-[#02b875]">
+                //     <img src={url} alt="" />
+                // </a>
+                <p>comming soon</p>
+            ),
         },
         {
             title: 'Địa điểm',

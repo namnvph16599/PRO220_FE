@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Drawer, Form, Input, Switch, Spin } from 'antd';
+import { Button, Drawer, Form, Input, notification, Spin } from 'antd';
 import { createShowroomAsync } from '../../../slices/showroom';
+import { NOTIFICATION_TYPE } from '../../../constants/status';
 import _ from 'lodash';
 import './showroom.css';
 import UploadImage from '../../../components/UploadImage';
@@ -9,21 +10,45 @@ import UploadImage from '../../../components/UploadImage';
 const DrawerCreateShowroom = ({ open, onClose, reloading}) => {
     const dispatch = useDispatch();
     const loading = useSelector((state) => state.showroom.create.loading)
+    const [defaultList, setDefaultList] = useState([]);
     const [url, setUrl] = useState(null);
     const [address,setAddress] = useState('')
     const coordinate = useRef({
         latitude:"",
-        longitude:"",
-        address:""
+        longitude:""
     })
+
     const handleClose = () => {
         onClose(false);
     };
 
-    const getSearchValue = ()=>{
-        const searchValue =  document.getElementById('search')
-        coordinate.current.address = searchValue.value
-    }
+    const noti = (type, message, description) => {
+        notification[type]({
+            message,
+            description,
+        });
+    };
+
+    const formRef = useRef(null);
+
+    useEffect(() => {
+     formRef.current?.setFieldsValue({
+        address: address,
+     });
+    }, [address]);
+
+    const handleChangeUrl = (value) => {
+        setUrl(value);
+        if (!value) return setDefaultList([]);
+        setDefaultList([
+            {
+                name: 'Click để xem ảnh!',
+                url: value,
+                status: 'done',
+                thumbUrl: value,
+            },
+        ]);
+    };
 
     useEffect(()=>{
         var geocoder = new maptiler.Geocoder({
@@ -34,19 +59,34 @@ const DrawerCreateShowroom = ({ open, onClose, reloading}) => {
 			let coordinates = item.center
             coordinate.current.latitude = coordinates[1]
             coordinate.current.longitude = coordinates[0]
-            setAddress(coordinate.current.address)
+            setAddress(item.place_name_vi)
         })
     },[])
 
     const onFinish = async(values) => {
         const data = { ...values, images:[url],longitude: _.toString(coordinate.current.longitude),latitude: _.toString(coordinate.current.latitude)};
-        const resalts = await new  dispatch(createShowroomAsync(data));
-        if(!loading){
-            handleClose()
-            reloading({
-            reload:false
-            })
+        dispatch(createShowroomAsync(data)).then((res)=>{
+            if(!loading){
+                noti(
+                    NOTIFICATION_TYPE.SUCCESS,
+                    'Thêm showroom thành công!',
+                );
+                setTimeout(()=>{
+                    handleClose()
+                    reloading({
+                    reload:false
+                    })
+                },2000)
+            }
         }
+        ).catch((err) => {
+            noti(
+                NOTIFICATION_TYPE.ERROR,
+                'Thêm showroom thất bại!',
+                `${err}`,
+            );
+          })
+        
     };
 
     return (
@@ -60,12 +100,13 @@ const DrawerCreateShowroom = ({ open, onClose, reloading}) => {
                 </div>
                 }
                 <Form
+                    ref={formRef}
                     id="form-add-banner"
                     className="form-add-banner bg-white px-6 max-w-screen-lg mx-auto"
                     name="booking-form"
                     layout={'vertical'}
                     initialValues={{
-                        remember: true,
+                        remember: false,
                     }}
                     onFinish={onFinish}
                     autoComplete="off"
@@ -105,12 +146,12 @@ const DrawerCreateShowroom = ({ open, onClose, reloading}) => {
                             },
                         ]}
                     >
-                        <Input className="h-10 text-base border-[#02b875] w-full" placeholder="Nhập địa chỉ"  onChange={()=>getSearchValue()}    id='search'/>
+                        <Input className="h-10 text-base border-[#02b875] w-full"  placeholder="Nhập địa chỉ" id='search'/>
                     </Form.Item>
                     <p className="text-base font-semibold">
                         <span className="text-[#ff4d4f]">*</span> Ảnh
                     </p>
-                    <UploadImage onSendUrl={(value) => setUrl(value)} />
+                    <UploadImage onChangeUrl={handleChangeUrl} defaultFileList={defaultList} />
                     {!url && <div className="text-[#ff4d4f]">Vui lòng tải ảnh lên!</div>}
                     <div className="absolute bottom-0 flex align-center">
                         <Form.Item>
