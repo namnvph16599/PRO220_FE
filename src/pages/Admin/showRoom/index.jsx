@@ -6,7 +6,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant
 import { notification, Popconfirm ,Input, Space, Table, Row, Button, Spin, Tooltip} from 'antd';
 import './showroom.css';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
-import { getAllShowroomAsync } from '../../../slices/showroom';
+import { getAllShowroomAsync, removeShowroomByIdAsync, removeShowroomByIdsAsync } from '../../../slices/showroom';
 import Highlighter from 'react-highlight-words';
 import DrawerCreateShowroom from './DrawerCreateShowroom';
 const noti = (type, message, description) => {
@@ -26,6 +26,10 @@ const ShowRoom = () => {
     const [reload,setReload] = useState({
       reload:false
     })
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
+    const searchInput = useRef(null);
+
     useEffect(() => {
         dispatch(getAllShowroomAsync());
     }, [reload]);
@@ -38,9 +42,6 @@ const ShowRoom = () => {
         selectedRowKeys,
         onChange: onSelectChange,
     };
-    const [searchText, setSearchText] = useState('');
-    const [searchedColumn, setSearchedColumn] = useState('');
-    const searchInput = useRef(null);
 
     const handleSearch = (
       selectedKeys,
@@ -132,25 +133,27 @@ const ShowRoom = () => {
     //     );
     // };
 
-    // const handleRemoveBannerByIds = (ids) => {
-    //     dispatch(removeBannerByIdsAsync(ids)).then((res) => {
-    //         const bannerRemoved = _.get(res, 'payload.data.dataDeleted', null);
-    //         if (bannerRemoved) {
-    //             noti(
-    //                 NOTIFICATION_TYPE.SUCCESS,
-    //                 'Xóa thành banner công!',
-    //                 `Bạn đã xóa ${bannerRemoved.name}  thành công!`,
-    //             );
-    //         } else {
-    //             const ids = _.get(res, 'payload.data.ids', null);
-    //             noti(
-    //                 NOTIFICATION_TYPE.SUCCESS,
-    //                 'Xóa thành banner công!',
-    //                 `Bạn đã xóa ${ids.length} banner  thành công!`,
-    //             );
-    //         }
-    //     });
-    // };
+    const handleRemoveShowroomById = (id) => {
+      // console.log(ids);
+        dispatch(removeShowroomByIdAsync(id)).then((res) => {
+            const showroomRemoved = _.get(res, 'payload.data.dataDeleted', null);
+            console.log(res);
+            // if (bannerRemoved) {
+            //     noti(
+            //         NOTIFICATION_TYPE.SUCCESS,
+            //         'Xóa thành banner công!',
+            //         `Bạn đã xóa ${bannerRemoved.name}  thành công!`,
+            //     );
+            // } else {
+            //     const ids = _.get(res, 'payload.data.ids', null);
+            //     noti(
+            //         NOTIFICATION_TYPE.SUCCESS,
+            //         'Xóa thành banner công!',
+            //         `Bạn đã xóa ${ids.length} banner  thành công!`,
+            //     );
+            // }
+        });
+    };
 
     const columns = [
         {
@@ -169,11 +172,12 @@ const ShowRoom = () => {
         },
         {
             title: 'Kho ảnh',
-            // render: (url) => (
-            //     <a target="_blank" href={url} className="text-[#02b875]">
-            //         <img src={url} alt="" />
-            //     </a>
-            // ),
+            render: (url) => (
+                // <a target="_blank" href={url} className="text-[#02b875]">
+                //     <img src={url} alt="" />
+                // </a>
+                <p>comming soon</p>
+            ),
         },
         {
             title: 'Địa điểm',
@@ -205,7 +209,7 @@ const ShowRoom = () => {
                         <Popconfirm
                             title={`Bạn chắc chắn muốn xóa ${data.name} không?`}
                             onConfirm={() => {
-                                handleRemoveBannerByIds([data._id]);
+                               handleRemoveShowroomById(data._id);
                             }}
                             okText="Đồng ý"
                             cancelText="Hủy"

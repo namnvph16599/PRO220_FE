@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getShowrooms, updateShowroom, createShowroom } from '../api/showroom';
+import { getShowrooms, updateShowroom, createShowroom, removeShowroomByIds, removeShowroomById } from '../api/showroom';
 
 export const getAllShowroomAsync = createAsyncThunk('getAllBShowroomAsync', async (filter,{rejectWithValue }) => {
     try {
@@ -21,8 +21,17 @@ export const updateShowroomAsync = createAsyncThunk('updateShowroomAsync', async
 
 export const removeShowroomByIdsAsync = createAsyncThunk('removeShowroomByIdsAsync', async (ids, { rejectWithValue }) => {
     try {
-        const showrooms = await removeBannerByIds(ids);
+        const showrooms = await removeShowroomByIds(ids);
         return showrooms;
+    } catch (error) {
+        return rejectWithValue(error);
+    }
+});
+
+export const removeShowroomByIdAsync = createAsyncThunk('removeShowroomByIdAsync', async (id, { rejectWithValue }) => {
+    try {
+        const showroom = await removeShowroomById(id);
+        return showroom;
     } catch (error) {
         return rejectWithValue(error);
     }
@@ -86,6 +95,18 @@ export const ShowroomSlice = createSlice({
        builder.addCase(createShowroomAsync.rejected,(state,action)=>{
         state.create.loading = false
         state.create.errors = action.payload
+       })
+
+        builder.addCase(removeShowroomByIdAsync.pending,(state,action)=>{
+        state.showroomRemove.loading = true
+       })
+       builder.addCase(removeShowroomByIdAsync.fulfilled,(state,action)=>{
+        state.showroomRemove.loading = false
+        state.showroomRemove.values = action.payload.data
+       })
+       builder.addCase(removeShowroomByIdAsync.rejected,(state,action)=>{
+        state.showroomRemove.loading = false
+        state.showroomRemove.errors = action.payload
        })
     },
 });
