@@ -6,9 +6,11 @@ import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant
 import { notification, Popconfirm ,Input, Space, Table, Row, Button, Spin, Tooltip} from 'antd';
 import './showroom.css';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
-import { getAllShowroomAsync } from '../../../slices/showroom';
+import { getAllShowroomAsync, removeShowroomByIdAsync, removeShowroomByIdsAsync } from '../../../slices/showroom';
 import Highlighter from 'react-highlight-words';
 import DrawerCreateShowroom from './DrawerCreateShowroom';
+import DrawerUpdateShowroom from './DrawerUpdateShowroom';
+
 const noti = (type, message, description) => {
     notification[type]({
         message,
@@ -22,10 +24,16 @@ const ShowRoom = () => {
     const loadding = useSelector((state) => state.showroom.showrooms.loading);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [open, setOpen] = useState(false);
+    const [openUpdate, setOpenUpdate] = useState(false);
     const data = showrooms.map((showroom) => ({ ...showroom, key: showroom._id }));
     const [reload,setReload] = useState({
       reload:false
     })
+    const idUpdate = useRef({id:''})
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
+    const searchInput = useRef(null);
+
     useEffect(() => {
         dispatch(getAllShowroomAsync());
     }, [reload]);
@@ -38,9 +46,6 @@ const ShowRoom = () => {
         selectedRowKeys,
         onChange: onSelectChange,
     };
-    const [searchText, setSearchText] = useState('');
-    const [searchedColumn, setSearchedColumn] = useState('');
-    const searchInput = useRef(null);
 
     const handleSearch = (
       selectedKeys,
@@ -123,34 +128,41 @@ const ShowRoom = () => {
         ),
     });
 
-    // const handleUpdateBanner = (data) => {
-    //     dispatch(
-    //         updateBannerAsync({
-    //             _id: data._id,
-    //             data: _.pick(data, ['name', 'url', 'enabled', 'redirectTo', 'priority']),
-    //         }),
-    //     );
-    // };
+    const handleRemoveShowroomByIds = (ids) => {
+      dispatch(removeShowroomByIdsAsync(ids)).then((res) => {
+          const showroomRemoved = _.get(res, 'payload.status', null);
+            if(showroomRemoved == 200){
+              setTimeout(()=> (setReload({reload:false},
+                noti(
+                  NOTIFICATION_TYPE.SUCCESS,
+                  'Xóa thành công!',
+              ))),1000)
+            }else{
+              noti(
+                NOTIFICATION_TYPE.ERROR,
+                'Xóa thất bại, Kiểm tra lại!',
+            );
+            }
+      });
+  };
 
-    // const handleRemoveBannerByIds = (ids) => {
-    //     dispatch(removeBannerByIdsAsync(ids)).then((res) => {
-    //         const bannerRemoved = _.get(res, 'payload.data.dataDeleted', null);
-    //         if (bannerRemoved) {
-    //             noti(
-    //                 NOTIFICATION_TYPE.SUCCESS,
-    //                 'Xóa thành banner công!',
-    //                 `Bạn đã xóa ${bannerRemoved.name}  thành công!`,
-    //             );
-    //         } else {
-    //             const ids = _.get(res, 'payload.data.ids', null);
-    //             noti(
-    //                 NOTIFICATION_TYPE.SUCCESS,
-    //                 'Xóa thành banner công!',
-    //                 `Bạn đã xóa ${ids.length} banner  thành công!`,
-    //             );
-    //         }
-    //     });
-    // };
+    const handleRemoveShowroomById = (id) => {
+        dispatch(removeShowroomByIdAsync(id)).then((res) => {
+            const showroomRemoved = _.get(res, 'payload.data.deleted', null);
+            if (res.payload.status == 200) {
+                noti(
+                    NOTIFICATION_TYPE.SUCCESS,
+                    'Xóa cửa hàng thành công!',
+                );
+                setTimeout(()=> setReload({reload:false}),1500)
+            } else {
+                noti(
+                    NOTIFICATION_TYPE.ERROR,
+                    'Xóa cửa hàng thất bại!',
+                );
+            }
+        });
+    };
 
     const columns = [
         {
@@ -200,13 +212,13 @@ const ShowRoom = () => {
             render: (data) => {
                 return (
                     <Row>
-                        <Link to={data._id}>
+                        <button onClick={()=>{setOpenUpdate(true),idUpdate.current.id=data._id}}>
                             <EditOutlined className="text-xl pr-4" />
-                        </Link>
+                        </button>
                         <Popconfirm
                             title={`Bạn chắc chắn muốn xóa ${data.name} không?`}
                             onConfirm={() => {
-                                handleRemoveBannerByIds([data._id]);
+                               handleRemoveShowroomById(data._id);
                             }}
                             okText="Đồng ý"
                             cancelText="Hủy"
@@ -233,7 +245,7 @@ const ShowRoom = () => {
                     <div className="flex justify-between align-center pb-4">
                         <Button
                             size="large"
-                            onClick={() => {}}
+                            onClick={() => handleRemoveShowroomByIds(selectedRowKeys)}
                             className="focus:outline-none text-base text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg px-5 py-2.5 mr-2 mb-2"
                             disabled={_.isEmpty(selectedRowKeys) ? true : false}
                         >
@@ -252,6 +264,7 @@ const ShowRoom = () => {
                 </>
             )}
             {open && <DrawerCreateShowroom open={open} onClose={setOpen} reloading={setReload}/>}
+            {openUpdate && <DrawerUpdateShowroom open={openUpdate} onClose={setOpenUpdate} reloading={setReload} id={idUpdate.current.id}/>}
         </div>
     );
 };

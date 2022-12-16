@@ -18,10 +18,10 @@ export const removeShowroomById = (id) => {
     return instance.delete(`${URL}/${id}`);
 };
 
-export const removeShowroomByIds = (ids = []) => {
-    return instance.delete(URL, { data: { ids } });
+export const removeShowroomByIds = (ids) => {
+    return instance.delete(URL,{ data: { ids } });
 };
 
-export const updateShowroom = (id, data) => {
-    return instance.patch(`${URL}/${id}`, data);
+export const updateShowroom = (data) => {
+    return instance.patch(`${URL}/${data.id}`, data);
 };

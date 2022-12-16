@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useRef} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Drawer, Form, Input, notification, Spin } from 'antd';
-import { createShowroomAsync } from '../../../slices/showroom';
+import { createShowroomAsync, getShowroomByIdAsync, updateShowroomAsync } from '../../../slices/showroom';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import _ from 'lodash';
 import './showroom.css';
 import UploadImage from '../../../components/UploadImage';
+import { getShowroomById } from '../../../api/showroom';
 
-const DrawerCreateShowroom = ({ open, onClose, reloading}) => {
+const DrawerUpdateShowroom = ({ open, onClose, reloading, id}) => {
     const dispatch = useDispatch();
-    const loading = useSelector((state) => state.showroom.create.loading)
+    const loading = useSelector((state) => state.showroom.showroomUpdate.loading)
     const [defaultList, setDefaultList] = useState([]);
     const [url, setUrl] = useState(null);
     const [address,setAddress] = useState('')
@@ -29,11 +30,24 @@ const DrawerCreateShowroom = ({ open, onClose, reloading}) => {
         });
     };
 
+    const dataUpdate = useRef({
+        name:"",
+        phone:"",
+        images:[],
+        location:{
+            coordinates:[]
+        }
+    })
     const formRef = useRef(null);
 
     useEffect(() => {
+     handleChangeUrl(dataUpdate.current.images[0])
+     coordinate.current.latitude=dataUpdate.current.location.coordinates[1]
+     coordinate.current.longitude=dataUpdate.current.location.coordinates[0]
      formRef.current?.setFieldsValue({
         address: address,
+        name:dataUpdate.current.name,
+        phone:dataUpdate.current.phone
      });
     }, [address]);
 
@@ -61,42 +75,51 @@ const DrawerCreateShowroom = ({ open, onClose, reloading}) => {
             coordinate.current.longitude = coordinates[0]
             setAddress(item.place_name_vi)
         })
+        getShowroomById(id).then((res)=>{
+            dataUpdate.current = res.data
+            setAddress(res.data.address)
+        })
+       
     },[])
 
+    
     const onFinish = async(values) => {
-        const data = { ...values, images:[url],longitude: _.toString(coordinate.current.longitude),latitude: _.toString(coordinate.current.latitude)};
-        dispatch(createShowroomAsync(data)).then((res)=>{
-            if(res.payload.status == 200){
-                noti(
-                    NOTIFICATION_TYPE.SUCCESS,
-                    'Thêm showroom thành công!',
-                );
-                setTimeout(()=>{
-                    handleClose()
-                    reloading({
-                    reload:false
-                    })
-                },2000)
-            }else{
+        const data = { id,...values, images:[url],longitude: _.toString(coordinate.current.longitude),latitude: _.toString(coordinate.current.latitude)};
+        dispatch(updateShowroomAsync(data)).then((res)=>{
+            try {
+                console.log(res);
+                if(res.payload.status == 200){
+                    noti(
+                        NOTIFICATION_TYPE.SUCCESS,
+                        'Cập nhật showroom thành công!',
+                    );
+                    setTimeout(()=>{
+                        handleClose()
+                        reloading({
+                        reload:false
+                        })
+                    },1000)
+                }else{
+                    noti(
+                        NOTIFICATION_TYPE.ERROR,
+                        'Cập nhật showroom thất bại!',
+                    );
+                }
+            } catch (error) {
                 noti(
                     NOTIFICATION_TYPE.ERROR,
-                    'Thêm showroom thất bại!'
+                    'Cập nhật showroom thất bại!',
+                    `${err}`,
                 );
             }
-        }
-        ).catch((err) => {
-            noti(
-                NOTIFICATION_TYPE.ERROR,
-                'Thêm showroom thất bại!',
-                `${err}`,
-            );
-          })
+            
+        })
         
     };
 
     return (
         <>
-            <Drawer title="Thêm cửa hàng" placement="right" width="40%" onClose={handleClose} open={open}>
+            <Drawer title="thay đổi thông tin cửa hàng" placement="right" width="40%" onClose={handleClose} open={open}>
 
                 {loading && <div className="absolute top-1/2 left-1/2">
                     <Spin tip="" size="large">
@@ -119,6 +142,7 @@ const DrawerCreateShowroom = ({ open, onClose, reloading}) => {
                     <Form.Item
                         label={<p className="text-base font-semibold">Tên cửa hàng</p>}
                         name="name"
+                        initialValue={dataUpdate.current.name}
                         rules={[
                             {
                                 required: true,
@@ -131,6 +155,7 @@ const DrawerCreateShowroom = ({ open, onClose, reloading}) => {
                     <Form.Item
                         label={<p className="text-base font-semibold">Liên hệ cửa hàng</p>}
                         name="phone"
+                        initialValue={dataUpdate.current.phone}
                         rules={[
                             {
                                 required: true,
@@ -186,4 +211,4 @@ const DrawerCreateShowroom = ({ open, onClose, reloading}) => {
         </>
     );
 };
-export default DrawerCreateShowroom;
+export default DrawerUpdateShowroom;
