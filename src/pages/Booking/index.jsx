@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import _ from 'lodash';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
 import { Avatar, Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
 import dayjs from 'dayjs';
 import './booking.css';
+import { HOUR_DATE_TIME } from '../../constants/format';
+import { search } from '../../api/showroom';
+import { useRef } from 'react';
 
 const range = (start, end) => {
     const result = [];
@@ -11,32 +16,161 @@ const range = (start, end) => {
     return result;
 };
 
+const disabledDate = (current) => {
+    return current && current < dayjs().endOf('day').subtract(1, 'days');
+};
+
+const disabledDateTime = () => ({
+    disabledHours: () => [...range(0, 7), ...range(12, 13), ...range(18, 24)],
+    disabledMinutes: () => range(0),
+    disabledSeconds: () => range(0, 60),
+});
+
 const BookingPage = () => {
+    useDocumentTitle('Đặt lịch');
     const [isShowroom, setIsShowroom] = useState(true);
     const [date, setDate] = useState(new Date());
-    const disabledDate = (current) => {
-        return current && current < dayjs().endOf('day').subtract(1, 'days');
-    };
-    const disabledDateTime = () => ({
-        disabledHours: () => [...range(0, 7), ...range(12, 13), ...range(18, 24)],
-        disabledMinutes: () => range(0),
-        disabledSeconds: () => range(0, 60),
-    });
+    const [showrooms, setShowrooms] = useState([]);
+    const [showroomsFilter, setShowroomsFilter] = useState([]);
+    const [filter, setFilter] = useState('');
+    const searchTemp = useRef(null);
+
+    useEffect(() => {
+        //call api get showroom
+        setShowrooms([
+            {
+                _id: 1,
+                name: 'Showroom 1',
+                phone: 'phone',
+                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
+                images: [
+                    'https://hethong.24hlaptop.com/image_branch/1649403159689-so-5-ngo-178-thai-ha-trung-liet-dong-da-ha-noi.jpg',
+                ],
+            },
+            {
+                _id: 2,
+                name: 'Showroom 2',
+                phone: 'phone',
+                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
+                images: ['https://hethong.24hlaptop.com/image_branch/1649403173272-so-220-thai-ha-dong-da-ha-noi.JPG'],
+            },
+            {
+                _id: 3,
+                name: 'Showroom 1',
+                phone: 'phone',
+                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
+                images: [
+                    'https://hethong.24hlaptop.com/image_branch/1649403159689-so-5-ngo-178-thai-ha-trung-liet-dong-da-ha-noi.jpg',
+                ],
+            },
+            {
+                _id: 4,
+                name: 'Showroom 2',
+                phone: 'phone',
+                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
+                images: ['https://hethong.24hlaptop.com/image_branch/1649403173272-so-220-thai-ha-dong-da-ha-noi.JPG'],
+            },
+            {
+                _id: 5,
+                name: 'Showroom 1',
+                phone: 'phone',
+                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
+                images: [
+                    'https://hethong.24hlaptop.com/image_branch/1649403159689-so-5-ngo-178-thai-ha-trung-liet-dong-da-ha-noi.jpg',
+                ],
+            },
+            {
+                _id: 6,
+                name: 'Showroom 2',
+                phone: 'phone',
+                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
+                images: ['https://hethong.24hlaptop.com/image_branch/1649403173272-so-220-thai-ha-dong-da-ha-noi.JPG'],
+            },
+        ]);
+
+        setShowroomsFilter([
+            {
+                _id: 1,
+                name: 'Showroom 1',
+                phone: 'phone',
+                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
+                images: [
+                    'https://hethong.24hlaptop.com/image_branch/1649403159689-so-5-ngo-178-thai-ha-trung-liet-dong-da-ha-noi.jpg',
+                ],
+            },
+            {
+                _id: 2,
+                name: 'Showroom 2',
+                phone: 'phone',
+                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
+                images: ['https://hethong.24hlaptop.com/image_branch/1649403173272-so-220-thai-ha-dong-da-ha-noi.JPG'],
+            },
+            {
+                _id: 3,
+                name: 'Showroom 1',
+                phone: 'phone',
+                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
+                images: [
+                    'https://hethong.24hlaptop.com/image_branch/1649403159689-so-5-ngo-178-thai-ha-trung-liet-dong-da-ha-noi.jpg',
+                ],
+            },
+            {
+                _id: 4,
+                name: 'Showroom 2',
+                phone: 'phone',
+                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
+                images: ['https://hethong.24hlaptop.com/image_branch/1649403173272-so-220-thai-ha-dong-da-ha-noi.JPG'],
+            },
+            {
+                _id: 5,
+                name: 'Showroom 1',
+                phone: 'phone',
+                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
+                images: [
+                    'https://hethong.24hlaptop.com/image_branch/1649403159689-so-5-ngo-178-thai-ha-trung-liet-dong-da-ha-noi.jpg',
+                ],
+            },
+            {
+                _id: 6,
+                name: 'Showroom 2',
+                phone: 'phone',
+                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
+                images: ['https://hethong.24hlaptop.com/image_branch/1649403173272-so-220-thai-ha-dong-da-ha-noi.JPG'],
+            },
+        ]);
+    }, []);
+
     const onFinish = (values) => {
         console.log('Success:', values);
     };
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
+    const handleSearch = (value) => {
+        if (!value) {
+            setShowroomsFilter(showrooms);
+            return;
+        }
+        if (searchTemp.current) {
+            clearTimeout(searchTemp.current);
+            searchTemp.current = null;
+        }
+        searchTemp.current = setTimeout(async () => {
+            const { data } = await search(value);
+            setShowroomsFilter(data);
+        }, 300);
+    };
+    const handleChange = (newValue) => {
+        setFilter(newValue);
+    };
+
     return (
         <div className="w-full content-booking py-16">
             <Form
-                className="bg-white px-6 max-w-screen-lg mx-auto"
+                className="bg-white px-6 max-w-screen-lg mx-auto rounded"
                 name="booking-form"
                 layout={'vertical'}
-                initialValues={{
-                    remember: true,
-                }}
+                initialValues={{}}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
@@ -64,7 +198,7 @@ const BookingPage = () => {
                                         },
                                     ]}
                                 >
-                                    <Input className="h-10 text-base border-[#02b875]" placeholder="Nhập họ và tên" />
+                                    <Input className="h-10 text-base border-[#02b875]" placeholder="Nguyen Van A" />
                                 </Form.Item>
                             </Col>
                             <Col span={24}>
@@ -81,16 +215,14 @@ const BookingPage = () => {
                                             message: 'Số điện thoại không đúng định dạng.',
                                         },
                                         {
-                                            max: 11,
+                                            max: 10,
                                             message: 'Số điện thoại không đúng định dạng.',
                                         },
                                     ]}
                                 >
                                     <Input
                                         className="h-10 text-base border-[#02b875]"
-                                        min="0"
-                                        type="number"
-                                        placeholder="Tối thiểu 10 chữ số"
+                                        placeholder="Tối thiểu 10 chữ số."
                                     />
                                 </Form.Item>
                             </Col>
@@ -117,78 +249,20 @@ const BookingPage = () => {
                             <Col span={24} className="pb-6">
                                 <Avatar
                                     size={34}
-                                    icon={<p className="text-base font-semibold leading-8">3</p>}
+                                    icon={<p className="text-base font-semibold leading-8">4</p>}
                                     style={{ backgroundColor: '#707070' }}
                                 />
-                                <span className="text-base pl-4 font-medium">Địa điểm và Thời gian</span>
-                            </Col>
-                            <Col span={24}>
-                                {isShowroom ? (
-                                    <Form.Item
-                                        name="showroomId"
-                                        label={<p className="text-base font-semibold">Showroom</p>}
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Vui lòng showroom sửa chữa/bảo dưỡng.',
-                                            },
-                                        ]}
-                                    >
-                                        <Select
-                                            size="large"
-                                            placeholder="Sửa chữa tại..."
-                                            className="h-10 text-base border-[#02b875]"
-                                        >
-                                            <Option value="1">111111</Option>
-                                            <Option value="0">2222</Option>
-                                        </Select>
-                                    </Form.Item>
-                                ) : (
-                                    <Form.Item
-                                        label={<p className="text-base font-semibold">Địa chỉ cụ thể</p>}
-                                        name="address"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Vui lòng nhập địa chỉ cụ thể.',
-                                            },
-                                        ]}
-                                    >
-                                        <Input.TextArea
-                                            className="text-base border-[#02b875]"
-                                            rows={4}
-                                            placeholder="Địa chỉ cụ thể"
-                                        />
-                                    </Form.Item>
-                                )}
+                                <span className="text-base pl-4 font-medium">Ghi chú</span>
                             </Col>
                             <Col span={24}>
                                 <Form.Item
-                                    name="time"
-                                    label={<p className="text-base font-semibold">Thời gian</p>}
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Vui lòng chọn thời gian!',
-                                        },
-                                    ]}
+                                    name="description"
+                                    label={<p className="text-base font-semibold">Ghi chú</p>}
                                 >
-                                    {/* <DatePicker showTime /> */}
-                                    <DatePicker
-                                        size="large"
-                                        className="w-full border-[#02b875]"
-                                        placeholder="Vui lòng chọn thời gian"
-                                        // format={HOUR_DATE_TIME}
-                                        disabledDate={disabledDate}
-                                        disabledTime={disabledDateTime}
-                                        showToday
-                                        value={date}
-                                        onChange={(date, dateString) => {
-                                            const dateStringConvert = new Date(dateString);
-                                            setDate(dateStringConvert);
-                                        }}
-                                        showTime
-                                        // defaultValue={dayjs().endOf('day').format(HOUR_DATE_TIME)}
+                                    <Input.TextArea
+                                        className="text-base border-[#02b875]"
+                                        rows={4}
+                                        placeholder="Cụ thể yêu cầu với Dodoris"
                                     />
                                 </Form.Item>
                             </Col>
@@ -228,8 +302,8 @@ const BookingPage = () => {
                                             setIsShowroom(false);
                                         }}
                                     >
-                                        <Option value="1">Sửa chữa/Bảo dưỡng tại showroom</Option>
-                                        <Option value="0">Sửa chữa/Bảo dưỡng tại nhà</Option>
+                                        <Select.Option value="1">Sửa chữa/ Bảo dưỡng tại cửa hàng.</Select.Option>
+                                        <Select.Option value="0">Sửa chữa/ Bảo dưỡng tại nhà.</Select.Option>
                                     </Select>
                                 </Form.Item>
                             </Col>
@@ -238,20 +312,97 @@ const BookingPage = () => {
                             <Col span={24} className="pb-6">
                                 <Avatar
                                     size={34}
-                                    icon={<p className="text-base font-semibold leading-8">4</p>}
+                                    icon={<p className="text-base font-semibold leading-8">3</p>}
                                     style={{ backgroundColor: '#707070' }}
                                 />
-                                <span className="text-base pl-4 font-medium">Ghi chú</span>
+                                <span className="text-base pl-4 font-medium">Địa điểm và Thời gian</span>
                             </Col>
                             <Col span={24}>
                                 <Form.Item
-                                    name="description"
-                                    label={<p className="text-base font-semibold">Ghi chú</p>}
+                                    name="showroomId"
+                                    label={<p className="text-base font-semibold">Showroom</p>}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Vui lòng showroom sửa chữa/bảo dưỡng.',
+                                        },
+                                    ]}
                                 >
-                                    <Input.TextArea
-                                        className="text-base border-[#02b875]"
-                                        rows={4}
-                                        placeholder="Cụ thể yêu cầu với Dodoris"
+                                    <Select
+                                        size="large"
+                                        value={filter}
+                                        placeholder="Tìm kiếm showroom theo tên, địa chỉ."
+                                        className="h-10 text-base border-[#02b875]"
+                                        optionLabelProp="label"
+                                        showSearch
+                                        onSearch={handleSearch}
+                                        onChange={handleChange}
+                                        filterOption={false}
+                                    >
+                                        {_.map(showroomsFilter, (showroom) => (
+                                            <Select.Option
+                                                value={showroom._id}
+                                                key={showroom._id}
+                                                label={showroom.name + ' - ' + showroom.address}
+                                            >
+                                                <div span={24}>
+                                                    <div span={24}>
+                                                        <span className="text-base font-medium text-[#02b875]">
+                                                            {showroom.name}
+                                                        </span>
+                                                    </div>
+                                                    <div span={24}>
+                                                        <span className="font-medium">{showroom.address}</span>
+                                                    </div>
+                                                </div>
+                                            </Select.Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                                {isShowroom ? null : (
+                                    <Form.Item
+                                        label={<p className="text-base font-semibold">Địa chỉ cụ thể</p>}
+                                        name="address"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Vui lòng nhập địa chỉ cụ thể.',
+                                            },
+                                        ]}
+                                    >
+                                        <Input.TextArea
+                                            className="text-base border-[#02b875]"
+                                            rows={2}
+                                            placeholder=""
+                                        />
+                                    </Form.Item>
+                                )}
+                            </Col>
+                            <Col span={24}>
+                                <Form.Item
+                                    name="time"
+                                    label={<p className="text-base font-semibold">Thời gian</p>}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Vui lòng chọn thời gian!',
+                                        },
+                                    ]}
+                                >
+                                    <DatePicker
+                                        size="large"
+                                        className="w-full border-[#02b875]"
+                                        placeholder="Vui lòng chọn thời gian"
+                                        format={HOUR_DATE_TIME}
+                                        disabledDate={disabledDate}
+                                        disabledTime={disabledDateTime}
+                                        showToday
+                                        value={date}
+                                        onChange={(date, dateString) => {
+                                            const dateStringConvert = new Date(dateString);
+                                            setDate(dateStringConvert);
+                                        }}
+                                        showTime
                                     />
                                 </Form.Item>
                             </Col>
