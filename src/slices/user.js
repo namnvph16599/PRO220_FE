@@ -32,6 +32,9 @@ export const userSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
+        builder.addCase(loginAsync.rejected, (state, action) => {
+            (state.loading = false), (state.error = 'Đã có lỗi xảy ra vui lòng thử lại!');
+        });
         builder.addCase(loginAsync.pending, (state, action) => {
             (state.loading = true), (state.error = ''), (state.currentUser.accessToken = '');
         });
