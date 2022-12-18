@@ -8,6 +8,7 @@ import { getAllBannerAsync, removeBannerByIdsAsync, updateBannerAsync } from '..
 import './banner.css';
 import DrawerCreateBanner from './DrawerCreateBanner';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
+import useDocumentTitle from '../../../hooks/useDocumentTitle';
 
 const noti = (type, message, description) => {
     notification[type]({
@@ -17,9 +18,12 @@ const noti = (type, message, description) => {
 };
 
 const BannerManage = () => {
+    useDocumentTitle('Quản lý banner');
     const dispatch = useDispatch();
     const banners = useSelector((state) => state.banner.banners.values);
     const loadding = useSelector((state) => state.banner.banners.loading);
+    const messageCreated = useSelector((state) => state.banner.create.message);
+    const statusNotiCreated = useSelector((state) => state.banner.create.status);
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [open, setOpen] = useState(false);
@@ -28,6 +32,10 @@ const BannerManage = () => {
     useEffect(() => {
         dispatch(getAllBannerAsync());
     }, []);
+
+    useEffect(() => {
+        if (messageCreated && statusNotiCreated) return noti(statusNotiCreated, messageCreated);
+    }, [messageCreated, statusNotiCreated]);
 
     const onSelectChange = (newSelectedRowKeys) => {
         setSelectedRowKeys(newSelectedRowKeys);

@@ -19,15 +19,16 @@ function App() {
                 <Route index element={<HomePage />} />
                 <Route path="about" element={<AboutPage />} />
                 <Route path="dat-lich" element={<BookingPage />} />
-                <Route path="dang-nhap" element={<Login />} />
+                <Route path="dang-nhap" element={<PrivateRouter><Login /></PrivateRouter>} />
                 <Route path="dang-ky" element={<Register />} />
             </Route>
-            <Route path="/admin" element={<AdminLayout />}>
+            <Route path="/admin" element={<PrivateLayout><AdminLayout /></PrivateLayout>}>
                 <Route path="dang-ky" element={<Register />} />
                 <Route path="quan-ly-banner" element={<BannerManage />} />
                 <Route path="don-hang" element={<OrderManage />} />
                 <Route path="don-hang/:id" element={<UpdateOrder />} />
             </Route>
+            <Route path="*" element={<PageNotFound />} />
         </Routes>
     );
 }
