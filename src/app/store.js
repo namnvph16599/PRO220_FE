@@ -6,6 +6,7 @@ const store = configureStore({
     reducer: {
         banner: BannerReducer,
         user: UserReducer,
+        showroom:ShowroomReduce
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
