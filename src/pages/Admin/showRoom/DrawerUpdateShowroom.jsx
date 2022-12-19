@@ -87,7 +87,6 @@ const DrawerUpdateShowroom = ({ open, onClose, reloading, id}) => {
         const data = { id,...values, images:[url],longitude: _.toString(coordinate.current.longitude),latitude: _.toString(coordinate.current.latitude)};
         dispatch(updateShowroomAsync(data)).then((res)=>{
             try {
-                console.log(res);
                 if(res.payload.status == 200){
                     noti(
                         NOTIFICATION_TYPE.SUCCESS,
