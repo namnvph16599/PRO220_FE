@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Input, Spin } from 'antd';
 import { updateOrderAsync } from '../../../slices/order';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getOrderById } from '../../../api/order';
 import _ from 'lodash';
@@ -26,7 +26,6 @@ const UpdateOrder = () => {
         data
     }));   
     navigate('/admin/don-hang')
-    console.log(data);
   }
   
   return (

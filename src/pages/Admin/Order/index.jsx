@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { Switch, Table, Row, Button, Popconfirm, notification, Spin } from 'antd';
-import { getOrdersAsync, removeOrderAsync, removeOrderByIdsAsync } from '../../../slices/order';
+import { getOrdersAsync, removeOrderByIdsAsync } from '../../../slices/order';
 import CreateOrder from './CreateOrder';
 import '../Banner/banner.css';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
@@ -22,10 +22,8 @@ const OrderManage = () => {
     const dispatch = useDispatch();
     const orders = useSelector((state) => state.order.orders.values);
     const loading = useSelector((state) => state.order.orders.loading)
-    console.log('orders', orders);
 
     const data = orders.map((order) => ({ ...order, key: order._id }));
-    console.log('data', data);
 
     useEffect(() => {
         dispatch(getOrdersAsync());
@@ -52,7 +50,6 @@ const OrderManage = () => {
     };
 
     const onSelectChange = (newSelectedRowKeys) => {
-        console.log('selectedRowKeys changed: ', newSelectedRowKeys);
         setSelectedRowKeys(newSelectedRowKeys);
     };
     const rowSelection = {

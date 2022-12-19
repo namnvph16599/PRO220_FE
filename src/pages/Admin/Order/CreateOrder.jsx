@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { Button, Col, Drawer, Form, Input } from 'antd';
+import React from 'react';
+import { Button, Drawer, Form, Input } from 'antd';
 import { createOrderAsync } from '../../../slices/order';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 
 const CreateOrder = (props) => {
@@ -12,7 +12,6 @@ const CreateOrder = (props) => {
   const onFinish = (data) => {
     const result = { ...data }
     dispatch(createOrderAsync(result));   
-    console.log(data);
   }
   
   return (
