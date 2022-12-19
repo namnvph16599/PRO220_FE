@@ -1,8 +1,8 @@
 import { Navigate } from 'react-router-dom';
-import { Token } from '../../constants/auth';
+import { JwtDecode } from '../../utils/auth';
 
 const PrivateRouter = ({ children }) => {
-    if (localStorage.getItem(Token.accessToken)) return <Navigate to="/" />;
+    if (JwtDecode()) return <Navigate to="/" />;
     return children;
 };
 
