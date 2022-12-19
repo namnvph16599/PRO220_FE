@@ -8,6 +8,8 @@ import { HOUR_DATE_TIME } from '../../constants/format';
 import { search } from '../../api/showroom';
 import './booking.css';
 import SpinCustomize from '../../components/Customs/Spin';
+import { createBannerByCustomer } from '../../api/order';
+import { Notification } from '../../utils/notifications';
 
 const range = (start, end) => {
     const result = [];
@@ -31,7 +33,11 @@ const BookingPage = () => {
     useDocumentTitle('Đặt lịch');
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.currentUser.values);
-    const [loading, setLoading] = useState(true);
+    const isLogged = useSelector((state) => state.user.isLogged);
+
+    const [loadingInital, setLoadingInital] = useState(true);
+    const [creatingBooking, setCreatingBooking] = useState(false);
+
     const [isShowroom, setIsShowroom] = useState(true);
     const [date, setDate] = useState(new Date());
     const [showrooms, setShowrooms] = useState([]);
@@ -41,15 +47,15 @@ const BookingPage = () => {
     const searchTemp = useRef(null);
 
     useEffect(() => {
-        if (!_.isEmpty(user)) {
+        if (!_.isEmpty(user) && isLogged) {
             setInitialValues({
                 name: user.name,
                 email: user.email,
                 number_phone: user.number_phone,
             });
         }
-        setLoading(false);
-    }, [user]);
+        setLoadingInital(false);
+    }, [user, isLogged]);
 
     useEffect(() => {
         //call api get showroom
@@ -158,6 +164,26 @@ const BookingPage = () => {
 
     const onFinish = (values) => {
         console.log('Success:', { ...values, accountId: user._id || null });
+        setCreatingBooking(true);
+        createBannerByCustomer({ ...values, accountId: user._id || null })
+            .then(({ data }) => {
+                if (isLogged) {
+                    Notification(
+                        NOTIFICATION_TYPE.SUCCESS,
+                        'Bạn đã đặt lịch thành công!',
+                        'Theo dõi lịch trong phần đơn hàng!',
+                    );
+                    return null;
+                }
+                Notification(NOTIFICATION_TYPE.SUCCESS, 'Bạn đã đặt lịch thành công!');
+            })
+            .catch((error) => {
+                console.log('error', error);
+                Notification(NOTIFICATION_TYPE.ERROR, error.message);
+            })
+            .finally(() => {
+                setCreatingBooking(false);
+            });
     };
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
@@ -182,7 +208,7 @@ const BookingPage = () => {
 
     return (
         <div className="w-full content-booking py-16">
-            {loading ? (
+            {loadingInital ? (
                 <SpinCustomize>
                     <Form
                         className="bg-white px-6 max-w-screen-lg mx-auto rounded"
@@ -430,6 +456,8 @@ const BookingPage = () => {
                             <Button
                                 type="primary"
                                 htmlType="submit"
+                                disabled={creatingBooking}
+                                loading={creatingBooking}
                                 className="text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-10 hover:text-white focus:ring-4 focus:outline-none
                          focus:ring-blue-300 font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
                             >
@@ -677,6 +705,8 @@ const BookingPage = () => {
                         <Button
                             type="primary"
                             htmlType="submit"
+                            disabled={creatingBooking}
+                            loading={creatingBooking}
                             className="text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-10 hover:text-white focus:ring-4 focus:outline-none
                          focus:ring-blue-300 font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
                         >

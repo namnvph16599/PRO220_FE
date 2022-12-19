@@ -17,6 +17,7 @@ const initialState = {
         values: {},
         accessToken: '',
     },
+    isLogged: false,
     error: '',
 };
 
@@ -43,7 +44,8 @@ export const userSlice = createSlice({
                 (state.error = action.payload.message), (state.currentUser.accessToken = ''), (state.loading = false);
             } else {
                 state.currentUser.values = jwtDecode(action.payload.accessToken);
-                (state.loading = false),
+                (state.isLogged = true),
+                    (state.loading = false),
                     (state.currentUser.accessToken = action.payload.accessToken),
                     (state.error = '');
             }
