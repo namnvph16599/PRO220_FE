@@ -1,10 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import BannerReducer from '../slices/banner';
 import  ShowroomReduce  from '../slices/showroom';
+import UserReducer from '../slices/user';
 const store = configureStore({
     reducer: {
         banner: BannerReducer,
-        showroom:ShowroomReduce
+        user: UserReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
