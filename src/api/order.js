@@ -7,5 +7,5 @@ export const getOrders = (filter) => {
 };
 
 export const createBannerByCustomer = (data) => {
-    return instance.post(URL, data);
+    return instance.post('/order-by-customer', data);
 };

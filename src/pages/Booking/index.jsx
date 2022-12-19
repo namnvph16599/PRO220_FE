@@ -10,6 +10,7 @@ import './booking.css';
 import SpinCustomize from '../../components/Customs/Spin';
 import { createBannerByCustomer } from '../../api/order';
 import { Notification } from '../../utils/notifications';
+import { NOTIFICATION_TYPE } from '../../constants/status';
 
 const range = (start, end) => {
     const result = [];
@@ -163,7 +164,6 @@ const BookingPage = () => {
     }, []);
 
     const onFinish = (values) => {
-        console.log('Success:', { ...values, accountId: user._id || null });
         setCreatingBooking(true);
         createBannerByCustomer({ ...values, accountId: user._id || null })
             .then(({ data }) => {
@@ -184,9 +184,6 @@ const BookingPage = () => {
             .finally(() => {
                 setCreatingBooking(false);
             });
-    };
-    const onFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
     };
     const handleSearch = (value) => {
         if (!value) {
@@ -216,7 +213,6 @@ const BookingPage = () => {
                         layout={'vertical'}
                         initialValues={initialValues}
                         onFinish={onFinish}
-                        onFinishFailed={onFinishFailed}
                         autoComplete="off"
                     >
                         <h1 className="text-center text-xl font-semibold text-[#1f2125] pt-8 ">ĐẶT LỊCH DỊCH VỤ</h1>
@@ -473,7 +469,6 @@ const BookingPage = () => {
                     layout={'vertical'}
                     initialValues={initialValues}
                     onFinish={onFinish}
-                    onFinishFailed={onFinishFailed}
                     autoComplete="off"
                 >
                     <h1 className="text-center text-xl font-semibold text-[#1f2125] pt-8 ">ĐẶT LỊCH DỊCH VỤ</h1>
