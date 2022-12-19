@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import { Button, Drawer, Form, Input, notification, Spin } from 'antd';
-import { createShowroomAsync, getShowroomByIdAsync, updateShowroomAsync } from '../../../slices/showroom';
+import {  updateShowroomAsync } from '../../../slices/showroom';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import _ from 'lodash';
 import './showroom.css';
@@ -9,6 +10,7 @@ import UploadImage from '../../../components/UploadImage';
 import { getShowroomById } from '../../../api/showroom';
 
 const DrawerUpdateShowroom = ({ open, onClose, reloading, id}) => {
+    useDocumentTitle('Cập nhật cửa hàng')
     const dispatch = useDispatch();
     const loading = useSelector((state) => state.showroom.showroomUpdate.loading)
     const [defaultList, setDefaultList] = useState([]);

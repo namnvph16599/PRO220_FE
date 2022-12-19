@@ -10,6 +10,8 @@ import { getAllShowroomAsync, removeShowroomByIdAsync, removeShowroomByIdsAsync 
 import Highlighter from 'react-highlight-words';
 import DrawerCreateShowroom from './DrawerCreateShowroom';
 import DrawerUpdateShowroom from './DrawerUpdateShowroom';
+import useDocumentTitle from '../../../hooks/useDocumentTitle';
+
 
 const noti = (type, message, description) => {
     notification[type]({
@@ -19,6 +21,7 @@ const noti = (type, message, description) => {
 };
 
 const ShowRoom = () => {
+    useDocumentTitle('Quản lý cửa hàng')
     const dispatch = useDispatch();
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const loadding = useSelector((state) => state.showroom.showrooms.loading);
