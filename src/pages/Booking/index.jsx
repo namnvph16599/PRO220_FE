@@ -11,6 +11,8 @@ import SpinCustomize from '../../components/Customs/Spin';
 import { createBannerByCustomer } from '../../api/order';
 import { Notification } from '../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../constants/status';
+import { getAllShowroomAsync } from '../../slices/showroom';
+import { SEVICE_TYPE } from '../../constants/orther';
 
 const range = (start, end) => {
     const result = [];
@@ -34,6 +36,7 @@ const BookingPage = () => {
     useDocumentTitle('Đặt lịch');
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.currentUser.values);
+    const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const isLogged = useSelector((state) => state.user.isLogged);
 
     const [loadingInital, setLoadingInital] = useState(true);
@@ -41,7 +44,6 @@ const BookingPage = () => {
 
     const [isShowroom, setIsShowroom] = useState(true);
     const [date, setDate] = useState(new Date());
-    const [showrooms, setShowrooms] = useState([]);
     const [showroomsFilter, setShowroomsFilter] = useState([]);
     const [filter, setFilter] = useState('');
     const [initialValues, setInitialValues] = useState({});
@@ -60,108 +62,13 @@ const BookingPage = () => {
 
     useEffect(() => {
         //call api get showroom
-        setShowrooms([
-            {
-                _id: 1,
-                name: 'Showroom 1',
-                phone: 'phone',
-                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
-                images: [
-                    'https://hethong.24hlaptop.com/image_branch/1649403159689-so-5-ngo-178-thai-ha-trung-liet-dong-da-ha-noi.jpg',
-                ],
-            },
-            {
-                _id: 2,
-                name: 'Showroom 2',
-                phone: 'phone',
-                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
-                images: ['https://hethong.24hlaptop.com/image_branch/1649403173272-so-220-thai-ha-dong-da-ha-noi.JPG'],
-            },
-            {
-                _id: 3,
-                name: 'Showroom 1',
-                phone: 'phone',
-                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
-                images: [
-                    'https://hethong.24hlaptop.com/image_branch/1649403159689-so-5-ngo-178-thai-ha-trung-liet-dong-da-ha-noi.jpg',
-                ],
-            },
-            {
-                _id: 4,
-                name: 'Showroom 2',
-                phone: 'phone',
-                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
-                images: ['https://hethong.24hlaptop.com/image_branch/1649403173272-so-220-thai-ha-dong-da-ha-noi.JPG'],
-            },
-            {
-                _id: 5,
-                name: 'Showroom 1',
-                phone: 'phone',
-                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
-                images: [
-                    'https://hethong.24hlaptop.com/image_branch/1649403159689-so-5-ngo-178-thai-ha-trung-liet-dong-da-ha-noi.jpg',
-                ],
-            },
-            {
-                _id: 6,
-                name: 'Showroom 2',
-                phone: 'phone',
-                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
-                images: ['https://hethong.24hlaptop.com/image_branch/1649403173272-so-220-thai-ha-dong-da-ha-noi.JPG'],
-            },
-        ]);
-
-        setShowroomsFilter([
-            {
-                _id: 1,
-                name: 'Showroom 1',
-                phone: 'phone',
-                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
-                images: [
-                    'https://hethong.24hlaptop.com/image_branch/1649403159689-so-5-ngo-178-thai-ha-trung-liet-dong-da-ha-noi.jpg',
-                ],
-            },
-            {
-                _id: 2,
-                name: 'Showroom 2',
-                phone: 'phone',
-                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
-                images: ['https://hethong.24hlaptop.com/image_branch/1649403173272-so-220-thai-ha-dong-da-ha-noi.JPG'],
-            },
-            {
-                _id: 3,
-                name: 'Showroom 1',
-                phone: 'phone',
-                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
-                images: [
-                    'https://hethong.24hlaptop.com/image_branch/1649403159689-so-5-ngo-178-thai-ha-trung-liet-dong-da-ha-noi.jpg',
-                ],
-            },
-            {
-                _id: 4,
-                name: 'Showroom 2',
-                phone: 'phone',
-                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
-                images: ['https://hethong.24hlaptop.com/image_branch/1649403173272-so-220-thai-ha-dong-da-ha-noi.JPG'],
-            },
-            {
-                _id: 5,
-                name: 'Showroom 1',
-                phone: 'phone',
-                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
-                images: [
-                    'https://hethong.24hlaptop.com/image_branch/1649403159689-so-5-ngo-178-thai-ha-trung-liet-dong-da-ha-noi.jpg',
-                ],
-            },
-            {
-                _id: 6,
-                name: 'Showroom 2',
-                phone: 'phone',
-                address: '85/73 chợ tân xuân - xuân đỉnh - bắc liêm',
-                images: ['https://hethong.24hlaptop.com/image_branch/1649403173272-so-220-thai-ha-dong-da-ha-noi.JPG'],
-            },
-        ]);
-    }, []);
+        if (_.isEmpty(showrooms)) {
+            dispatch(getAllShowroomAsync());
+        }
+        if (!_.isEmpty(showrooms)) {
+            setShowroomsFilter(showrooms);
+        }
+    }, [showrooms]);
 
     const onFinish = (values) => {
         setCreatingBooking(true);
@@ -325,24 +232,26 @@ const BookingPage = () => {
                                                     message: 'Vui lòng chọn dịch vụ.',
                                                 },
                                             ]}
-                                            initialValue="1"
+                                            initialValue={SEVICE_TYPE.SHOWROOM}
                                         >
                                             <Select
                                                 size="large"
                                                 placeholder="Sửa chữa tại..."
                                                 className="h-10 text-base border-[#02b875]"
                                                 onSelect={(value) => {
-                                                    if (value === '1') {
+                                                    if (value === SEVICE_TYPE.SHOWROOM) {
                                                         setIsShowroom(true);
                                                         return;
                                                     }
                                                     setIsShowroom(false);
                                                 }}
                                             >
-                                                <Select.Option value="1">
+                                                <Select.Option value={SEVICE_TYPE.SHOWROOM}>
                                                     Sửa chữa/ Bảo dưỡng tại cửa hàng.
                                                 </Select.Option>
-                                                <Select.Option value="0">Sửa chữa/ Bảo dưỡng tại nhà.</Select.Option>
+                                                <Select.Option value={SEVICE_TYPE.HOUSE}>
+                                                    Sửa chữa/ Bảo dưỡng tại nhà.
+                                                </Select.Option>
                                             </Select>
                                         </Form.Item>
                                     </Col>
@@ -575,22 +484,26 @@ const BookingPage = () => {
                                                 message: 'Vui lòng chọn dịch vụ.',
                                             },
                                         ]}
-                                        initialValue="1"
+                                        initialValue={SEVICE_TYPE.SHOWROOM}
                                     >
                                         <Select
                                             size="large"
                                             placeholder="Sửa chữa tại..."
                                             className="h-10 text-base border-[#02b875]"
                                             onSelect={(value) => {
-                                                if (value === '1') {
+                                                if (value === SEVICE_TYPE.SHOWROOM) {
                                                     setIsShowroom(true);
                                                     return;
                                                 }
                                                 setIsShowroom(false);
                                             }}
                                         >
-                                            <Select.Option value="1">Sửa chữa/ Bảo dưỡng tại cửa hàng.</Select.Option>
-                                            <Select.Option value="0">Sửa chữa/ Bảo dưỡng tại nhà.</Select.Option>
+                                            <Select.Option value={SEVICE_TYPE.SHOWROOM}>
+                                                Sửa chữa/ Bảo dưỡng tại cửa hàng.
+                                            </Select.Option>
+                                            <Select.Option value={SEVICE_TYPE.HOUSE}>
+                                                Sửa chữa/ Bảo dưỡng tại nhà.
+                                            </Select.Option>
                                         </Select>
                                     </Form.Item>
                                 </Col>
