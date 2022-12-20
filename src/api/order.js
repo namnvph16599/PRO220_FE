@@ -1,3 +1,4 @@
+
 import instance from "./instance";
 
 const URL = '/orders';
@@ -33,3 +34,8 @@ export const removeOrderByIds = (ids = []) => {
 export const updateOrder = (id, data) => {
     return instance.patch(`${URL}/${id}`, data);
 }
+
+export const createBannerByCustomer = (data) => {
+    return instance.post('/order-by-customer', data);
+};
+

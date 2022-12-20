@@ -2,6 +2,7 @@ import {
     configureStore
 } from '@reduxjs/toolkit';
 import BannerReducer from '../slices/banner';
+import  ShowroomReduce  from '../slices/showroom';
 import UserReducer from '../slices/user';
 import OrderSlice from '../slices/order';
 const store = configureStore({
@@ -9,6 +10,8 @@ const store = configureStore({
         banner: BannerReducer,
         user: UserReducer,
         order: OrderSlice
+        showroom:ShowroomReduce
+
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
