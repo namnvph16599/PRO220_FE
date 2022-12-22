@@ -94,7 +94,7 @@ focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 
                                     )}
                                     <li>
                                         <Link
-                                            to="/cai-dat/tai-khoan"
+                                            to="/cai-dat/tai-khoan/1"
                                             className="block py-2 px-4 text-sm text-gray-700 hover:bg-[#02b875] hover:text-white"
                                         >
                                             Tài khoản
@@ -102,7 +102,7 @@ focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 
                                     </li>
                                     <li>
                                         <Link
-                                            to="/cai-dat/don-hang"
+                                            to="/cai-dat/quan-ly-đơn-hàng/2"
                                             className="block py-2 px-4 text-sm text-gray-700 hover:bg-[#02b875] hover:text-white"
                                         >
                                             Đơn hàng

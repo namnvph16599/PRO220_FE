@@ -14,6 +14,9 @@ import PrivateLayout from './components/Private/PrivateLayout';
 import PageNotFound from './pages/PageNotFound';
 import UpdateBanner from './pages/Admin/Banner/UpdateBanner';
 import PrivateRouter from './components/Private/PrivateRouter';
+import Personal from './pages/User';
+import User from './pages/Personal'
+import ListOrder from './pages/list-order';
 function App() {
     return (
         <Routes>
@@ -22,6 +25,10 @@ function App() {
                 <Route path="about" element={<AboutPage />} />
                 <Route path="dat-lich" element={<BookingPage />} />
                 <Route path="dang-nhap" element={<PrivateRouter><Login /></PrivateRouter>} />
+                <Route path="cai-dat" element={<Personal />}>
+                    <Route  index path='tai-khoan/:id' element={<User />} />
+                    <Route  path='quan-ly-đơn-hàng/:id' element={<ListOrder />} />
+                </Route>
                 <Route path="dang-ky" element={<Register />} />
             </Route>
             <Route path="/admin" element={<PrivateLayout><AdminLayout /></PrivateLayout>}>
