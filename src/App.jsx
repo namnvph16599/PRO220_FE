@@ -16,9 +16,10 @@ import PageNotFound from './pages/PageNotFound';
 import UpdateBanner from './pages/Admin/Banner/UpdateBanner';
 import PrivateRouter from './components/Private/PrivateRouter';
 import Personal from './pages/Setting';
-import User from './pages/Personal';
-import ListOrder from './pages/list-order';
+import UpdateProfile from './pages/Setting/UpdateProfile';
 import PrivateSetting from './components/Private/PrivateSetting';
+import ChangePassword from './pages/Setting/ChangePassword';
+import Orders from './pages/Setting/Orders';
 function App() {
     return (
         <Routes>
@@ -42,8 +43,9 @@ function App() {
                         </PrivateSetting>
                     }
                 >
-                    <Route index path="tai-khoan" element={<User />} />
-                    <Route path="quan-ly-don-hang" element={<ListOrder />} />
+                    <Route index path="tai-khoan" element={<UpdateProfile />} />
+                    <Route index path="doi-mat-khau" element={<ChangePassword />} />
+                    <Route path="quan-ly-don-hang" element={<Orders />} />
                 </Route>
                 <Route path="dang-ky" element={<Register />} />
             </Route>

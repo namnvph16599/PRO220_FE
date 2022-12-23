@@ -1,29 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import { PieChartOutlined, UserOutlined, LockOutlined } from '@ant-design/icons';
-import { Avatar, Breadcrumb, Layout, Menu, theme } from 'antd';
-import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
-const { Header, Content, Footer, Sider } = Layout;
+import { UserSwitchOutlined, UnlockOutlined, FileDoneOutlined } from '@ant-design/icons';
+import { Layout, Menu, theme } from 'antd';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { themeCustom } from '../../utils/theme';
+import './setting.css';
+
+const { Content, Sider } = Layout;
 const items = [
     {
         key: 'tai-khoan',
         path: 'tai-khoan',
-        icon: <UserOutlined />,
-        label: 'thông tin tài khoản',
+        icon: <UserSwitchOutlined />,
+        label: 'Cập nhật tài khoản',
+    },
+    {
+        key: 'doi-mat-khau',
+        path: 'doi-mat-khau',
+        icon: <UnlockOutlined />,
+        label: 'Đổi mật khẩu',
     },
     {
         key: 'quan-ly-don-hang',
         path: 'quan-ly-don-hang',
-        icon: <PieChartOutlined />,
+        icon: <FileDoneOutlined />,
         label: 'Quản lý đơn hàng',
     },
 ];
 const Personal = () => {
     const navigate = useNavigate();
     const [collapsed, setCollapsed] = useState(false);
-    const [something, setSomething] = useState('tai-khoan');
+    const [path, setPath] = useState('tai-khoan');
     const { pathname } = useLocation();
     const {
-        token: { colorBgContainer, darkAlgorithm },
+        token: { colorBgContainer },
     } = theme.useToken();
     const handleClick = ({
         item: {
@@ -35,7 +44,7 @@ const Personal = () => {
     useEffect(() => {
         const subString = pathname.substring(9);
         if (subString) {
-            setSomething(subString);
+            setPath(subString);
         }
     }, [pathname]);
 
@@ -43,11 +52,12 @@ const Personal = () => {
         <Layout
             style={{
                 width: '100%',
-                backgroundColor: '#efefef',
+                backgroundColor: themeCustom.color.setting,
                 padding: '20px 0px',
             }}
         >
             <Layout
+                className="setting-content"
                 style={{
                     width: '75%',
                     margin: 'auto',
@@ -56,27 +66,18 @@ const Personal = () => {
             >
                 <Sider
                     onCollapse={(value) => setCollapsed(value)}
-                    style={{ backgroundColor: 'rgb(255, 255, 255)', minHeight: 550 }}
+                    style={{ backgroundColor: themeCustom.color.white, minHeight: 550 }}
                 >
-                    <div
-                        style={{
-                            height: 32,
-                            margin: 16,
-                            // background: 'rgba(255, 255, 255, 0.2)',
-                        }}
-                    >
-                        <Avatar size={{ xs: 24, xl: 40 }} />
-                    </div>
                     <Menu
-                        style={{ backgroundColor: 'rgb(255, 255, 255)' }}
+                        style={{ backgroundColor: themeCustom.color.white }}
                         defaultSelectedKeys={['tai-khoan']}
-                        selectedKeys={[something]}
+                        selectedKeys={[path]}
                         mode="inline"
                         items={items}
                         onClick={handleClick}
                     />
                 </Sider>
-                <Layout className="site-layout" style={{ backgroundColor: '#efefef' }}>
+                <Layout className="site-layout" style={{ backgroundColor: themeCustom.color.setting }}>
                     <Content
                         style={{
                             margin: '0 16px',
