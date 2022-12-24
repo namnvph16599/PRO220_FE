@@ -52,7 +52,7 @@ const UpdateOrder = () => {
             </Form.Item>
             <Form.Item
               label={<p className="text-base font-semibold">Địa chỉ</p>}
-              name="addresses"
+              name="address"
               rules={[
                 {
                   required: true,
@@ -64,7 +64,7 @@ const UpdateOrder = () => {
             </Form.Item>
             <Form.Item
               label={<p className="text-base font-semibold">Số điện thoại</p>}
-              name="phone"
+              name="number_phone"
               rules={[
                 {
                   required: true,
@@ -74,7 +74,7 @@ const UpdateOrder = () => {
             >
               <Input className="h-10 text-base border-[#02b875]" placeholder="Nhập mô tả"/>
             </Form.Item>
-            <Form.Item
+            {/* <Form.Item
               label={<p className="text-base font-semibold">Giá</p>}
               name="price"
               rules={[
@@ -85,7 +85,7 @@ const UpdateOrder = () => {
               ]}
             >
               <Input className="h-10 text-base border-[#02b875]" placeholder="Nhập mô tả"/>
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item
               label={<p className="text-base font-semibold">Giá phục vụ thêm</p>}
               name="subPrice"
@@ -123,8 +123,8 @@ const UpdateOrder = () => {
               <Input className="h-10 text-base border-[#02b875]" placeholder="Nhập mô tả"/>
             </Form.Item>
             <Form.Item
-              label={<p className="text-base font-semibold">Ngày</p>}
-              name="date"
+              label={<p className="text-base font-semibold">Thời gian tiếp nhận</p>}
+              name="appointmentSchedule"
               rules={[
                 {
                   required: true,

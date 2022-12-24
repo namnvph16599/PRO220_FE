@@ -10,6 +10,14 @@ export const getOrders = (filter) => {
     });
 }
 
+export const getOrdersByShowroomId = (showroomId) => {
+    return instance.get(URL, {
+        params: {
+            showroomId
+        }
+    })
+}
+
 export const getOrderById = (id) => {
     return instance.get(`${URL}/${id}`)
 }
@@ -33,3 +41,8 @@ export const removeOrderByIds = (ids = []) => {
 export const updateOrder = (id, data) => {
     return instance.patch(`${URL}/${id}`, data);
 }
+
+
+export const createBannerByCustomer = (data) => {
+    return instance.post('/order-by-customer', data);
+};

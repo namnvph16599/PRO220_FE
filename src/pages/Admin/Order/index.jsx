@@ -8,6 +8,8 @@ import { getOrdersAsync, removeOrderByIdsAsync } from '../../../slices/order';
 import CreateOrder from './CreateOrder';
 import '../Banner/banner.css';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
+import { ROLE } from '../../../constants/auth';
+import { getAllShowroomAsync } from '../../../slices/showroom';
 
 const noti = (type, message, description) => {
     notification[type]({
@@ -17,11 +19,13 @@ const noti = (type, message, description) => {
 };
 
 const OrderManage = () => {
-  const [open, setOpen] = useState(false);
+    const user = useSelector((state) => state.user.currentUser.values.role);
+    const showroom = useSelector((state) => state.showroom.showrooms.values);
+    const [open, setOpen] = useState(false);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const dispatch = useDispatch();
     const orders = useSelector((state) => state.order.orders.values);
-    const loading = useSelector((state) => state.order.orders.loading)
+    const loading = useSelector((state) => state.order.orders.loading);
 
     const data = orders.map((order) => ({ ...order, key: order._id }));
 
@@ -29,6 +33,11 @@ const OrderManage = () => {
         dispatch(getOrdersAsync());
     }, []);
 
+    useEffect(() => {
+        if (_.isEmpty(showroom)) {
+            dispatch(getAllShowroomAsync());
+        }
+    }, [showroom]);
     const handleRemoveOrderByIds = (ids) => {
         dispatch(removeOrderByIdsAsync(ids)).then((res) => {
             const orderRemoved = _.get(res, 'payload.data.dataDeleted', null);
@@ -63,11 +72,15 @@ const OrderManage = () => {
         },
         {
             title: 'Địa chỉ',
-            dataIndex: 'addresses',
+            dataIndex: 'address',
+        },
+        {
+            title: 'Cửa hàng',
+            dataIndex: ['showroomId'],
         },
         {
             title: 'Số điện thoại',
-            dataIndex: 'phone',
+            dataIndex: 'number_phone',
         },
         {
             title: 'Giá',
@@ -86,13 +99,15 @@ const OrderManage = () => {
             dataIndex: 'serviceType',
         },
         {
-            title: 'Ngày',
-            dataIndex: 'date',
+            title: 'Thời gian tiếp nhận',
+            dataIndex: 'appointmentSchedule',
         },
+
         {
             title: 'Mô tả',
             dataIndex: 'description',
-        },{
+        },
+        {
             title: 'Tổng tiền',
             dataIndex: 'total',
         },
@@ -107,7 +122,6 @@ const OrderManage = () => {
             title: '',
             render: (data) => {
                 return (
-                    
                     <Row>
                         <Link to={data._id}>
                             <EditOutlined className="text-xl pr-4" />
@@ -127,7 +141,15 @@ const OrderManage = () => {
             },
         },
     ];
-
+    useEffect(() => {
+        if (user === ROLE.ADMIN) {
+            columns.splice(7, 0, {
+                title: 'Cửa hàng',
+                dataIndex: 'showroomId',
+            });
+            console.log(columns);
+        }
+    }, [user]);
     return (
         <div className="banner-content">
             {loading ? (
@@ -135,7 +157,7 @@ const OrderManage = () => {
                     <Spin tip="" size="large">
                         <div className="content" />
                     </Spin>
-                </div>  
+                </div>
             ) : (
                 <>
                     <div className="flex justify-between align-center pb-4">
@@ -158,7 +180,7 @@ const OrderManage = () => {
                     <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
                 </>
             )}
-            {open && <CreateOrder open={open} onClose={() => setOpen(false)}/>}
+            {open && <CreateOrder open={open} onClose={() => setOpen(false)} />}
         </div>
     );
 };
