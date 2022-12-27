@@ -20,7 +20,8 @@ a:hover {
 
 /*  customize btn type primary*/
 
-.ant-btn.ant-btn-sm {
+.ant-btn.ant-btn-sm,
+.btn-primary {
     background-color: var(--primary-color) !important;
 }
 
