@@ -135,7 +135,7 @@ const BookingPage = () => {
                                         <Avatar
                                             size={34}
                                             icon={<p className="text-base font-semibold leading-8">1</p>}
-                                            style={{ backgroundColor: '#707070' }}
+                                            style={{ backgroundColor: '#02b875' }}
                                         />
                                         <span className="text-base pl-4 font-medium">Thông tin khách hàng</span>
                                     </Col>
@@ -202,7 +202,7 @@ const BookingPage = () => {
                                         <Avatar
                                             size={34}
                                             icon={<p className="text-base font-semibold leading-8">3</p>}
-                                            style={{ backgroundColor: '#707070' }}
+                                            style={{ backgroundColor: '#02b875' }}
                                         />
                                         <span className="text-base pl-4 font-medium">Dịch vụ</span>
                                     </Col>
@@ -257,7 +257,7 @@ const BookingPage = () => {
                                         <Avatar
                                             size={34}
                                             icon={<p className="text-base font-semibold leading-8">2</p>}
-                                            style={{ backgroundColor: '#707070' }}
+                                            style={{ backgroundColor: '#02b875' }}
                                         />
                                         <span className="text-base pl-4 font-medium">Thông tin xe</span>
                                     </Col>
@@ -313,14 +313,14 @@ const BookingPage = () => {
                                         <Avatar
                                             size={34}
                                             icon={<p className="text-base font-semibold leading-8">4</p>}
-                                            style={{ backgroundColor: '#707070' }}
+                                            style={{ backgroundColor: '#02b875' }}
                                         />
                                         <span className="text-base pl-4 font-medium">Địa điểm và Thời gian</span>
                                     </Col>
                                     <Col span={24}>
                                         <Form.Item
                                             name="showroomId"
-                                            label={<p className="text-base font-semibold">Showroom</p>}
+                                            label={<p className="text-base font-semibold">Cửa hàng</p>}
                                             rules={[
                                                 {
                                                     required: true,
@@ -331,7 +331,7 @@ const BookingPage = () => {
                                             <Select
                                                 size="large"
                                                 value={filter}
-                                                placeholder="Tìm kiếm showroom theo tên, địa chỉ."
+                                                placeholder="Tìm kiếm cửa hàng theo tên, địa chỉ."
                                                 className="h-10 text-base border-[#02b875]"
                                                 optionLabelProp="label"
                                                 showSearch
@@ -415,7 +415,7 @@ const BookingPage = () => {
                                 htmlType="submit"
                                 disabled={creatingBooking}
                                 loading={creatingBooking}
-                                className="btn-primary text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-10 hover:text-white focus:ring-4 focus:outline-none
+                                className="btn-primary text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-12 hover:text-white focus:ring-4 focus:outline-none
                                 font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
                             >
                                 Đặt lịch
@@ -440,7 +440,7 @@ const BookingPage = () => {
                                     <Avatar
                                         size={34}
                                         icon={<p className="text-base font-semibold leading-8">1</p>}
-                                        style={{ backgroundColor: '#707070' }}
+                                        style={{ backgroundColor: '#02b875' }}
                                     />
                                     <span className="text-base pl-4 font-medium">Thông tin khách hàng</span>
                                 </Col>
@@ -504,7 +504,7 @@ const BookingPage = () => {
                                     <Avatar
                                         size={34}
                                         icon={<p className="text-base font-semibold leading-8">3</p>}
-                                        style={{ backgroundColor: '#707070' }}
+                                        style={{ backgroundColor: '#02b875' }}
                                     />
                                     <span className="text-base pl-4 font-medium">Dịch vụ</span>
                                 </Col>
@@ -559,7 +559,7 @@ const BookingPage = () => {
                                     <Avatar
                                         size={34}
                                         icon={<p className="text-base font-semibold leading-8">2</p>}
-                                        style={{ backgroundColor: '#707070' }}
+                                        style={{ backgroundColor: '#02b875' }}
                                     />
                                     <span className="text-base pl-4 font-medium">Thông tin xe</span>
                                 </Col>
@@ -608,14 +608,14 @@ const BookingPage = () => {
                                     <Avatar
                                         size={34}
                                         icon={<p className="text-base font-semibold leading-8">4</p>}
-                                        style={{ backgroundColor: '#707070' }}
+                                        style={{ backgroundColor: '#02b875' }}
                                     />
                                     <span className="text-base pl-4 font-medium">Địa điểm và Thời gian</span>
                                 </Col>
                                 <Col span={24}>
                                     <Form.Item
                                         name="showroomId"
-                                        label={<p className="text-base font-semibold">Showroom</p>}
+                                        label={<p className="text-base font-semibold">Cửa hàng</p>}
                                         rules={[
                                             {
                                                 required: true,
@@ -626,7 +626,7 @@ const BookingPage = () => {
                                         <Select
                                             size="large"
                                             value={filter}
-                                            placeholder="Tìm kiếm showroom theo tên, địa chỉ."
+                                            placeholder="Tìm kiếm cửa hàng theo tên, địa chỉ."
                                             className="h-10 text-base border-[#02b875]"
                                             optionLabelProp="label"
                                             showSearch
@@ -706,12 +706,11 @@ const BookingPage = () => {
                     </Row>
                     <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
                         <Button
-                            type="primary"
                             htmlType="submit"
                             disabled={creatingBooking}
                             loading={creatingBooking}
-                            className="text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-10 hover:text-white focus:ring-4 focus:outline-none
-                         focus:ring-blue-300 font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
+                            className="btn-primary text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-12 hover:!text-white hover:out
+                        font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
                         >
                             Đặt lịch
                         </Button>
