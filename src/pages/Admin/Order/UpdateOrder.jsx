@@ -7,7 +7,7 @@ import { getOrderById } from '../../../api/order';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import SpinCustomize from '../../../components/Customs/Spin';
-import { SEVICE_TYPE } from '../../../constants/order';
+import { SEVICE_TYPE, VEHICLE_TYPE } from '../../../constants/order';
 import { HOUR_DATE_TIME } from '../../../constants/format';
 import StatusOrder from '../../../components/StatusOrder';
 import './order.css';
@@ -37,9 +37,7 @@ const UpdateOrder = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
     const [order, setOrder] = useState({});
-    const [date, setDate] = useState(dayjs().format(HOUR_DATE_TIME));
     const [initialValues, setInitialValues] = useState({});
-    console.log(111, date);
 
     useEffect(() => {
         (async () => {
@@ -48,8 +46,7 @@ const UpdateOrder = () => {
             console.log('data', data);
             const { appointmentSchedule, ...dataOther } = data;
             console.log('appointmentSchedule', appointmentSchedule);
-            setInitialValues({ ...dataOther, appointmentSchedule: dayjs(appointmentSchedule).format(HOUR_DATE_TIME) });
-            setDate(dayjs(appointmentSchedule).format(HOUR_DATE_TIME));
+            setInitialValues({ ...dataOther, appointmentSchedule: dayjs(appointmentSchedule) });
         })();
     }, [id]);
     const onFinish = (data) => {
@@ -86,14 +83,8 @@ const UpdateOrder = () => {
                                 <Input className="h-10 text-base border-[#02b875]" />
                             </Form.Item>
                             <Form.Item
-                                label={<p className="text-base font-semibold">Địa chỉ</p>}
+                                label={<p className="text-base font-semibold">Địa chỉ sửa chữa </p>}
                                 name="address"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                                    },
-                                ]}
                             >
                                 <Input className="h-10 text-base border-[#02b875]" />
                             </Form.Item>
@@ -110,6 +101,37 @@ const UpdateOrder = () => {
                                 <Input className="h-10 text-base border-[#02b875]" />
                             </Form.Item>
                         </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                label={<p className="text-base font-semibold">Biển kiểm soát</p>}
+                                name="licensePlates"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Quý khách vui lòng không để trống trường thông tin này.',
+                                    },
+                                ]}
+                            >
+                                <Input className="h-10 text-base border-[#02b875]" />
+                            </Form.Item>
+                            <Form.Item name="vehicleType" label={<p className="text-base font-semibold">Loại xe</p>}>
+                                <Select size="large" className="h-10 text-base border-[#02b875]">
+                                    {VEHICLE_TYPE.map((item) => (
+                                        <Select.Option key={item.value} value={item.value} label={item.label}>
+                                            {item.label}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                            <Form.Item label={<p className="text-base font-semibold">Số km xe đã chạy</p>} name="km">
+                                <Input className="h-10 text-base border-[#02b875]" />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Form.Item name="status" label={<p className="text-base font-semibold">Trạng thái</p>}>
+                        <StatusOrder status={order.status} />
+                    </Form.Item>
+                    <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item
                                 name="serviceType"
@@ -131,7 +153,7 @@ const UpdateOrder = () => {
                                 </Select>
                             </Form.Item>
                             <Form.Item
-                                name="aaa"
+                                name="appointmentSchedule"
                                 label={<p className="text-base font-semibold">Thời gian</p>}
                                 // rules={[
                                 //     {
@@ -145,41 +167,44 @@ const UpdateOrder = () => {
                                     className="w-full border-[#02b875]"
                                     placeholder="Vui lòng chọn thời gian"
                                     format={HOUR_DATE_TIME}
-                                    value={date}
                                     disabledDate={disabledDate}
                                     disabledTime={disabledDateTime}
                                     showToday
                                     showTime
                                 />
                             </Form.Item>
+                            <Form.Item label={<p className="text-base font-semibold">Mô tả</p>} name="description">
+                                <Input.TextArea className="text-base border-[#02b875]" rows={2} placeholder="" />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name="materialIds"
+                                label={<p className="text-base font-semibold">Vật tư sử dụng</p>}
+                            >
+                                <Select
+                                    size="large"
+                                    placeholder="Chọn vật tư sử dụng..."
+                                    className="h-10 text-base border-[#02b875]"
+                                >
+                                    <Select.Option value={SEVICE_TYPE.SHOWROOM}>
+                                        Sửa chữa/ Bảo dưỡng tại cửa hàng.11111111
+                                    </Select.Option>
+                                    <Select.Option value={SEVICE_TYPE.HOUSE}>2222</Select.Option>
+                                </Select>
+                            </Form.Item>
                             <Form.Item label={<p className="text-base font-semibold">Phụ phí</p>} name="subPrice">
                                 <Input className="h-10 text-base border-[#02b875]" type="number" />
                             </Form.Item>
                         </Col>
                     </Row>
-                    <Form.Item name="status" label={<p className="text-base font-semibold">Trạng thái</p>}>
-                        <StatusOrder status={order.status} />
-                    </Form.Item>
-                    <Form.Item name="materialIds" label={<p className="text-base font-semibold">Vật tư sử dụng</p>}>
-                        <Select
-                            size="large"
-                            placeholder="Chọn vật tư sử dụng..."
-                            className="h-10 text-base border-[#02b875]"
-                        >
-                            <Select.Option value={SEVICE_TYPE.SHOWROOM}>
-                                Sửa chữa/ Bảo dưỡng tại cửa hàng.11111111
-                            </Select.Option>
-                            <Select.Option value={SEVICE_TYPE.HOUSE}>2222</Select.Option>
-                        </Select>
-                    </Form.Item>
-                    <Form.Item label={<p className="text-base font-semibold">Mô tả</p>} name="description">
-                        <Input.TextArea className="text-base border-[#02b875]" rows={2} placeholder="" />
-                    </Form.Item>
                     <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
                         <Button
-                            type="primary"
                             htmlType="submit"
-                            className="text-white bg-[#02b875] w-full mb-8 mt-8 h-10 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
+                            // disabled={creatingBooking}
+                            // loading={creatingBooking}
+                            className="btn-primary text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-12 hover:!text-white hover:out
+                        font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
                         >
                             Cập nhật
                         </Button>
