@@ -7,9 +7,9 @@ import { getOrderById } from '../../../api/order';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import SpinCustomize from '../../../components/Customs/Spin';
-import { SEVICE_TYPE, VEHICLE_TYPE } from '../../../constants/order';
+import { ORDER_STATUS, SEVICE_TYPE, VEHICLE_TYPE } from '../../../constants/order';
 import { HOUR_DATE_TIME } from '../../../constants/format';
-import StatusOrder from '../../../components/StatusOrder';
+import StatusOrder from './StatusOrder';
 import './order.css';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 
@@ -43,12 +43,14 @@ const UpdateOrder = () => {
         (async () => {
             const { data } = await getOrderById(id);
             setOrder(data);
-            console.log('data', data);
-            const { appointmentSchedule, ...dataOther } = data;
-            console.log('appointmentSchedule', appointmentSchedule);
-            setInitialValues({ ...dataOther, appointmentSchedule: dayjs(appointmentSchedule) });
         })();
     }, [id]);
+    useEffect(() => {
+        if (!_.isEmpty(order)) {
+            const { appointmentSchedule, ...orderOther } = order;
+            setInitialValues({ ...orderOther, appointmentSchedule: dayjs(appointmentSchedule) });
+        }
+    }, [order]);
     const onFinish = (data) => {
         console.log('data', data);
         // dispatch(
@@ -62,12 +64,18 @@ const UpdateOrder = () => {
 
     return (
         <div>
-            {_.isEmpty(order) ? (
+            {_.isEmpty(initialValues) ? (
                 <div className="absolute top-1/2 left-1/2">
                     <SpinCustomize />
                 </div>
             ) : (
-                <Form layout={'vertical'} initialValues={initialValues} name="nest-messages" onFinish={onFinish}>
+                <Form
+                    layout={'vertical'}
+                    initialValues={initialValues}
+                    name="nest-messages"
+                    onFinish={onFinish}
+                    disabled={order.status > 2}
+                >
                     <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item
@@ -128,8 +136,22 @@ const UpdateOrder = () => {
                             </Form.Item>
                         </Col>
                     </Row>
-                    <Form.Item name="status" label={<p className="text-base font-semibold">Trạng thái</p>}>
-                        <StatusOrder status={order.status} />
+                    <Form.Item
+                        name="status"
+                        label={
+                            <p className="text-base font-semibold">
+                                Trạng thái :{' '}
+                                <span className="text-lg text-[#02b875] font-semibold">
+                                    {ORDER_STATUS[order.status]}
+                                </span>
+                            </p>
+                        }
+                    >
+                        <StatusOrder
+                            // status={2}
+                            status={order.status}
+                            // description={'haloooo'}
+                        />
                     </Form.Item>
                     <Row gutter={16}>
                         <Col span={12}>
@@ -186,6 +208,8 @@ const UpdateOrder = () => {
                                     size="large"
                                     placeholder="Chọn vật tư sử dụng..."
                                     className="h-10 text-base border-[#02b875]"
+                                    mode="multiple"
+                                    disabled
                                 >
                                     <Select.Option value={SEVICE_TYPE.SHOWROOM}>
                                         Sửa chữa/ Bảo dưỡng tại cửa hàng.11111111
