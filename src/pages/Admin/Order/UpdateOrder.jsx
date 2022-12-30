@@ -5,31 +5,13 @@ import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getOrderById } from '../../../api/order';
 import _ from 'lodash';
-import dayjs from 'dayjs';
 import SpinCustomize from '../../../components/Customs/Spin';
 import { ORDER_STATUS, SEVICE_TYPE, VEHICLE_TYPE } from '../../../constants/order';
 import { HOUR_DATE_TIME } from '../../../constants/format';
 import StatusOrder from './StatusOrder';
 import './order.css';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
-
-const range = (start, end) => {
-    const result = [];
-    for (let i = start; i < end; i++) {
-        result.push(i);
-    }
-    return result;
-};
-
-const disabledDate = (current) => {
-    return current && current < dayjs().endOf('day').subtract(1, 'days');
-};
-
-const disabledDateTime = () => ({
-    disabledHours: () => [...range(0, 7), ...range(12, 13), ...range(18, 24)],
-    disabledMinutes: () => range(0),
-    disabledSeconds: () => range(0, 60),
-});
+import { disabledDate, disabledDateTime } from '../../../utils/date';
 
 const UpdateOrder = () => {
     useDocumentTitle('Cập nhật đơn hàng');
