@@ -1,31 +1,10 @@
-import {
-    createSlice,
-    createAsyncThunk
-} from '@reduxjs/toolkit';
-import {
-    getAccounts,
-    login
-} from '../api/auth';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { login } from '../api/auth';
 import jwtDecode from 'jwt-decode';
 
-export const getAllAccountsAsync = createAsyncThunk('getAllAccountsAsync', async (filter, {
-    rejectWithValue
-}) => {
+export const loginAsync = createAsyncThunk('user/login', async (values, { rejectWithValue }) => {
     try {
-        const account = await getAccounts(filter);
-        return account;
-    } catch (error) {
-        return rejectWithValue(error);
-    }
-});
-
-export const loginAsync = createAsyncThunk('user/login', async (values, {
-    rejectWithValue
-}) => {
-    try {
-        const {
-            data
-        } = await login(values);
+        const { data } = await login(values);
         return data;
     } catch (error) {
         return rejectWithValue(error);
@@ -35,7 +14,6 @@ export const loginAsync = createAsyncThunk('user/login', async (values, {
 const initialState = {
     loading: false,
     currentUser: {
-        value: [],
         values: {},
         accessToken: '',
     },
@@ -58,9 +36,6 @@ export const userSlice = createSlice({
         },
     },
     extraReducers: {
-        [getAllAccountsAsync.fulfilled.type]: (state, action) => {
-            state.currentUser.value = action.payload.data
-        },
         [loginAsync.rejected.type]: (state, action) => {
             state.loading = false;
             state.error = action.payload.message;
@@ -82,8 +57,5 @@ export const userSlice = createSlice({
     },
 });
 
-export const {
-    logout,
-    saveUserValues
-} = userSlice.actions;
+export const { logout, saveUserValues } = userSlice.actions;
 export default userSlice.reducer;
