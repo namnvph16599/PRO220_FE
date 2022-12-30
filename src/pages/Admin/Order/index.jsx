@@ -96,6 +96,10 @@ const OrderManage = () => {
             dataIndex: 'subPrice',
         },
         {
+            title: 'VAT',
+            render: () => '10%',
+        },
+        {
             title: 'Tổng tiền',
             dataIndex: 'total',
         },
