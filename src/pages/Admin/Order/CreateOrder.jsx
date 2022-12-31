@@ -9,6 +9,7 @@ import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../../constants/regex';
 import { createOrder } from '../../../api/order';
 import { disabledDate, disabledDateTime } from '../../../utils/date';
+import { Notification } from '../../../utils/notifications';
 
 const CreateOrder = () => {
     const navigate = useNavigate();
@@ -19,7 +20,7 @@ const CreateOrder = () => {
 
     const onFinish = (data) => {
         setLoading(true);
-        createOrder({ ...data, showroomId })
+        createOrder({ ...data, showroomId, status: 2 })
             .then(() => {
                 Notification(NOTIFICATION_TYPE.SUCCESS, 'Thêm đơn hàng thành công!');
                 navigate('/admin/don-hang');

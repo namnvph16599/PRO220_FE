@@ -132,7 +132,7 @@ const OrderManage = () => {
                             <span>
                                 <PlusOutlined className="pr-2 text-white " />
                             </span>
-                            Thêm
+                            <Link to="/admin/them-don-hang">Thêm</Link>
                         </button>
                     </div>
                     <Table
