@@ -127,12 +127,15 @@ const OrderManage = () => {
             ) : (
                 <>
                     <div className="flex justify-between align-center pb-4">
-                        <button className="h-10 w-20  text-white bg-[#02b875] hover:bg-[#09915f] hover:!text-white font-medium rounded-lg text-base ">
+                        <Link
+                            to="/admin/them-don-hang"
+                            className="h-10 w-20 py-2 text-white bg-[#02b875] hover:bg-[#09915f] hover:!text-white font-medium rounded-lg text-base "
+                        >
                             <span>
-                                <PlusOutlined className="pr-2 text-white " />
+                                <PlusOutlined className="px-2 text-white " />
                             </span>
-                            <Link to="/admin/them-don-hang">Thêm</Link>
-                        </button>
+                            <span>Thêm</span>
+                        </Link>
                     </div>
                     <Table
                         scroll={{
