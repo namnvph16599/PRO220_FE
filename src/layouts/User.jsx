@@ -4,24 +4,24 @@ import { Dropdown, Space } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, saveUserValues } from '../slices/user';
 import { JwtDecode } from '../utils/auth';
-import { Token } from '../constants/auth';
+import { ROLE, Token } from '../constants/auth';
+import jwtDecode from 'jwt-decode';
+import { isEmpty } from 'lodash';
 
 const User = (props) => {
     const items = [];
     const [isAdmin, setIsAdmin] = useState(false);
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.currentUser.values);
+    const accessToken = useSelector((state) => state.user.currentUser.accessToken);
     const isLogged = useSelector((state) => state.user.isLogged);
 
     useEffect(() => {
         const userDecode = JwtDecode();
-        if (userDecode) {
-            dispatch(saveUserValues(userDecode));
-            if (!userDecode.role) {
-                setIsAdmin(false);
-            } else {
-                setIsAdmin(true);
-            }
+        if (userDecode || !isEmpty(accessToken)) {
+            const Jwt = userDecode ? userDecode : jwtDecode(accessToken);
+            dispatch(saveUserValues(Jwt));
+            [ROLE.ADMIN, ROLE.MANAGER].includes(Jwt.role) ? setIsAdmin(true) : setIsAdmin(false);
         }
     }, [isLogged]);
     const hanldelogout = () => {
