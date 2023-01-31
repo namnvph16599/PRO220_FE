@@ -16,23 +16,7 @@ const OrderManage = () => {
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const orders = useSelector((state) => state.order.orders.values);
     const loading = useSelector((state) => state.order.orders.loading);
-
-    useEffect(() => {
-        dispatch(getOrdersAsync());
-    }, []);
-
-    useEffect(() => {
-        if (_.isEmpty(showrooms)) {
-            dispatch(getAllShowroomAsync());
-        }
-    }, [showrooms]);
-
     const columns = [
-        {
-            title: 'Cửa hàng sửa chữa',
-            dataIndex: 'showroomId',
-            render: (showroomId) => _.get(_.find(showrooms, ['_id', showroomId]), 'name', ''),
-        },
         {
             title: 'Mã đơn hàng',
             dataIndex: '_id',
@@ -41,6 +25,11 @@ const OrderManage = () => {
                     # {_id.substring(18)}
                 </Link>
             ),
+        },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            render: (status, data) => ORDER_STATUS[status],
         },
         {
             title: 'Tên khách hàng',
@@ -103,10 +92,11 @@ const OrderManage = () => {
             title: 'Tổng tiền',
             dataIndex: 'total',
         },
+
         {
-            title: 'Trạng thái',
-            dataIndex: 'status',
-            render: (status, data) => ORDER_STATUS[status],
+            title: 'Cửa hàng sửa chữa',
+            dataIndex: 'showroomId',
+            render: (showroomId) => _.get(_.find(showrooms, ['_id', showroomId]), 'name', ''),
         },
         {
             title: '',
@@ -119,6 +109,15 @@ const OrderManage = () => {
             },
         },
     ];
+    useEffect(() => {
+        dispatch(getOrdersAsync());
+    }, []);
+
+    useEffect(() => {
+        if (_.isEmpty(showrooms)) {
+            dispatch(getAllShowroomAsync());
+        }
+    }, [showrooms]);
     return (
         <div className="banner-content">
             {loading ? (
