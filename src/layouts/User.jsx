@@ -18,10 +18,11 @@ const User = (props) => {
 
     useEffect(() => {
         const userDecode = JwtDecode();
-        if (userDecode || !isEmpty(accessToken)) {
-            const Jwt = userDecode ? userDecode : jwtDecode(accessToken);
-            dispatch(saveUserValues(Jwt));
-            [ROLE.ADMIN, ROLE.MANAGER].includes(Jwt.role) ? setIsAdmin(true) : setIsAdmin(false);
+        if (userDecode) {
+            dispatch(saveUserValues(userDecode));
+            if (userDecode.role) {
+                setIsAdmin(true);
+            }
         }
     }, [isLogged]);
     const hanldelogout = () => {
