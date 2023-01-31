@@ -1,5 +1,11 @@
 import instance from './instance';
 
+
+const URL = '/order';
+
+export const getOrders = (filter) => {
+    return instance.get(URL, { params: { filter } });
+
 const URL = '/orders';
 
 export const getOrders = (filter) => {
@@ -36,8 +42,13 @@ export const updateOrder = (id, data) => {
 
 export const updateOrderStatus = (id, data) => {
     return instance.patch(`order-status/${id}`, data);
+
 };
 
 export const createBannerByCustomer = (data) => {
     return instance.post('/order-by-customer', data);
+
 };
+
+};
+

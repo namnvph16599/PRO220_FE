@@ -16,6 +16,8 @@ import PageNotFound from './pages/PageNotFound';
 import UpdateBanner from './pages/Admin/Banner/UpdateBanner';
 import PrivateRouter from './components/Private/PrivateRouter';
 
+=======
+
 import OrderManage from './pages/Admin/Order';
 import UpdateOrder from './pages/Admin/Order/UpdateOrder';
 import Personal from './pages/Setting';
@@ -25,6 +27,7 @@ import ChangePassword from './pages/Setting/ChangePassword';
 import Orders from './pages/Setting/Orders';
 import CreateOrder from './pages/Admin/Order/CreateOrder';
 
+
 function App() {
     return (
         <Routes>
@@ -32,6 +35,15 @@ function App() {
                 <Route index element={<HomePage />} />
                 <Route path="about" element={<AboutPage />} />
                 <Route path="dat-lich" element={<BookingPage />} />
+
+                <Route path="dang-nhap" element={<PrivateRouter><Login /></PrivateRouter>} />
+                <Route path="dang-ky" element={<Register />} />
+            </Route>
+            <Route path="/admin" element={<PrivateLayout><AdminLayout /></PrivateLayout>}>
+                <Route path="dang-ky" element={<Register />} />
+                <Route path="quan-ly-banner" element={<BannerManage />} />
+                <Route path="quan-ly-cua-hang" element={<ShowRoom/>} />
+
                 <Route
                     path="dang-nhap"
                     element={
@@ -65,6 +77,7 @@ function App() {
                 <Route path="dang-ky" element={<Register />} />
                 <Route path="quan-ly-banner" element={<BannerManage />} />
                 <Route path="quan-ly-cua-hang" element={<ShowRoom />} />
+
                 <Route path="quan-ly-banner/:id" element={<UpdateBanner />} />
                 <Route path="don-hang" element={<OrderManage />} />
                 <Route path="them-don-hang" element={<CreateOrder />} />
