@@ -1,4 +1,5 @@
 import { Button, Modal } from 'antd';
+import _ from 'lodash';
 import React from 'react';
 
 const ModalCustomize = (props) => {
@@ -26,7 +27,7 @@ const ModalCustomize = (props) => {
                         </button>
                         <Button
                             onClick={handleOkCancel}
-                            disabled={!props.value}
+                            disabled={props.disabled && _.isEmpty(props.value)}
                             type="primary"
                             className="btn-primary h-10 px-4 text-white bg-![#02b875] hover:bg-[#09915f] hover:!text-white font-medium rounded-lg text-base "
                         >
