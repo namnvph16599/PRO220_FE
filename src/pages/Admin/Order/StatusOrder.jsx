@@ -1,4 +1,4 @@
-import { Button, Input, Steps, message, Select } from 'antd';
+import { Button, Steps, message, Select } from 'antd';
 import _ from 'lodash';
 import React, { useState, useEffect } from 'react';
 import { SEVICE_TYPE } from '../../../constants/order';
@@ -6,14 +6,15 @@ import ModalCustomize from '../../../components/Customs/ModalCustomize';
 
 const StatusOrder = (props) => {
     const [messageApi, contextHolder] = message.useMessage();
-    const [prev, setPrev] = useState(props.status);
     const [current, setCurrent] = useState(props.status);
-    const [textCancel, setTextCancel] = useState('');
     const [showModal, setShowModal] = useState(null);
-    const [disabledChangeStatus, setDisabledChangeStatus] = useState(true);
+    const [disabled, setDisabled] = useState(true);
     const [materials, setMaterials] = useState([]);
+    const [reasons, setReasons] = useState(['Khác']);
 
-    console.log('materials', materials);
+    const onSubmitStatus = () => {
+        props.onSubmit(current);
+    };
 
     const msgCancel = () => {
         messageApi.open({
@@ -24,41 +25,40 @@ const StatusOrder = (props) => {
 
     useEffect(() => {
         setCurrent(props.status);
-        // setPrev(props.status);
+        checkDisableChangeStatus(props.status);
     }, [props.status]);
 
     const checkDisableChangeStatus = (current) => {
         //disabeld cancel
         if (!current && props.status > 2) {
             msgCancel();
-            setDisabledChangeStatus(true);
+            setDisabled(true);
             return;
         }
         //disabeld if same status
         if (current === props.status || (current && current !== props.status + 1)) {
-            setDisabledChangeStatus(true);
+            setDisabled(true);
             return;
         }
-        setDisabledChangeStatus(false);
+        setDisabled(false);
 
         //
     };
 
     const onChange = (value) => {
         checkDisableChangeStatus(value);
-        // setPrev(current);
         setCurrent(value);
     };
 
     const handleOkCancel = () => {
         setShowModal(null);
+        onSubmitStatus();
     };
     const handleCancel = () => {
         setShowModal(null);
     };
 
     const handleChangeStatus = () => {
-        console.log(9999);
         switch (current) {
             case 0:
                 setShowModal('cancel');
@@ -67,7 +67,7 @@ const StatusOrder = (props) => {
                 setShowModal('selectMaterials');
                 break;
             default:
-                return false;
+                onSubmitStatus();
         }
     };
     return (
@@ -120,7 +120,8 @@ const StatusOrder = (props) => {
                 )}
                 <Button
                     onClick={handleChangeStatus}
-                    disabled={disabledChangeStatus}
+                    disabled={disabled}
+                    loading={props.loading}
                     type="primary"
                     className="btn-primary h-10 px-4 text-white bg-![#02b875] hover:bg-[#09915f] hover:!text-white font-medium rounded-lg text-base "
                 >
@@ -132,20 +133,34 @@ const StatusOrder = (props) => {
                     title="Chuyển trạng thái: Hủy đơn hàng"
                     showModal={showModal}
                     setShowModal={setShowModal}
-                    value={textCancel}
-                    onSubmit={handleOkCancel}
+                    value={reasons}
+                    onSubmit={() => {
+                        props.onSubmit(current, { reasons });
+                        setShowModal(null);
+                    }}
+                    disabled={true}
                 >
                     <p className="text-base font-semibold py-2">
-                        Nhập lý do
+                        Chọn lý do
                         <span className="text-[#ff4d4f]"> *</span>
                     </p>
-                    <Input
-                        type="text"
-                        value={textCancel}
-                        className="h-10 text-base border-[#02b875]"
-                        onChange={(e) => setTextCancel(e.target.value)}
-                    />
-                    {!textCancel && <span className="text-[#ff4d4f]">Vui lòng nhập lý do hủy đơn</span>}
+                    <Select
+                        size="large"
+                        className="w-full text-base border-[#02b875]"
+                        mode="multiple"
+                        value={reasons}
+                        onChange={(newValue) => {
+                            setReasons(newValue);
+                        }}
+                    >
+                        <Select.Option value="Hết vật tư">Hết vật tư</Select.Option>
+                        <Select.Option value="Khách hàng không còn nhu cầu">Khách hàng không còn nhu cầu</Select.Option>
+                        <Select.Option value="Không xác thực được thông tin khách hàng">
+                            Không xác thực được thông tin khách hàng
+                        </Select.Option>
+                        <Select.Option value="Khác">Khác</Select.Option>
+                    </Select>
+                    {_.isEmpty(reasons) && <span className="text-[#ff4d4f]">Vui lòng lý do hủy đơn hàng</span>}
                 </ModalCustomize>
             )}
             {showModal === 'selectMaterials' && (
@@ -163,7 +178,7 @@ const StatusOrder = (props) => {
                     <Select
                         size="large"
                         placeholder="Chọn vật tư sử dụng..."
-                        className="h-10 w-full text-base border-[#02b875]"
+                        className="w-full text-base border-[#02b875]"
                         mode="multiple"
                         value={materials}
                         onChange={(newValue) => {

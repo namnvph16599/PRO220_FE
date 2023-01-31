@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
-import { OrderSlice, updateOrderAsync } from '../../../slices/order';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getOrderById } from '../../../api/order';
+import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { getOrderById, updateOrderStatus } from '../../../api/order';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import SpinCustomize from '../../../components/Customs/Spin';
@@ -14,17 +13,18 @@ import './order.css';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import { disabledDate, disabledDateTime } from '../../../utils/date';
 import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../../constants/regex';
+import { Notification } from '../../../utils/notifications';
+import { NOTIFICATION_TYPE } from '../../../constants/status';
 
 const UpdateOrder = () => {
     useDocumentTitle('Cập nhật đơn hàng');
     const orders = useSelector((state) => state.order.orders.values);
-    const navigate = useNavigate();
     const { id } = useParams();
-    const dispatch = useDispatch();
     const [order, setOrder] = useState({});
     const [initialValues, setInitialValues] = useState({});
     const [isShowroom, setIsShowroom] = useState(true);
     const [date, setDate] = useState(new Date());
+    const [loadingUpdateStatus, setLoadingUpdateStatus] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -39,7 +39,6 @@ const UpdateOrder = () => {
     }, [id]);
     useEffect(() => {
         if (!_.isEmpty(order)) {
-            console.log('order', order);
             const { appointmentSchedule, ...orderOther } = order;
             setInitialValues({ ...orderOther, appointmentSchedule: dayjs(appointmentSchedule) });
             setIsShowroom(order.serviceType);
@@ -47,13 +46,26 @@ const UpdateOrder = () => {
     }, [order]);
     const onFinish = (data) => {
         console.log('data', data);
-        // dispatch(
-        //     updateOrderAsync({
-        //         _id: order._id,
-        //         data,
-        //     }),
-        // );
-        // navigate('/admin/don-hang');
+    };
+
+    const handleChangeStatus = async (status, data) => {
+        setLoadingUpdateStatus(true);
+        updateOrderStatus(order._id, { status, ...data })
+            .then(({ data }) => {
+                Notification(
+                    NOTIFICATION_TYPE.SUCCESS,
+                    'Chuyển trạng thái thành công',
+                    `Trạng thái của đơn hàng là: ${ORDER_STATUS[data.status]}`,
+                );
+                setOrder(data);
+            })
+            .catch((error) => {
+                console.log('update-status-error', error);
+                Notification(NOTIFICATION_TYPE.ERROR, 'Chuyển trạng thái thất bại', error.message || '');
+            })
+            .finally(() => {
+                setLoadingUpdateStatus(false);
+            });
     };
 
     return (
@@ -196,9 +208,10 @@ const UpdateOrder = () => {
                         }
                     >
                         <StatusOrder
-                            // status={2}
+                            order={order}
                             status={order.status}
-                            // description={'haloooo'}
+                            onSubmit={handleChangeStatus}
+                            loading={loadingUpdateStatus}
                         />
                     </Form.Item>
                     <Row gutter={16}>
@@ -349,9 +362,8 @@ const UpdateOrder = () => {
                     </Row>
                     <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
                         <Button
+                            type="primary"
                             htmlType="submit"
-                            // disabled={creatingBooking}
-                            // loading={creatingBooking}
                             className="btn-primary text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-12 hover:!text-white hover:out
                         font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
                         >
