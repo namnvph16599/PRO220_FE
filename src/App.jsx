@@ -17,6 +17,15 @@ import UpdateBanner from './pages/Admin/Banner/UpdateBanner';
 import PrivateRouter from './components/Private/PrivateRouter';
 import MaterialManage from './pages/Admin/Material';
 import UpdateMaterial from './pages/Admin/Material/DrawerUpdateMaterial';
+import OrderManage from './pages/Admin/Order';
+import UpdateOrder from './pages/Admin/Order/UpdateOrder';
+import Personal from './pages/Setting';
+import UpdateProfile from './pages/Setting/UpdateProfile';
+import PrivateSetting from './components/Private/PrivateSetting';
+import ChangePassword from './pages/Setting/ChangePassword';
+import Orders from './pages/Setting/Orders';
+import OrderDetail from './pages/Setting/OrderDetail';
+
 function App () {
     return (
         <Routes>
@@ -32,6 +41,19 @@ function App () {
                         </PrivateRouter>
                     }
                 />
+                <Route
+                    path="cai-dat"
+                    element={
+                        <PrivateSetting>
+                            <Personal />
+                        </PrivateSetting>
+                    }
+                >
+                    <Route index path="tai-khoan" element={<UpdateProfile />} />
+                    <Route index path="doi-mat-khau" element={<ChangePassword />} />
+                    <Route path="quan-ly-don-hang" element={<Orders />} />
+                    <Route path="quan-ly-don-hang/:id" element={<OrderDetail />} />
+                </Route>
                 <Route path="dang-ky" element={<Register />} />
             </Route>
             <Route
@@ -48,6 +70,8 @@ function App () {
                 <Route path="quan-ly-banner/:id" element={<UpdateBanner />} />
                 <Route path="quan-ly-vat-tu" element={<MaterialManage />} />
                 <Route path="quan-ly-vat-tu/:id" element={<UpdateMaterial />} />
+                <Route path="don-hang" element={<OrderManage />} />
+                <Route path="don-hang/:id" element={<UpdateOrder />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
         </Routes>

@@ -85,7 +85,7 @@ const MaterialManage = () => {
             dataIndex: 'image',
             render: (url) => (
                 <a target="_blank" href={url} className="text-[#02b875]">
-                    <img src={url} alt="" className="w-36" />
+                    <img src={url} alt="" className="w-36 h-32" />
                 </a>
             ),
         },
@@ -130,7 +130,7 @@ const MaterialManage = () => {
                             className="focus:outline-none text-base text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
                             disabled={_.isEmpty(selectedRowKeys) ? true : false}
                         >
-                            Xóa {_.isEmpty(selectedRowKeys) ? '' : _.get(selectedRowKeys, 'length', '') + ' banner'}
+                            Xóa {_.isEmpty(selectedRowKeys) ? '' : _.get(selectedRowKeys, 'length', '') + ' material'}
                         </Button>
                         <button
                             type="button"
