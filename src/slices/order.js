@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getOrders, getOrderById, createOrder, updateOrder, getUserOrder } from '../api/order';
+import { getOrders, getOrderById, createOrder, updateOrder } from '../api/order';
 
 export const getOrdersAsync = createAsyncThunk('getOrdersAsync', async (filter, { rejectWithValue }) => {
     try {

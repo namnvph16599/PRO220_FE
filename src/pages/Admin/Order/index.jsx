@@ -8,7 +8,7 @@ import { getAllShowroomAsync } from '../../../slices/showroom';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { Table } from 'antd';
 import { HOUR_DATE_TIME } from '../../../constants/format';
-import { ORDER_STATUS } from '../../../constants/order';
+import { ORDER_STATUS, VEHICLE_TYPE } from '../../../constants/order';
 import SpinCustomize from '../../../components/Customs/Spin';
 
 const OrderManage = () => {
@@ -16,17 +16,6 @@ const OrderManage = () => {
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const orders = useSelector((state) => state.order.orders.values);
     const loading = useSelector((state) => state.order.orders.loading);
-
-    useEffect(() => {
-        dispatch(getOrdersAsync());
-    }, []);
-
-    useEffect(() => {
-        if (_.isEmpty(showrooms)) {
-            dispatch(getAllShowroomAsync());
-        }
-    }, [showrooms]);
-
     const columns = [
         {
             title: 'Mã đơn hàng',
@@ -38,11 +27,16 @@ const OrderManage = () => {
             ),
         },
         {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            render: (status, data) => ORDER_STATUS[status],
+        },
+        {
             title: 'Tên khách hàng',
             dataIndex: 'name',
         },
         {
-            title: 'Địa chỉ',
+            title: 'Địa chỉ sửa chữa',
             dataIndex: 'address',
         },
         {
@@ -50,9 +44,22 @@ const OrderManage = () => {
             dataIndex: 'number_phone',
         },
         {
-            title: 'Cửa hàng sửa chữa',
-            dataIndex: 'showroomId',
-            render: (showroomId) => _.get(_.find(showrooms, ['_id', showroomId]), 'name', ''),
+            title: 'Số km xe đã chạy',
+            dataIndex: 'km',
+        },
+        {
+            title: 'Loại xe',
+            dataIndex: 'vehicleType',
+            render: (value) => {
+                const vehicle = VEHICLE_TYPE.find((item) => item.value == value);
+                if (vehicle) {
+                    return vehicle.label;
+                }
+            },
+        },
+        {
+            title: 'Biển kiểm soát',
+            dataIndex: 'licensePlates',
         },
         {
             title: 'Loại hình dịch vụ',
@@ -78,13 +85,18 @@ const OrderManage = () => {
             dataIndex: 'subPrice',
         },
         {
+            title: 'VAT',
+            render: () => '10%',
+        },
+        {
             title: 'Tổng tiền',
             dataIndex: 'total',
         },
+
         {
-            title: 'Trạng thái',
-            dataIndex: 'status',
-            render: (status, data) => ORDER_STATUS[status],
+            title: 'Cửa hàng sửa chữa',
+            dataIndex: 'showroomId',
+            render: (showroomId) => _.get(_.find(showrooms, ['_id', showroomId]), 'name', ''),
         },
         {
             title: '',
@@ -97,6 +109,15 @@ const OrderManage = () => {
             },
         },
     ];
+    useEffect(() => {
+        dispatch(getOrdersAsync());
+    }, []);
+
+    useEffect(() => {
+        if (_.isEmpty(showrooms)) {
+            dispatch(getAllShowroomAsync());
+        }
+    }, [showrooms]);
     return (
         <div className="banner-content">
             {loading ? (
@@ -106,12 +127,15 @@ const OrderManage = () => {
             ) : (
                 <>
                     <div className="flex justify-between align-center pb-4">
-                        <button className="h-10 w-20  text-white bg-[#02b875] hover:bg-[#09915f] hover:!text-white font-medium rounded-lg text-base ">
+                        <Link
+                            to="/admin/them-don-hang"
+                            className="h-10 w-20 py-2 text-white bg-[#02b875] hover:bg-[#09915f] hover:!text-white font-medium rounded-lg text-base "
+                        >
                             <span>
-                                <PlusOutlined className="pr-2 text-white " />
+                                <PlusOutlined className="px-2 text-white " />
                             </span>
-                            Thêm
-                        </button>
+                            <span>Thêm</span>
+                        </Link>
                     </div>
                     <Table
                         scroll={{

@@ -11,7 +11,6 @@ const store = configureStore({
         showroom: ShowroomReduce,
         material: MaterialReducer,
         order: OrderSlice,
-        showroom: ShowroomReduce,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
