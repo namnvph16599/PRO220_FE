@@ -60,6 +60,7 @@ const ShowRoom = () => {
     };
 
     const getColumnSearchProps = (dataIndex) => ({
+
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
             <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
                 <Input
@@ -98,6 +99,7 @@ const ShowRoom = () => {
                     </Button>
                 </Space>
             </div>
+
         ),
         filterIcon: (filtered) => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         onFilter: (value, record) => record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),

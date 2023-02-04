@@ -54,6 +54,7 @@ const DrawerCreateShowroom = () => {
 
     useEffect(() => {
         var geocoder = new maptiler.Geocoder({
+
             input: 'search',
             key: 'CKlzQ1LLayVnG9v67Xs3',
         });
@@ -64,6 +65,7 @@ const DrawerCreateShowroom = () => {
             setAddress(item.place_name_vi);
         });
     }, []);
+
 
     const onFinish = async (values) => {
         const data = {
