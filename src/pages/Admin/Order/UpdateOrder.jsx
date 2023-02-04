@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
-import { useSelector } from 'react-redux';
+import { Avatar, Button, Col, DatePicker, Form, Input, InputNumber, Row, Select, Tooltip } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getOrderById, updateOrderStatus } from '../../../api/order';
 import _ from 'lodash';
@@ -15,17 +15,28 @@ import { disabledDate, disabledDateTime } from '../../../utils/date';
 import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../../constants/regex';
 import { Notification } from '../../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
+import { getMaterialsWarehouseAsync } from '../../../slices/warehouse';
 
-const UpdateOrder = () => {
+const UpdateOrder = (props) => {
     useDocumentTitle('Cập nhật đơn hàng');
+    const dispatch = useDispatch();
     const orders = useSelector((state) => state.order.orders.values);
+    const materials = useSelector((state) => state.warehouse.materials.value);
+    const showroomId = useSelector((state) => state.user.currentUser.values.showroomId);
+
     const { id } = useParams();
     const [order, setOrder] = useState({});
     const [initialValues, setInitialValues] = useState({});
     const [isShowroom, setIsShowroom] = useState(true);
     const [date, setDate] = useState(new Date());
     const [loadingUpdateStatus, setLoadingUpdateStatus] = useState(false);
-
+    const [form] = Form.useForm();
+    console.log('order', order);
+    useEffect(() => {
+        if (showroomId && _.isEmpty(materials)) {
+            dispatch(getMaterialsWarehouseAsync(showroomId));
+        }
+    }, [materials, showroomId]);
     useEffect(() => {
         (async () => {
             const order = orders.find((order) => order._id === id);
@@ -37,6 +48,10 @@ const UpdateOrder = () => {
             setOrder(data);
         })();
     }, [id]);
+    useEffect(() => {
+        const { appointmentSchedule, ...orderOther } = order;
+        form.setFieldsValue({ ...orderOther, appointmentSchedule: dayjs(appointmentSchedule) });
+    }, [form, order]);
     useEffect(() => {
         if (!_.isEmpty(order)) {
             const { appointmentSchedule, ...orderOther } = order;
@@ -52,16 +67,20 @@ const UpdateOrder = () => {
         setLoadingUpdateStatus(true);
         updateOrderStatus(order._id, { status, ...data })
             .then(({ data }) => {
-                Notification(
-                    NOTIFICATION_TYPE.SUCCESS,
-                    'Chuyển trạng thái thành công',
-                    `Trạng thái của đơn hàng là: ${ORDER_STATUS[data.status]}`,
-                );
+                if (order.status === data.status) {
+                    Notification(NOTIFICATION_TYPE.SUCCESS, 'Chỉnh sửa vật tư thành công');
+                } else {
+                    Notification(
+                        NOTIFICATION_TYPE.SUCCESS,
+                        'Chuyển trạng thái thành công',
+                        `Trạng thái của đơn hàng là: ${ORDER_STATUS[data.status]}`,
+                    );
+                }
                 setOrder(data);
             })
             .catch((error) => {
                 console.log('update-status-error', error);
-                Notification(NOTIFICATION_TYPE.ERROR, 'Chuyển trạng thái thất bại', error.message || '');
+                Notification(NOTIFICATION_TYPE.ERROR, 'Đã có lỗi xảy ra vui lòng thử lại!', error.message || '');
             })
             .finally(() => {
                 setLoadingUpdateStatus(false);
@@ -80,7 +99,7 @@ const UpdateOrder = () => {
                     initialValues={initialValues}
                     name="nest-messages"
                     onFinish={onFinish}
-                    disabled={order.status > 2}
+                    form={form}
                 >
                     <Row gutter={16}>
                         <Col span={12}>
@@ -240,11 +259,7 @@ const UpdateOrder = () => {
                                         placeholder="Sửa chữa tại..."
                                         className="h-10 text-base border-[#02b875]"
                                         onSelect={(value) => {
-                                            if (value === SEVICE_TYPE.SHOWROOM) {
-                                                setIsShowroom(true);
-                                                return;
-                                            }
-                                            setIsShowroom(false);
+                                            setIsShowroom(!!value);
                                         }}
                                     >
                                         <Select.Option value={SEVICE_TYPE.SHOWROOM}>
@@ -328,16 +343,48 @@ const UpdateOrder = () => {
                                 label={<p className="text-base font-semibold">Vật tư sử dụng</p>}
                             >
                                 <Select
+                                    disabled
                                     size="large"
                                     placeholder="Chọn vật tư sử dụng..."
-                                    className="h-10 text-base border-[#02b875]"
+                                    className="w-full text-base border-[#02b875]"
                                     mode="multiple"
-                                    disabled
+                                    value={order.materialIds}
+                                    optionLabelProp="label"
+                                    // filterOption={false}
                                 >
-                                    <Select.Option value={SEVICE_TYPE.SHOWROOM}>
-                                        Sửa chữa/ Bảo dưỡng tại cửa hàng.11111111
-                                    </Select.Option>
-                                    <Select.Option value={SEVICE_TYPE.HOUSE}>2222</Select.Option>
+                                    {_.map(materials, ({ materialId: material }) => {
+                                        return (
+                                            <Select.Option
+                                                key={material._id}
+                                                value={material._id}
+                                                label={
+                                                    <div>
+                                                        <Tooltip title={material.name}>
+                                                            {material.name.length > 40
+                                                                ? material.name.slice(0, 40) + '...'
+                                                                : material.name}{' '}
+                                                        </Tooltip>
+                                                        <InputNumber
+                                                            size="small"
+                                                            value={_.get(
+                                                                _.find(
+                                                                    order.materials,
+                                                                    (item) => item.marterialId === material._id,
+                                                                ),
+                                                                'qty',
+                                                                1,
+                                                            )}
+                                                            min={1}
+                                                            disabled
+                                                            defaultValue={1}
+                                                        />
+                                                    </div>
+                                                }
+                                            >
+                                                {material.name} - {material.price}
+                                            </Select.Option>
+                                        );
+                                    })}
                                 </Select>
                             </Form.Item>
                             <Form.Item label={<p className="text-base font-semibold">Giá vật tư</p>} name="price">
@@ -353,7 +400,7 @@ const UpdateOrder = () => {
                                     },
                                 ]}
                             >
-                                <Input className="h-10 text-base border-[#02b875]" type="number" />
+                                <InputNumber className="h-10 w-full text-base border-[#02b875]" />
                             </Form.Item>
                             <Form.Item label={<p className="text-base font-semibold">Tổng đơn hàng</p>} name="total">
                                 <Input className="h-10 text-base border-[#02b875]" type="number" disabled />

@@ -3,13 +3,13 @@ import _ from 'lodash';
 import React, { useState, useEffect } from 'react';
 import { SEVICE_TYPE } from '../../../constants/order';
 import ModalCustomize from '../../../components/Customs/ModalCustomize';
+import SelectMaterials from './SelectMaterials';
 
 const StatusOrder = (props) => {
     const [messageApi, contextHolder] = message.useMessage();
     const [current, setCurrent] = useState(props.status);
     const [showModal, setShowModal] = useState(null);
     const [disabled, setDisabled] = useState(true);
-    const [materials, setMaterials] = useState([]);
     const [reasons, setReasons] = useState(['Khác']);
 
     const onSubmitStatus = () => {
@@ -50,14 +50,6 @@ const StatusOrder = (props) => {
         setCurrent(value);
     };
 
-    const handleOkCancel = () => {
-        setShowModal(null);
-        onSubmitStatus();
-    };
-    const handleCancel = () => {
-        setShowModal(null);
-    };
-
     const handleChangeStatus = () => {
         switch (current) {
             case 0:
@@ -81,7 +73,6 @@ const StatusOrder = (props) => {
                 items={[
                     {
                         title: 'Hủy',
-                        // subTitle: 'waiting for longlong time',
                         status: 'error',
                         description: props.description || '',
                     },
@@ -111,7 +102,11 @@ const StatusOrder = (props) => {
             <div className="pt-4 flex justify-end">
                 {props.status === 3 && (
                     <Button
-                        onClick={() => setShowModal('selectMaterials')}
+                        onClick={() => {
+                            setShowModal('selectMaterials');
+                        }}
+                        disabled={false}
+                        loading={props.loading}
                         type="primary"
                         className="mr-2 btn-primary h-10 px-4 text-white bg-![#02b875] hover:bg-[#09915f] hover:!text-white font-medium rounded-lg text-base "
                     >
@@ -164,35 +159,15 @@ const StatusOrder = (props) => {
                 </ModalCustomize>
             )}
             {showModal === 'selectMaterials' && (
-                <ModalCustomize
-                    title="Chuyển trạng thái: Đang xử lý"
+                <SelectMaterials
+                    order={props.order}
                     showModal={showModal}
                     setShowModal={setShowModal}
-                    value={materials}
-                    onSubmit={handleOkCancel}
-                >
-                    <p className="text-base font-semibold py-2">
-                        Chọn vật tư
-                        <span className="text-[#ff4d4f]"> *</span>
-                    </p>
-                    <Select
-                        size="large"
-                        placeholder="Chọn vật tư sử dụng..."
-                        className="w-full text-base border-[#02b875]"
-                        mode="multiple"
-                        value={materials}
-                        onChange={(newValue) => {
-                            console.log('newValue', newValue);
-                            setMaterials(newValue);
-                        }}
-                    >
-                        <Select.Option value={SEVICE_TYPE.SHOWROOM}>
-                            Sửa chữa/ Bảo dưỡng tại cửa hàng.11111111
-                        </Select.Option>
-                        <Select.Option value={SEVICE_TYPE.HOUSE}>2222</Select.Option>
-                    </Select>
-                    {_.isEmpty(materials) && <span className="text-[#ff4d4f]">Vui lòng nhập chọn vật tư sử dụng</span>}
-                </ModalCustomize>
+                    handleOkCancel={(data) => {
+                        setShowModal(null);
+                        props.onSubmit(current, data);
+                    }}
+                />
             )}
         </div>
     );
