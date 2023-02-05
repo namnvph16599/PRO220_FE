@@ -16,6 +16,7 @@ import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../../constants/regex';
 import { Notification } from '../../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { getMaterialsWarehouseAsync } from '../../../slices/warehouse';
+import { updateOrderAsync } from '../../../slices/order';
 
 const UpdateOrder = (props) => {
     useDocumentTitle('Cập nhật đơn hàng');
@@ -82,7 +83,8 @@ const UpdateOrder = (props) => {
         }
     }, [order]);
     const onFinish = (data) => {
-        console.log('data', data);
+        const _id = order._id;
+        dispatch(updateOrderAsync({ _id, data }));
     };
 
     const handleChangeStatus = async (status, { reasons = [], materials = [], materialIds = [] }) => {
