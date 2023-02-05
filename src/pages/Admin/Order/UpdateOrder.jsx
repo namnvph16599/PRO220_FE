@@ -50,12 +50,34 @@ const UpdateOrder = (props) => {
     }, [id]);
     useEffect(() => {
         const { appointmentSchedule, ...orderOther } = order;
-        form.setFieldsValue({ ...orderOther, appointmentSchedule: dayjs(appointmentSchedule) });
+        form.setFieldsValue({
+            ...orderOther,
+            appointmentSchedule: dayjs(appointmentSchedule),
+            price: _.reduce(
+                order.materials,
+                (rs, material) => {
+                    const price = material.qty * material.price;
+                    return rs + price;
+                },
+                0,
+            ),
+        });
     }, [form, order]);
     useEffect(() => {
         if (!_.isEmpty(order)) {
             const { appointmentSchedule, ...orderOther } = order;
-            setInitialValues({ ...orderOther, appointmentSchedule: dayjs(appointmentSchedule) });
+            setInitialValues({
+                ...orderOther,
+                appointmentSchedule: dayjs(appointmentSchedule),
+                price: _.reduce(
+                    order.materials,
+                    (rs, material) => {
+                        const price = material.qty * material.price;
+                        return rs + price;
+                    },
+                    0,
+                ),
+            });
             setIsShowroom(order.serviceType);
         }
     }, [order]);
@@ -63,9 +85,9 @@ const UpdateOrder = (props) => {
         console.log('data', data);
     };
 
-    const handleChangeStatus = async (status, data) => {
+    const handleChangeStatus = async (status, { reasons = [], materials = [], materialIds = [] }) => {
         setLoadingUpdateStatus(true);
-        updateOrderStatus(order._id, { status, ...data })
+        updateOrderStatus(order._id, { status, reasons, materials, materialIds })
             .then(({ data }) => {
                 if (order.status === data.status) {
                     Notification(NOTIFICATION_TYPE.SUCCESS, 'Chỉnh sửa vật tư thành công');
@@ -100,6 +122,7 @@ const UpdateOrder = (props) => {
                     name="nest-messages"
                     onFinish={onFinish}
                     form={form}
+                    disabled={order.status === 5}
                 >
                     <Row gutter={16}>
                         <Col span={12}>
@@ -411,7 +434,7 @@ const UpdateOrder = (props) => {
                         <Button
                             type="primary"
                             htmlType="submit"
-                            className="btn-primary text-white bg-[#02b875] w-full hover:!bg-[#09915f] mb-8 mt-8 h-12 hover:!text-white hover:out
+                            className="btn-primary text-white bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out
                         font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
                         >
                             Cập nhật

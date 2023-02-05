@@ -44,7 +44,7 @@ const SelectMaterials = (props) => {
             showModal={props.showModal}
             setShowModal={props.setShowModal}
             value={materialIds}
-            onSubmit={() => props.handleOkCancel({ materials: selectedMaterials, materialIds })}
+            onSubmit={() => props.handleOkCancel({ materials: selectedMaterials, materialIds, reasons: [] })}
             disabled={true}
         >
             <Fragment>

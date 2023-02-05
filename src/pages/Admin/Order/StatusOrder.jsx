@@ -1,19 +1,58 @@
 import { Button, Steps, message, Select } from 'antd';
 import _ from 'lodash';
 import React, { useState, useEffect } from 'react';
-import { SEVICE_TYPE } from '../../../constants/order';
 import ModalCustomize from '../../../components/Customs/ModalCustomize';
 import SelectMaterials from './SelectMaterials';
-
+const contentStyle = {
+    lineHeight: '80px',
+    textAlign: 'center',
+    color: '#02b875',
+    backgroundColor: '#f5f5f5',
+    borderRadius: '2px',
+    fontSize: '18px',
+    marginTop: 16,
+};
 const StatusOrder = (props) => {
     const [messageApi, contextHolder] = message.useMessage();
+    const [status, setStatus] = useState([
+        {
+            title: 'Hủy',
+            status: 'error',
+        },
+        {
+            title: 'Chờ xác nhận',
+            status: 'process',
+            description: 'Check lại thông tin đơn hàng.',
+        },
+        {
+            title: 'Đã tiếp nhận lịch',
+            status: 'process',
+        },
+        {
+            title: 'Đang xử lý',
+            status: 'process',
+        },
+        {
+            title: 'Thanh toán',
+            status: 'process',
+        },
+        {
+            title: 'Hoàn thành',
+            status: 'finish',
+        },
+    ]);
+    const [stepValue, setStepValue] = useState(0);
     const [current, setCurrent] = useState(props.status);
     const [showModal, setShowModal] = useState(null);
     const [disabled, setDisabled] = useState(true);
     const [reasons, setReasons] = useState(['Khác']);
 
     const onSubmitStatus = () => {
-        props.onSubmit(current);
+        props.onSubmit(current, {
+            materials: props.order.materials,
+            materialIds: props.order.materialIds,
+            reasons: [],
+        });
     };
 
     const msgCancel = () => {
@@ -26,7 +65,43 @@ const StatusOrder = (props) => {
     useEffect(() => {
         setCurrent(props.status);
         checkDisableChangeStatus(props.status);
+
+        //handle step
+        handleChangeStep();
     }, [props.status]);
+
+    const handleChangeStep = () => {
+        props.status > 2 ? setStepValue(1) : setStepValue(0);
+        const statusConvert = status.filter((items, idx) => {
+            //hidden cancel
+            if (props.status > 2 && items.title !== 'Hủy') {
+                return true;
+            }
+            if (props.status <= 2) {
+                return true;
+            }
+        });
+        const step = statusConvert.map((item, idx) => {
+            if (idx > props.status) {
+                return {
+                    ...item,
+                    status: 'wait',
+                };
+            }
+            if (idx === props.status) {
+                return {
+                    ...item,
+                    status: 'process',
+                };
+            }
+            return {
+                ...item,
+                disabled: item.title === 'Hủy' ? false : true,
+                status: item.title === 'Hủy' ? 'error' : 'finish',
+            };
+        });
+        setStatus(step);
+    };
 
     const checkDisableChangeStatus = (current) => {
         //disabeld cancel
@@ -66,39 +141,24 @@ const StatusOrder = (props) => {
         <div className="status-content py-4">
             {contextHolder}
             <Steps
+                initial={stepValue}
                 type="navigation"
                 current={current}
                 onChange={onChange}
                 className="site-navigation-steps"
-                items={[
-                    {
-                        title: 'Hủy',
-                        status: 'error',
-                        description: props.description || '',
-                    },
-                    {
-                        title: 'Chờ xác nhận',
-                        status: 'process',
-                        description: 'Check lại thông tin đơn hàng.',
-                    },
-                    {
-                        title: 'Đã tiếp nhận lịch',
-                        status: 'process',
-                    },
-                    {
-                        title: 'Đang xử lý',
-                        status: 'process',
-                    },
-                    {
-                        title: 'Thanh toán',
-                        status: 'process',
-                    },
-                    {
-                        title: 'Hoàn thành',
-                        status: 'finish',
-                    },
-                ]}
+                items={status}
             />
+            {!_.isEmpty(props.order.reasons) ? (
+                <div style={contentStyle}>
+                    Lý do huỷ đơn:{' '}
+                    {_.map(props.order.reasons, (reason, idx) => {
+                        if (idx + 1 === props.order.reasons.length) {
+                            return reason;
+                        }
+                        return reason + ', ';
+                    })}
+                </div>
+            ) : null}
             <div className="pt-4 flex justify-end">
                 {props.status === 3 && (
                     <Button
