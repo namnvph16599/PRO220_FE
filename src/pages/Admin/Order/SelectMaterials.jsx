@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 import _ from 'lodash';
 import { useSelector } from 'react-redux';
+import { warehouseSearch } from '../../../api/warehouse';
 import { InputNumber, Select, Tooltip } from 'antd';
 import ModalCustomize from '../../../components/Customs/ModalCustomize';
 
@@ -33,9 +34,8 @@ const SelectMaterials = (props) => {
             searchTemp.current = null;
         }
         searchTemp.current = setTimeout(async () => {
-            //call api search material
-            // const { data } = await search(value);
-            // setMaterials(data);
+            const { data } = await warehouseSearch(value);
+            setMaterials(data);
         }, 300);
     };
     return (
@@ -60,10 +60,7 @@ const SelectMaterials = (props) => {
                     mode="multiple"
                     value={materialIds}
                     onChange={(marterials, option) => {
-                        console.log('state', materialIds);
-                        console.log('marterials', marterials);
                         setMaterialIds(marterials);
-
                         const materialsWithQuantity = _.map(marterials, (marterial) => {
                             const price = _.get(
                                 _.find(option, (item) => item.value === marterial, {}),
