@@ -31,7 +31,6 @@ export const createOrderAsync = createAsyncThunk('createOrder', async (data, { r
 export const updateOrderAsync = createAsyncThunk('updateOrder', async ({ _id, data }, { rejectWithValue }) => {
     try {
         const order = await updateOrder(_id, data);
-        console.log('order', order);
         return order;
     } catch (error) {
         return rejectWithValue(error);
@@ -45,6 +44,10 @@ export const OrderSlice = createSlice({
             values: [],
             errors: null,
             loading: false,
+        },
+        updateOrder: {
+            loading: false,
+            errors: null,
         },
     },
     reducers: {},
@@ -62,7 +65,17 @@ export const OrderSlice = createSlice({
         [createOrderAsync.fulfilled.type]: (state, action) => {
             state.orders.values.push(action.payload.data);
         },
+        [updateOrderAsync.pending.type]: (state, action) => {
+            state.updateOrder.loading = true;
+        },
+        [updateOrderAsync.rejected.type]: (state, action) => {
+            console.log('update-async-error', action);
+            state.updateOrder.loading = false;
+            state.updateOrder.errors = action.payload;
+        },
         [updateOrderAsync.fulfilled.type]: (state, action) => {
+            state.updateOrder.loading = false;
+            state.updateOrder.errors = false;
             state.orders.values = state.orders.values.map((order) => {
                 if (order._id !== action.payload.data._id) return order;
                 return action.payload.data;

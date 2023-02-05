@@ -24,6 +24,8 @@ const UpdateOrder = (props) => {
     const orders = useSelector((state) => state.order.orders.values);
     const materials = useSelector((state) => state.warehouse.materials.value);
     const showroomId = useSelector((state) => state.user.currentUser.values.showroomId);
+    const updating = useSelector((state) => state.order.updateOrder.loading);
+    const errors = useSelector((state) => state.order.updateOrder.errors);
 
     const { id } = useParams();
     const [order, setOrder] = useState({});
@@ -32,7 +34,6 @@ const UpdateOrder = (props) => {
     const [date, setDate] = useState(new Date());
     const [loadingUpdateStatus, setLoadingUpdateStatus] = useState(false);
     const [form] = Form.useForm();
-    console.log('order', order);
     useEffect(() => {
         if (showroomId && _.isEmpty(materials)) {
             dispatch(getMaterialsWarehouseAsync(showroomId));
@@ -49,39 +50,58 @@ const UpdateOrder = (props) => {
             setOrder(data);
         })();
     }, [id]);
+
+    useEffect(() => {
+        if (!_.isEmpty(errors)) {
+            Notification(NOTIFICATION_TYPE.ERROR, 'Đã có lỗi xảy ra vui lòng thử lại!', errors.message || '');
+        }
+    }, [errors]);
+
+    const totalPriceMaterials = () => {
+        return _.reduce(
+            order.materials,
+            (rs, material) => {
+                const price = material.qty * material.price;
+                return rs + price;
+            },
+            0,
+        );
+    };
+
     useEffect(() => {
         const { appointmentSchedule, ...orderOther } = order;
+        const price = totalPriceMaterials();
         form.setFieldsValue({
             ...orderOther,
             appointmentSchedule: dayjs(appointmentSchedule),
-            price: _.reduce(
-                order.materials,
-                (rs, material) => {
-                    const price = material.qty * material.price;
-                    return rs + price;
-                },
-                0,
-            ),
+            price,
         });
     }, [form, order]);
+
     useEffect(() => {
         if (!_.isEmpty(order)) {
             const { appointmentSchedule, ...orderOther } = order;
             setInitialValues({
                 ...orderOther,
                 appointmentSchedule: dayjs(appointmentSchedule),
-                price: _.reduce(
-                    order.materials,
-                    (rs, material) => {
-                        const price = material.qty * material.price;
-                        return rs + price;
-                    },
-                    0,
-                ),
+                price: totalPriceMaterials(),
             });
             setIsShowroom(order.serviceType);
         }
     }, [order]);
+
+    const handleChangeSubPrice = (value) => {
+        const { appointmentSchedule, ...orderOther } = order;
+        const price = totalPriceMaterials();
+        const total = price + value;
+        form.setFieldsValue({
+            ...orderOther,
+            appointmentSchedule: dayjs(appointmentSchedule),
+            price,
+            total,
+        });
+    };
+
     const onFinish = (data) => {
         const _id = order._id;
         dispatch(updateOrderAsync({ _id, data }));
@@ -89,7 +109,16 @@ const UpdateOrder = (props) => {
 
     const handleChangeStatus = async (status, { reasons = [], materials = [], materialIds = [] }) => {
         setLoadingUpdateStatus(true);
-        updateOrderStatus(order._id, { status, reasons, materials, materialIds })
+        const price = _.reduce(
+            materials,
+            (rs, material) => {
+                const price = material.qty * material.price;
+                return rs + price;
+            },
+            0,
+        );
+        const total = price + _.get(order, 'subPrice', 0);
+        updateOrderStatus(order._id, { status, reasons, materials, materialIds, total })
             .then(({ data }) => {
                 if (order.status === data.status) {
                     Notification(NOTIFICATION_TYPE.SUCCESS, 'Chỉnh sửa vật tư thành công');
@@ -425,7 +454,10 @@ const UpdateOrder = (props) => {
                                     },
                                 ]}
                             >
-                                <InputNumber className="h-10 w-full text-base border-[#02b875]" />
+                                <InputNumber
+                                    className="h-10 w-full text-base border-[#02b875]"
+                                    onChange={handleChangeSubPrice}
+                                />
                             </Form.Item>
                             <Form.Item label={<p className="text-base font-semibold">Tổng đơn hàng</p>} name="total">
                                 <Input className="h-10 text-base border-[#02b875]" type="number" disabled />
@@ -434,6 +466,7 @@ const UpdateOrder = (props) => {
                     </Row>
                     <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
                         <Button
+                            loading={updating || loadingUpdateStatus}
                             type="primary"
                             htmlType="submit"
                             className="btn-primary text-white bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out
