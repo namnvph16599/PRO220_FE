@@ -25,6 +25,10 @@ import ChangePassword from './pages/Setting/ChangePassword';
 import Orders from './pages/Setting/Orders';
 import Warehouse from './pages/Admin/Warehouse/Warehouse';
 import CreateOrder from './pages/Admin/Order/CreateOrder';
+import OrderDetail from './pages/Setting/OrderDetail';
+import MaterialManage from './pages/Admin/Material/index';
+import UpdateMaterial from './pages/Admin/Material/DrawerUpdateMaterial'
+import ListOrder from './pages/Setting/ListOrder';
 
 function App () {
     return (
@@ -51,8 +55,22 @@ function App () {
                 >
                     <Route index path="tai-khoan" element={<UpdateProfile />} />
                     <Route index path="doi-mat-khau" element={<ChangePassword />} />
-                    <Route path="quan-ly-don-hang" element={<Orders />} />
-                    <Route path="quan-ly-don-hang/:id" element={<OrderDetail />} />
+                    <Route path="quan-ly-don-hang" element={<Orders />} >
+                        <Route path=''  element={<ListOrder status={''}/>}/>
+                        <Route path='da-xac-nhan-lich'  element={<ListOrder status={2}/>}/>
+                        <Route path='cho-xac-nhan-lich'  element={<ListOrder status={1}/>}/>
+                        <Route path='dang-xu-ly'  element={<ListOrder status={3}/>}/>
+                        <Route path='thanh-toan'  element={<ListOrder status={4}/>}/>
+                        <Route path='hoan-thanh'  element={<ListOrder status={5}/>}/>
+                        <Route path='huy'  element={<ListOrder status={0}/>}/>
+                    </Route>
+                    <Route path="quan-ly-don-hang/:id" element={<OrderDetail/>} />
+                    <Route path="quan-ly-don-hang/da-xac-nhan-lich/:id" element={<OrderDetail/>} />
+                    <Route path="quan-ly-don-hang/cho-xac-nhan-lich/:id" element={<OrderDetail/>} />
+                    <Route path="quan-ly-don-hang/dang-xu-ly/:id" element={<OrderDetail/>} />
+                    <Route path="quan-ly-don-hang/thanh-toan/:id" element={<OrderDetail/>} />
+                    <Route path="quan-ly-don-hang/hoan-thanh/:id" element={<OrderDetail/>} />
+                    <Route path="quan-ly-don-hang/huy/:id" element={<OrderDetail/>} />
                 </Route>
                 <Route path="dang-ky" element={<Register />} />
             </Route>

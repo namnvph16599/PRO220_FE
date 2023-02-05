@@ -1,25 +1,27 @@
-import { Steps } from 'antd'
-import React from 'react'
+import { Steps } from 'antd';
+import React from 'react';
+import { ORDER_STATUS } from '../../../constants/order';
 
-const OrderCancel = ({status}) => {
-  console.log(status);
-  
-  return (
-    <div>
-        <Steps
-                current={status}
+const OrderCancel = ({ status }) => {
+    console.log(status);
+
+    return (
+        <div>
+            <Steps
+                current={2}
                 percent={60}
+                labelPlacement="vertical"
                 items={[
                     {
-                        title: 'Chờ xác nhận',
+                        title: ORDER_STATUS[1],
                     },
                     {
-                        title: 'Đã Hủy',
-                    }
+                        title: ORDER_STATUS[0],
+                    },
                 ]}
             />
-    </div>
-  )
-}
+        </div>
+    );
+};
 
-export default OrderCancel
+export default OrderCancel;

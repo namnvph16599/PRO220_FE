@@ -45,3 +45,7 @@ export const createBannerByCustomer = (data) => {
 export const getUserOrder = (accountId) => {
     return instance.get(`/orders-customer/${accountId}`);
 };
+
+export const updateOrderUser = (data) => {
+    return instance.patch(`orders-customer/${data._id}`, { status: 0 });
+}
