@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout, saveUserValues } from '../slices/user';
 import { JwtDecode } from '../utils/auth';
 import { ROLE, Token } from '../constants/auth';
-import jwtDecode from 'jwt-decode';
 import { isEmpty } from 'lodash';
+import jwtDecode from 'jwt-decode';
 
 const User = (props) => {
     const items = [];
@@ -18,11 +18,10 @@ const User = (props) => {
 
     useEffect(() => {
         const userDecode = JwtDecode();
-        if (userDecode) {
-            dispatch(saveUserValues(userDecode));
-            if (userDecode.role) {
-                setIsAdmin(true);
-            }
+        if (!isEmpty(userDecode) || !isEmpty(accessToken)) {
+            const Jwt = userDecode ? userDecode : jwtDecode(accessToken);
+            dispatch(saveUserValues(Jwt));
+            setIsAdmin(!!Jwt.role);
         }
     }, [isLogged]);
     const hanldelogout = () => {
