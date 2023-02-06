@@ -10,3 +10,7 @@ export const updateAccount = async (data) => {
 export const getUser = async (id) => {
     return instance.get(`/account/${id}`);
 };
+
+export const Password = async (data) => {
+    return instance.post(`/chagePassword/${data._id}`, data);
+};

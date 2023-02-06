@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { login } from '../api/auth';
 import jwtDecode from 'jwt-decode';
-import { updateAccount } from '../api/account';
+import { Password, updateAccount } from '../api/account';
 import _ from 'lodash';
 
 export const loginAsync = createAsyncThunk('user/login', async (values, { rejectWithValue }) => {
@@ -21,6 +21,14 @@ export const UpdateUser = createAsyncThunk('user/Updater', async (values, { reje
     }
 });
 
+export const CheckPassword = createAsyncThunk('user/CheckPassword', async (values, { rejectWithValue }) => {
+    try {
+        const { data } = await Password(values);
+        return data;
+    } catch (error) {
+        return rejectWithValue(error);
+    }
+});
 const initialState = {
     loading: false,
     currentUser: {
@@ -75,6 +83,9 @@ export const userSlice = createSlice({
         [UpdateUser.fulfilled.type]: (state, action) => {
             state.currentUser.values = state.currentUser.values._id == action.payload._id && action.payload;
             state.UpdateUser.status = 'sussecc';
+        },
+        [CheckPassword.fulfilled.type]: (state, action) => {
+            state.checkPassword = action.payload;
         },
     },
 });
