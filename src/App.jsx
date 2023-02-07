@@ -25,6 +25,8 @@ import ChangePassword from './pages/Setting/ChangePassword';
 import Orders from './pages/Setting/Orders';
 import Warehouse from './pages/Admin/Warehouse/Warehouse';
 import CreateOrder from './pages/Admin/Order/CreateOrder';
+import DrawerCreateShowroom from './pages/Admin/showRoom/DrawerCreateShowroom';
+import DrawerUpdateShowroom from './pages/Admin/showRoom/DrawerUpdateShowroom';
 
 function App() {
     return (
@@ -66,6 +68,8 @@ function App() {
                 <Route path="dang-ky" element={<Register />} />
                 <Route path="quan-ly-banner" element={<BannerManage />} />
                 <Route path="quan-ly-cua-hang" element={<ShowRoom />} />
+                <Route path="them-cua-hang" element={<DrawerCreateShowroom />} />
+                <Route path="quan-ly-cua-hang/:id" element={<DrawerUpdateShowroom />} />
                 <Route path="quan-ly-banner/:id" element={<UpdateBanner />} />
                 <Route path="don-hang" element={<OrderManage />} />
                 <Route path="them-don-hang" element={<CreateOrder />} />
