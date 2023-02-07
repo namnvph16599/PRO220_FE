@@ -23,6 +23,7 @@ import UpdateProfile from './pages/Setting/UpdateProfile';
 import PrivateSetting from './components/Private/PrivateSetting';
 import ChangePassword from './pages/Setting/ChangePassword';
 import Orders from './pages/Setting/Orders';
+import Warehouse from './pages/Admin/Warehouse/Warehouse';
 import CreateOrder from './pages/Admin/Order/CreateOrder';
 import DrawerCreateShowroom from './pages/Admin/showRoom/DrawerCreateShowroom';
 import DrawerUpdateShowroom from './pages/Admin/showRoom/DrawerUpdateShowroom';
@@ -73,6 +74,7 @@ function App() {
                 <Route path="don-hang" element={<OrderManage />} />
                 <Route path="them-don-hang" element={<CreateOrder />} />
                 <Route path="don-hang/:id" element={<UpdateOrder />} />
+                <Route path="quan-ly-kho" element={<Warehouse />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
         </Routes>
