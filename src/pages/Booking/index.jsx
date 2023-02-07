@@ -14,6 +14,8 @@ import { getAllShowroomAsync } from '../../slices/showroom';
 import { SEVICE_TYPE, VEHICLE_TYPE } from '../../constants/order';
 import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../constants/regex';
 import { disabledDate, disabledDateTime } from '../../utils/date';
+import ModalCustomize from '../../components/Customs/ModalCustomize';
+import ShowroomModal from './showroomModal';
 
 const BookingPage = () => {
     useDocumentTitle('Đặt lịch');
@@ -31,6 +33,8 @@ const BookingPage = () => {
     const [filter, setFilter] = useState('');
     const [initialValues, setInitialValues] = useState({});
     const searchTemp = useRef(null);
+
+    const [open, setOpenModal] = useState(false);
 
     useEffect(() => {
         if (!_.isEmpty(user) && isLogged) {
@@ -55,7 +59,7 @@ const BookingPage = () => {
 
     const onFinish = (values) => {
         setCreatingBooking(true);
-        createBannerByCustomer({ ...values, accountId: user._id || null })
+        createBannerByCustomer({ ...values, accountId: user._id, showroomId: filter._id || null })
             .then(({ data: { message } }) => {
                 if (message) {
                     Notification(NOTIFICATION_TYPE.WARNING, message);
@@ -94,7 +98,10 @@ const BookingPage = () => {
         }, 300);
     };
     const handleChange = (newValue) => {
+        console.log(newValue);
         setFilter(newValue);
+        setOpenModal(false);
+        setIsShowroom(true);
     };
 
     return (
@@ -392,7 +399,7 @@ const BookingPage = () => {
                                 </Col>
                             </Col>
                         </Row>
-                        <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
+                        <Form.Item wrapperCol={{ offset: 8, span: 8 }} name="#">
                             <Button
                                 htmlType="submit"
                                 type="primary"
@@ -601,46 +608,52 @@ const BookingPage = () => {
                                         label={<p className="text-base font-semibold">Cửa hàng</p>}
                                         rules={[
                                             {
-                                                required: true,
+                                                required: filter == '' ? true : false,
                                                 message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                             },
                                         ]}
                                     >
-                                        <Select
-                                            size="large"
-                                            value={filter}
-                                            placeholder="Tìm kiếm cửa hàng theo tên, địa chỉ."
-                                            className="h-10 text-base border-[#02b875]"
-                                            optionLabelProp="label"
-                                            showSearch
-                                            onSearch={handleSearch}
-                                            onChange={handleChange}
-                                            filterOption={false}
-                                        >
-                                            {_.map(showroomsFilter, (showroom) => (
-                                                <Select.Option
-                                                    value={showroom._id}
-                                                    key={showroom._id}
-                                                    label={showroom.name + ' - ' + showroom.address}
-                                                >
-                                                    <div span={24}>
-                                                        <div span={24}>
-                                                            <span className="text-base font-medium text-[#02b875]">
-                                                                {showroom.name}
-                                                            </span>
-                                                        </div>
-                                                        <div span={24}>
-                                                            <span className="font-medium">{showroom.address}</span>
-                                                        </div>
+                                        <>
+                                            <div
+                                                className="!cursor-pointer flex items-center border rounded-md border-[#02b875]"
+                                                onClick={() => setOpenModal(true)}
+                                            >
+                                                <Input
+                                                    type="text"
+                                                    value={filter.address}
+                                                    disabled={true}
+                                                    placeholder="Chọn cửa hàng sửa chữa"
+                                                    className="!cursor-pointer !bg-white py-2 relative !text-black text-base"
+                                                />
+                                                {filter == '' && (
+                                                    <div className="right-3 absolute">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="16"
+                                                            height="16"
+                                                            fill="currentColor"
+                                                            className="bi bi-caret-right-fill"
+                                                            viewBox="0 0 16 16"
+                                                        >
+                                                            <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"></path>
+                                                        </svg>
                                                     </div>
-                                                </Select.Option>
-                                            ))}
-                                        </Select>
+                                                )}
+                                            </div>
+                                            <ModalCustomize
+                                                showModal={open}
+                                                footer={null}
+                                                setShowModal={() => setOpenModal(false)}
+                                                handleOkCancel={() => console.log('dsds')}
+                                            >
+                                                <ShowroomModal setSelectShowroom={handleChange} />
+                                            </ModalCustomize>
+                                        </>
                                     </Form.Item>
                                     {isShowroom ? null : (
                                         <Form.Item
                                             label={<p className="text-base font-semibold">Địa chỉ cụ thể</p>}
-                                            name="address"
+                                            name="address_user"
                                             rules={[
                                                 {
                                                     required: true,
@@ -687,7 +700,7 @@ const BookingPage = () => {
                             </Col>
                         </Col>
                     </Row>
-                    <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
+                    <Form.Item wrapperCol={{ offset: 8, span: 8 }} name="#">
                         <Button
                             htmlType="submit"
                             type="primary"
