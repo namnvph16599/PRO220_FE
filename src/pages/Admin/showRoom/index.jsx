@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { notification, Popconfirm, Input, Space, Table, Row, Button, Spin, Tooltip, Switch } from 'antd';
+import { notification, Popconfirm, Input, Space, Table, Row, Button, Spin, Tooltip } from 'antd';
 import './showroom.css';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { getAllShowroomAsync, removeShowroomByIdAsync, removeShowroomByIdsAsync } from '../../../slices/showroom';
@@ -25,6 +25,7 @@ const ShowRoom = () => {
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const loadding = useSelector((state) => state.showroom.showrooms.loading);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [open, setOpen] = useState(false);
     const [openUpdate, setOpenUpdate] = useState(false);
     const data = showrooms.map((showroom) => ({ ...showroom, key: showroom._id }));
     const [reload, setReload] = useState({
@@ -41,11 +42,6 @@ const ShowRoom = () => {
 
     const onSelectChange = (newSelectedRowKeys) => {
         setSelectedRowKeys(newSelectedRowKeys);
-    };
-
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
     };
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -188,23 +184,12 @@ const ShowRoom = () => {
             dataIndex: 'phone',
         },
         {
-            title: 'Trạng thái kích hoạt',
-            dataIndex: 'enabled',
-            render: (enabled, data) => <Switch checked={enabled} />,
-        },
-        {
             title: '',
             render: (data) => {
                 return (
-                    <Row>
-                        <button
-                            onClick={() => {
-                                setOpenUpdate(true), (idUpdate.current.id = data._id);
-                            }}
-                        >
-                            <EditOutlined className="text-xl pr-4" />
-                        </button>
-                    </Row>
+                    <Link to={data._id}>
+                        <EditOutlined className="text-xl pr-4" />
+                    </Link>
                 );
             },
         },
@@ -220,12 +205,10 @@ const ShowRoom = () => {
                 </div>
             ) : (
                 <>
-                    <h1 className="text-[28px] mb-4 text-[#02b875]">
-                        <b>Quản lý cửa hàng</b>
-                    </h1>
                     <Table columns={columns} dataSource={data} />
                 </>
             )}
+            {open && <DrawerCreateShowroom open={open} onClose={setOpen} reloading={setReload} />}
             {openUpdate && (
                 <DrawerUpdateShowroom
                     open={openUpdate}
