@@ -14,6 +14,8 @@ import { getAllShowroomAsync } from '../../slices/showroom';
 import { SEVICE_TYPE, VEHICLE_TYPE } from '../../constants/order';
 import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../constants/regex';
 import { disabledDate, disabledDateTime } from '../../utils/date';
+import ModalCustomize from '../../components/Customs/ModalCustomize';
+import ShowroomModal from './showroomModal';
 
 const BookingPage = () => {
     useDocumentTitle('Đặt lịch');
@@ -31,6 +33,8 @@ const BookingPage = () => {
     const [filter, setFilter] = useState('');
     const [initialValues, setInitialValues] = useState({});
     const searchTemp = useRef(null);
+
+    const [open, setOpenModal] = useState(false);
 
     useEffect(() => {
         if (!_.isEmpty(user) && isLogged) {
@@ -392,7 +396,7 @@ const BookingPage = () => {
                                 </Col>
                             </Col>
                         </Row>
-                        <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
+                        <Form.Item wrapperCol={{ offset: 8, span: 8 }} name="#">
                             <Button
                                 htmlType="submit"
                                 type="primary"
@@ -430,7 +434,7 @@ const BookingPage = () => {
                                 <Col span={24}>
                                     <Form.Item
                                         label={<p className="text-base font-semibold">Họ tên</p>}
-                                        name="name"
+                                        name="name_user"
                                         rules={[
                                             {
                                                 required: true,
@@ -444,7 +448,7 @@ const BookingPage = () => {
                                 <Col span={24}>
                                     <Form.Item
                                         label={<p className="text-base font-semibold">Số điện thoại</p>}
-                                        name="number_phone"
+                                        name="number_phone_user"
                                         rules={[
                                             {
                                                 required: true,
@@ -462,7 +466,7 @@ const BookingPage = () => {
                                 <Col span={24}>
                                     <Form.Item
                                         label={<p className="text-base font-semibold">Email</p>}
-                                        name="email"
+                                        name="email_user"
                                         // rules={[
                                         //     {
                                         //         required: true,
@@ -493,7 +497,7 @@ const BookingPage = () => {
                                 </Col>
                                 <Col span={24}>
                                     <Form.Item
-                                        name="serviceType"
+                                        name="serviceType_user"
                                         label={<p className="text-base font-semibold">Nơi sửa chữa</p>}
                                         rules={[
                                             {
@@ -524,7 +528,7 @@ const BookingPage = () => {
                                         </Select>
                                     </Form.Item>
                                     <Form.Item
-                                        name="description"
+                                        name="description_user"
                                         label={<p className="text-base font-semibold">Ghi chú</p>}
                                     >
                                         <Input.TextArea
@@ -549,7 +553,7 @@ const BookingPage = () => {
                                 <Col span={24}>
                                     <Form.Item
                                         label={<p className="text-base font-semibold">Số km xe đã chạy</p>}
-                                        name="km"
+                                        name="km_user"
                                         rules={[
                                             {
                                                 pattern: R_NUMBER,
@@ -560,7 +564,7 @@ const BookingPage = () => {
                                         <Input className="h-10 text-base border-[#02b875]" placeholder="" />
                                     </Form.Item>
                                     <Form.Item
-                                        name="vehicleType"
+                                        name="vehicleType_user"
                                         label={<p className="text-base font-semibold">Loại xe</p>}
                                         initialValue={SEVICE_TYPE.SHOWROOM}
                                     >
@@ -574,7 +578,7 @@ const BookingPage = () => {
                                     </Form.Item>
                                     <Form.Item
                                         label={<p className="text-base font-semibold">Biển số xe</p>}
-                                        name="licensePlates"
+                                        name="licensePlates_user"
                                         // rules={[
                                         //     {
                                         //         required: true,
@@ -597,7 +601,7 @@ const BookingPage = () => {
                                 </Col>
                                 <Col span={24}>
                                     <Form.Item
-                                        name="showroomId"
+                                        name="showroomId_user"
                                         label={<p className="text-base font-semibold">Cửa hàng</p>}
                                         rules={[
                                             {
@@ -606,7 +610,41 @@ const BookingPage = () => {
                                             },
                                         ]}
                                     >
-                                        <Select
+                                        <>
+                                            <div
+                                                className="!cursor-pointer flex items-center border rounded-md border-[#02b875]"
+                                                onClick={() => setOpenModal(true)}
+                                            >
+                                                <Input
+                                                    type="text"
+                                                    value={filter}
+                                                    disabled={true}
+                                                    placeholder="Chọn cửa hàng sửa chữa"
+                                                    className="!cursor-pointer !bg-white py-2 relative !text-black text-base"
+                                                />
+                                                <div className="right-3 absolute">
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        width="16"
+                                                        height="16"
+                                                        fill="currentColor"
+                                                        className="bi bi-caret-right-fill"
+                                                        viewBox="0 0 16 16"
+                                                    >
+                                                        <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"></path>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <ModalCustomize
+                                                showModal={open}
+                                                footer={null}
+                                                setShowModal={() => setOpenModal(false)}
+                                                handleOkCancel={() => console.log('dsds')}
+                                            >
+                                                <ShowroomModal />
+                                            </ModalCustomize>
+                                        </>
+                                        {/* <Select
                                             size="large"
                                             value={filter}
                                             placeholder="Tìm kiếm cửa hàng theo tên, địa chỉ."
@@ -635,12 +673,12 @@ const BookingPage = () => {
                                                     </div>
                                                 </Select.Option>
                                             ))}
-                                        </Select>
+                                        </Select> */}
                                     </Form.Item>
                                     {isShowroom ? null : (
                                         <Form.Item
                                             label={<p className="text-base font-semibold">Địa chỉ cụ thể</p>}
-                                            name="address"
+                                            name="address_user"
                                             rules={[
                                                 {
                                                     required: true,
@@ -658,7 +696,7 @@ const BookingPage = () => {
                                 </Col>
                                 <Col span={24}>
                                     <Form.Item
-                                        name="appointmentSchedule"
+                                        name="appointmentSchedule_user"
                                         label={<p className="text-base font-semibold">Thời gian</p>}
                                         rules={[
                                             {
@@ -687,7 +725,7 @@ const BookingPage = () => {
                             </Col>
                         </Col>
                     </Row>
-                    <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
+                    <Form.Item wrapperCol={{ offset: 8, span: 8 }} name="#_user">
                         <Button
                             htmlType="submit"
                             type="primary"

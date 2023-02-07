@@ -28,3 +28,15 @@ export const updateShowroom = (data) => {
 export const search = (value) => {
     return instance.get(`/showroom/search?`, { params: { value } });
 };
+
+export const searchInListShowroom = (value) => {
+    const removeEmptyParams = (params) => {
+        return Object.keys(params)
+            .filter((key) => params[key] !== '')
+            .reduce((obj, key) => {
+                obj[key] = params[key];
+                return obj;
+            }, {});
+    };
+    return instance.get(`/showroom/search?`, { params: { ...removeEmptyParams(value) } });
+};
