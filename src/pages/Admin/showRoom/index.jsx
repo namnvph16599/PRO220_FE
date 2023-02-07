@@ -2,29 +2,20 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
-import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { notification, Popconfirm, Input, Space, Table, Row, Button, Spin, Tooltip } from 'antd';
+import { EditOutlined, SearchOutlined } from '@ant-design/icons';
+import { notification, Input, Space, Table, Row, Button, Spin, Tooltip } from 'antd';
 import './showroom.css';
-import { NOTIFICATION_TYPE } from '../../../constants/status';
-import { getAllShowroomAsync, removeShowroomByIdAsync, removeShowroomByIdsAsync } from '../../../slices/showroom';
+import { getAllShowroomAsync } from '../../../slices/showroom';
 import Highlighter from 'react-highlight-words';
 import DrawerCreateShowroom from './DrawerCreateShowroom';
 import DrawerUpdateShowroom from './DrawerUpdateShowroom';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
-
-const noti = (type, message, description) => {
-    notification[type]({
-        message,
-        description,
-    });
-};
 
 const ShowRoom = () => {
     useDocumentTitle('Quản lý cửa hàng');
     const dispatch = useDispatch();
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const loadding = useSelector((state) => state.showroom.showrooms.loading);
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [open, setOpen] = useState(false);
     const [openUpdate, setOpenUpdate] = useState(false);
     const data = showrooms.map((showroom) => ({ ...showroom, key: showroom._id }));
@@ -40,10 +31,6 @@ const ShowRoom = () => {
         dispatch(getAllShowroomAsync());
     }, [reload]);
 
-    const onSelectChange = (newSelectedRowKeys) => {
-        setSelectedRowKeys(newSelectedRowKeys);
-    };
-
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
         setSearchText(selectedKeys[0]);
@@ -56,7 +43,6 @@ const ShowRoom = () => {
     };
 
     const getColumnSearchProps = (dataIndex) => ({
-
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
             <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
                 <Input
@@ -95,7 +81,6 @@ const ShowRoom = () => {
                     </Button>
                 </Space>
             </div>
-
         ),
         filterIcon: (filtered) => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         onFilter: (value, record) => record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
@@ -116,32 +101,6 @@ const ShowRoom = () => {
                 text
             ),
     });
-
-    const handleRemoveShowroomByIds = (ids) => {
-        dispatch(removeShowroomByIdsAsync(ids)).then((res) => {
-            const showroomRemoved = _.get(res, 'payload.status', null);
-            if (showroomRemoved == 200) {
-                setTimeout(
-                    () => setReload({ reload: false }, noti(NOTIFICATION_TYPE.SUCCESS, 'Xóa thành công!')),
-                    1000,
-                );
-            } else {
-                noti(NOTIFICATION_TYPE.ERROR, 'Xóa thất bại, Kiểm tra lại!');
-            }
-        });
-    };
-
-    const handleRemoveShowroomById = (id) => {
-        dispatch(removeShowroomByIdAsync(id)).then((res) => {
-            const showroomRemoved = _.get(res, 'payload.data.deleted', null);
-            if (res.payload.status == 200) {
-                noti(NOTIFICATION_TYPE.SUCCESS, 'Xóa cửa hàng thành công!');
-                setTimeout(() => setReload({ reload: false }), 1500);
-            } else {
-                noti(NOTIFICATION_TYPE.ERROR, 'Xóa cửa hàng thất bại!');
-            }
-        });
-    };
 
     const columns = [
         {
