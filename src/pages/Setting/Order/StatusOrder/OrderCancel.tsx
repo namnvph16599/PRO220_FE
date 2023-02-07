@@ -1,6 +1,6 @@
 import { Steps } from 'antd';
 import React from 'react';
-import { ORDER_STATUS } from '../../../constants/order';
+import { ORDER_STATUS } from '../../../../constants/order';
 
 const OrderCancel = ({ status }) => {
     console.log(status);
@@ -8,6 +8,7 @@ const OrderCancel = ({ status }) => {
     return (
         <div>
             <Steps
+            //  className="site-navigation-steps"
                 current={2}
                 percent={60}
                 labelPlacement="vertical"

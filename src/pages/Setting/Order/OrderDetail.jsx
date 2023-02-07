@@ -3,12 +3,13 @@ import { Table } from 'antd';
 import OrderProcessing from './StatusOrder/OrderProcessing';
 import OrderCancel from './StatusOrder/OrderCancel';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOrderById } from '../../api/order';
+import { getOrderById } from '../../../api/order';
 import { useParams } from 'react-router-dom';
-import { ORDER_STATUS, SEVICE_TYPE_ODERDETAIL } from '../../constants/order';
+import { ORDER_STATUS, SEVICE_TYPE_ODERDETAIL } from '../../../constants/order';
 import { Link } from 'react-router-dom';
-import { HOUR_DATE_TIME } from '../../constants/format';
+import { HOUR_DATE_TIME } from '../../../constants/format';
 import moment from 'moment';
+
 import {
     UserOutlined,
     EnvironmentOutlined,
@@ -63,8 +64,8 @@ const OrderDetail = () => {
                 {dataOrderDetail.status === 0 && <OrderCancel status={dataOrderDetail.status} />}
             </div>
             <div className="grid grid-cols-3 gap-4">
-                <div className=' border rounded-lg '>
-                    <div className=" font-bold  my-1 text-cyan-400	ml-3 text-center	">
+                <div className=' border rounded-lg  '>
+                    <div className=" font-bold  my-1 text-[#02b875]	ml-3 text-center	">
                         <div>Thời gian đặt lịch:</div>
                         <div>{moment(dataOrderDetail.appointmentSchedule).format(HOUR_DATE_TIME)}</div>
                     </div>
@@ -74,9 +75,9 @@ const OrderDetail = () => {
                                 <UserOutlined className='mr-2'/>
                                 {dataOrderDetail.name}
                             </div>
-                            <div className="my-px text-lg ml-3	 mb-1 flex">
-                                <EnvironmentOutlined />
-                                <div className='ml-2'>{dataOrderDetail.address}{' '}</div>
+                            <div className="my-px text-lg ml-3	 mb-1">
+                                <EnvironmentOutlined className='mr-2'/>
+                                {dataOrderDetail.address}
                             </div>
                             <div className="my-px text-lg flex ml-3  mb-1	">
                                 <LikeOutlined />
@@ -100,16 +101,19 @@ const OrderDetail = () => {
                     </div>
                 </div>
 
-                <div className='col-span-2'>
-                    <div >
-                        <Table
-                            columns={columns}
-                            // dataSource={data}
-                            bordered
-                            title={() => 'Dịch vụ sửa chữa'}
-                        />
-                        <div className='font-bold'>Tổng tiền: </div>
+                <div className='col-span-2 '>
+                    <div  className="border rounded-lg ">
+                        <div className='my-3 ml-3 font-bold  text-[#02b875]	'>
+                            Dịch vụ sửa chữa
+                        </div>
+                        <div>
+                            <Table
+                                columns={columns}
+                                // dataSource={data}
+                            />
+                        </div>
                     </div>
+                    <div className='font-bold mt-2'>Tổng tiền: </div>
                 </div>
             </div>
         </div>

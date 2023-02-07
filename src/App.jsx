@@ -11,7 +11,6 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import BannerManage from './pages/Admin/Banner';
 import ShowRoom from './pages/Admin/showRoom';
-import DrawerCreateShowroom from './pages/Admin/showRoom/DrawerCreateShowroom';
 import PrivateLayout from './components/Private/PrivateLayout';
 import PageNotFound from './pages/PageNotFound';
 import UpdateBanner from './pages/Admin/Banner/UpdateBanner';
@@ -22,13 +21,14 @@ import Personal from './pages/Setting';
 import UpdateProfile from './pages/Setting/UpdateProfile';
 import PrivateSetting from './components/Private/PrivateSetting';
 import ChangePassword from './pages/Setting/ChangePassword';
-import Orders from './pages/Setting/Orders';
+import Orders from './pages/Setting/Order/Orders';
 import Warehouse from './pages/Admin/Warehouse/Warehouse';
 import CreateOrder from './pages/Admin/Order/CreateOrder';
-import OrderDetail from './pages/Setting/OrderDetail';
+import OrderDetail from './pages/Setting/Order/OrderDetail';
 import MaterialManage from './pages/Admin/Material/index';
 import UpdateMaterial from './pages/Admin/Material/DrawerUpdateMaterial'
-import ListOrder from './pages/Setting/ListOrder';
+import ListOrder from './pages/Setting/Order/ListOrder';
+import DrawerCreateShowroom from './pages/Admin/showRoom/DrawerCreateShowroom';
 
 function App () {
     return (
@@ -63,14 +63,15 @@ function App () {
                         <Route path='thanh-toan'  element={<ListOrder status={4}/>}/>
                         <Route path='hoan-thanh'  element={<ListOrder status={5}/>}/>
                         <Route path='huy'  element={<ListOrder status={0}/>}/>
+                        <Route path=":id" element={<OrderDetail/>} />
+                        <Route path="da-xac-nhan-lich/:id" element={<OrderDetail/>} />
+                        <Route path="cho-xac-nhan-lich/:id" element={<OrderDetail/>} />
+                        <Route path="dang-xu-ly/:id" element={<OrderDetail/>} />
+                        <Route path="thanh-toan/:id" element={<OrderDetail/>} />
+                        <Route path="hoan-thanh/:id" element={<OrderDetail/>} />
+                        <Route path="huy/:id" element={<OrderDetail/>} />
                     </Route>
-                    <Route path="quan-ly-don-hang/:id" element={<OrderDetail/>} />
-                    <Route path="quan-ly-don-hang/da-xac-nhan-lich/:id" element={<OrderDetail/>} />
-                    <Route path="quan-ly-don-hang/cho-xac-nhan-lich/:id" element={<OrderDetail/>} />
-                    <Route path="quan-ly-don-hang/dang-xu-ly/:id" element={<OrderDetail/>} />
-                    <Route path="quan-ly-don-hang/thanh-toan/:id" element={<OrderDetail/>} />
-                    <Route path="quan-ly-don-hang/hoan-thanh/:id" element={<OrderDetail/>} />
-                    <Route path="quan-ly-don-hang/huy/:id" element={<OrderDetail/>} />
+                    
                 </Route>
                 <Route path="dang-ky" element={<Register />} />
             </Route>

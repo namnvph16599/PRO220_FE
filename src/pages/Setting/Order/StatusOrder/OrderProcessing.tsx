@@ -1,7 +1,7 @@
 import React from 'react'
 import { Steps } from 'antd';
+
 const OrderProcessing = ({status}) => {
-    console.log(status);
   return (
     <div>
         <Steps
@@ -12,6 +12,7 @@ const OrderProcessing = ({status}) => {
                 items={[
                     {
                         title: 'Chờ xác nhận',
+                       
                     },
                     {
                         title: 'Tiếp nhận lịch',
