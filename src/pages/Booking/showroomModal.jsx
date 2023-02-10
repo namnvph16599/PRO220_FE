@@ -2,20 +2,20 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Button, Select, Input } from 'antd';
 import { getDistrict } from '../../api/district';
 import _ from 'lodash';
-import { searchInListShowroom } from '../../api/showroom';
+import { findNearShowroom, searchInListShowroom } from '../../api/showroom';
 
-const ShowroomModal = () => {
+const ShowroomModal = ({ setSelectShowroom }) => {
     const [zone, setZone] = useState([]);
     const [selectZone, setSelectZone] = useState('----chọn tất cả-------');
     const [dataToPreview, setDataToPreview] = useState([]);
     const [searchText, setSearchText] = useState('');
-    const [userLocation, setUserLocation] = useState({});
 
     const fetchAPIFilter = async () => {
         const getDataSearch = await searchInListShowroom({
             district: selectZone == '----chọn tất cả-------' ? '' : selectZone,
             address: searchText,
         });
+        setDataToPreview(getDataSearch.data);
     };
 
     const fetchApiDistrict = async () => {
@@ -25,19 +25,15 @@ const ShowroomModal = () => {
         } catch (error) {}
     };
 
-    const filterDataView = (dataFilter) => {
-        console.log('filter data when user want to filter data');
-    };
-
     const findUserLocation = () => {
-        navigator.geolocation.getCurrentPosition(function (position) {
-            let lat = position.coords.latitude;
-            let lon = position.coords.longitude;
-            console.log('Latitude: ' + lat + ' Longitude: ' + lon);
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            let latitude = position.coords.latitude.toString();
+            let longitude = position.coords.longitude.toString();
+            let dist = 2;
+            const dataUserNearBy = await findNearShowroom({ latitude, longitude, dist });
+            // setDataToPreview(dataUserNearBy.data);
         });
     };
-
-    findUserLocation();
 
     useEffect(() => {
         fetchApiDistrict();
@@ -78,8 +74,8 @@ const ShowroomModal = () => {
                             {district.name}
                         </Button>
                     ))}
-                    <Button type="primary" onClick={() => console.log('search cửa hàng gàn nhất')}>
-                        Cửa Hàng Gần Nhất
+                    <Button type="primary" onClick={() => findUserLocation()}>
+                        Cửa Hàng Gần Nhất ( 2km )
                     </Button>
                 </div>
             </div>
@@ -93,94 +89,19 @@ const ShowroomModal = () => {
                 <hr className="my-1" />
                 <div className="w-full h-60  overflow-y-scroll">
                     <div>
-                        <div className="my-3 grid grid-cols-5 place-items-center">
-                            <img
-                                src="https://cdn.vietnambiz.vn/2019/10/3/color-silhouette-cartoon-facade-shop-store-vector-14711058-1570007843495391141359-1570076859193969194096-15700769046292030065819-1570076927728377843390.png"
-                                alt=""
-                                className="w-[50px] h-[50px]"
-                            />
-                            <div className="col-span-4">
-                                <span className="font-bold text-[16px]">Số 297 Lương Ngọc Quyến, TP Thái Nguyên</span>
-                                <p>Hệ thống sửa chữa xe máy Dodoris</p>
+                        {_.map(dataToPreview, (viewShowroom) => (
+                            <div
+                                key={viewShowroom._id}
+                                onClick={() => setSelectShowroom(viewShowroom)}
+                                className="my-3 grid grid-cols-5 place-items-center cursor-pointer"
+                            >
+                                <img src={viewShowroom.images[0]} alt="" className="w-[50px] h-[50px]" />
+                                <div className="col-span-4">
+                                    <span className="font-bold text-[16px]">{viewShowroom.address}</span>
+                                    <p>Hệ thống sửa chữa xe máy Dodoris</p>
+                                </div>
                             </div>
-                        </div>
-                        <div className="my-3 grid grid-cols-5 place-items-center">
-                            <img
-                                src="https://cdn.vietnambiz.vn/2019/10/3/color-silhouette-cartoon-facade-shop-store-vector-14711058-1570007843495391141359-1570076859193969194096-15700769046292030065819-1570076927728377843390.png"
-                                alt=""
-                                className="w-[50px] h-[50px]"
-                            />
-                            <div className="col-span-4">
-                                <span className="font-bold text-[16px]">Số 297 Lương Ngọc Quyến, TP Thái Nguyên</span>
-                                <p>Hệ thống sửa chữa xe máy Dodoris</p>
-                            </div>
-                        </div>
-                        <div className="my-3 grid grid-cols-5 place-items-center">
-                            <img
-                                src="https://cdn.vietnambiz.vn/2019/10/3/color-silhouette-cartoon-facade-shop-store-vector-14711058-1570007843495391141359-1570076859193969194096-15700769046292030065819-1570076927728377843390.png"
-                                alt=""
-                                className="w-[50px] h-[50px]"
-                            />
-                            <div className="col-span-4">
-                                <span className="font-bold text-[16px]">Số 297 Lương Ngọc Quyến, TP Thái Nguyên</span>
-                                <p>Hệ thống sửa chữa xe máy Dodoris</p>
-                            </div>
-                        </div>
-                        <div className="my-3 grid grid-cols-5 place-items-center">
-                            <img
-                                src="https://cdn.vietnambiz.vn/2019/10/3/color-silhouette-cartoon-facade-shop-store-vector-14711058-1570007843495391141359-1570076859193969194096-15700769046292030065819-1570076927728377843390.png"
-                                alt=""
-                                className="w-[50px] h-[50px]"
-                            />
-                            <div className="col-span-4">
-                                <span className="font-bold text-[16px]">Số 297 Lương Ngọc Quyến, TP Thái Nguyên</span>
-                                <p>Hệ thống sửa chữa xe máy Dodoris</p>
-                            </div>
-                        </div>
-                        <div className="my-3 grid grid-cols-5 place-items-center">
-                            <img
-                                src="https://cdn.vietnambiz.vn/2019/10/3/color-silhouette-cartoon-facade-shop-store-vector-14711058-1570007843495391141359-1570076859193969194096-15700769046292030065819-1570076927728377843390.png"
-                                alt=""
-                                className="w-[50px] h-[50px]"
-                            />
-                            <div className="col-span-4">
-                                <span className="font-bold text-[16px]">Số 297 Lương Ngọc Quyến, TP Thái Nguyên</span>
-                                <p>Hệ thống sửa chữa xe máy Dodoris</p>
-                            </div>
-                        </div>
-                        <div className="my-3 grid grid-cols-5 place-items-center">
-                            <img
-                                src="https://cdn.vietnambiz.vn/2019/10/3/color-silhouette-cartoon-facade-shop-store-vector-14711058-1570007843495391141359-1570076859193969194096-15700769046292030065819-1570076927728377843390.png"
-                                alt=""
-                                className="w-[50px] h-[50px]"
-                            />
-                            <div className="col-span-4">
-                                <span className="font-bold text-[16px]">Số 297 Lương Ngọc Quyến, TP Thái Nguyên</span>
-                                <p>Hệ thống sửa chữa xe máy Dodoris</p>
-                            </div>
-                        </div>
-                        <div className="my-3 grid grid-cols-5 place-items-center">
-                            <img
-                                src="https://cdn.vietnambiz.vn/2019/10/3/color-silhouette-cartoon-facade-shop-store-vector-14711058-1570007843495391141359-1570076859193969194096-15700769046292030065819-1570076927728377843390.png"
-                                alt=""
-                                className="w-[50px] h-[50px]"
-                            />
-                            <div className="col-span-4">
-                                <span className="font-bold text-[16px]">Số 297 Lương Ngọc Quyến, TP Thái Nguyên</span>
-                                <p>Hệ thống sửa chữa xe máy Dodoris</p>
-                            </div>
-                        </div>
-                        <div className="my-3 grid grid-cols-5 place-items-center">
-                            <img
-                                src="https://cdn.vietnambiz.vn/2019/10/3/color-silhouette-cartoon-facade-shop-store-vector-14711058-1570007843495391141359-1570076859193969194096-15700769046292030065819-1570076927728377843390.png"
-                                alt=""
-                                className="w-[50px] h-[50px]"
-                            />
-                            <div className="col-span-4">
-                                <span className="font-bold text-[16px]">Số 297 Lương Ngọc Quyến, TP Thái Nguyên</span>
-                                <p>Hệ thống sửa chữa xe máy Dodoris</p>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>

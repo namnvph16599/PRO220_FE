@@ -40,3 +40,7 @@ export const searchInListShowroom = (value) => {
     };
     return instance.get(`/showroom/search?`, { params: { ...removeEmptyParams(value) } });
 };
+
+export const findNearShowroom = (value) => {
+    return instance.get(`${URL}/user-near-by`, value);
+};

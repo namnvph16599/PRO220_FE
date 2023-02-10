@@ -23,18 +23,34 @@ const BookingPage = () => {
     const user = useSelector((state) => state.user.currentUser.values);
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const isLogged = useSelector((state) => state.user.isLogged);
-
     const [loadingInital, setLoadingInital] = useState(true);
     const [creatingBooking, setCreatingBooking] = useState(false);
-
     const [isShowroom, setIsShowroom] = useState(true);
     const [date, setDate] = useState(new Date());
     const [showroomsFilter, setShowroomsFilter] = useState([]);
     const [filter, setFilter] = useState('');
     const [initialValues, setInitialValues] = useState({});
     const searchTemp = useRef(null);
-
     const [open, setOpenModal] = useState(false);
+    const [address, setAddress] = useState('');
+    const coordinate = useRef({
+        latitude: '',
+        longitude: '',
+    });
+
+    useEffect(() => {
+        var geocoder = new maptiler.Geocoder({
+            input: 'searchBooking',
+            key: 'CKlzQ1LLayVnG9v67Xs3',
+        });
+        geocoder.on('select', (item) => {
+            console.log(item);
+            let coordinates = item.center;
+            coordinate.current.latitude = coordinates[1];
+            coordinate.current.longitude = coordinates[0];
+            setAddress(item.place_name_en);
+        });
+    }, [isShowroom == false]);
 
     useEffect(() => {
         if (!_.isEmpty(user) && isLogged) {
@@ -59,7 +75,7 @@ const BookingPage = () => {
 
     const onFinish = (values) => {
         setCreatingBooking(true);
-        createBannerByCustomer({ ...values, accountId: user._id || null })
+        createBannerByCustomer({ ...values, accountId: user._id, showroomId: filter._id || null })
             .then(({ data: { message } }) => {
                 if (message) {
                     Notification(NOTIFICATION_TYPE.WARNING, message);
@@ -83,6 +99,7 @@ const BookingPage = () => {
                 setCreatingBooking(false);
             });
     };
+
     const handleSearch = (value) => {
         if (!value) {
             setShowroomsFilter(showrooms);
@@ -97,8 +114,12 @@ const BookingPage = () => {
             setShowroomsFilter(data);
         }, 300);
     };
+
     const handleChange = (newValue) => {
+        console.log(newValue);
         setFilter(newValue);
+        setOpenModal(false);
+        setIsShowroom(true);
     };
 
     return (
@@ -605,7 +626,7 @@ const BookingPage = () => {
                                         label={<p className="text-base font-semibold">Cửa hàng</p>}
                                         rules={[
                                             {
-                                                required: true,
+                                                required: filter == '' ? true : false,
                                                 message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                             },
                                         ]}
@@ -617,23 +638,25 @@ const BookingPage = () => {
                                             >
                                                 <Input
                                                     type="text"
-                                                    value={filter}
+                                                    value={filter.address}
                                                     disabled={true}
                                                     placeholder="Chọn cửa hàng sửa chữa"
                                                     className="!cursor-pointer !bg-white py-2 relative !text-black text-base"
                                                 />
-                                                <div className="right-3 absolute">
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        width="16"
-                                                        height="16"
-                                                        fill="currentColor"
-                                                        className="bi bi-caret-right-fill"
-                                                        viewBox="0 0 16 16"
-                                                    >
-                                                        <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"></path>
-                                                    </svg>
-                                                </div>
+                                                {filter == '' && (
+                                                    <div className="right-3 absolute">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="16"
+                                                            height="16"
+                                                            fill="currentColor"
+                                                            className="bi bi-caret-right-fill"
+                                                            viewBox="0 0 16 16"
+                                                        >
+                                                            <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"></path>
+                                                        </svg>
+                                                    </div>
+                                                )}
                                             </div>
                                             <ModalCustomize
                                                 showModal={open}
@@ -641,44 +664,14 @@ const BookingPage = () => {
                                                 setShowModal={() => setOpenModal(false)}
                                                 handleOkCancel={() => console.log('dsds')}
                                             >
-                                                <ShowroomModal />
+                                                <ShowroomModal setSelectShowroom={handleChange} />
                                             </ModalCustomize>
                                         </>
-                                        {/* <Select
-                                            size="large"
-                                            value={filter}
-                                            placeholder="Tìm kiếm cửa hàng theo tên, địa chỉ."
-                                            className="h-10 text-base border-[#02b875]"
-                                            optionLabelProp="label"
-                                            showSearch
-                                            onSearch={handleSearch}
-                                            onChange={handleChange}
-                                            filterOption={false}
-                                        >
-                                            {_.map(showroomsFilter, (showroom) => (
-                                                <Select.Option
-                                                    value={showroom._id}
-                                                    key={showroom._id}
-                                                    label={showroom.name + ' - ' + showroom.address}
-                                                >
-                                                    <div span={24}>
-                                                        <div span={24}>
-                                                            <span className="text-base font-medium text-[#02b875]">
-                                                                {showroom.name}
-                                                            </span>
-                                                        </div>
-                                                        <div span={24}>
-                                                            <span className="font-medium">{showroom.address}</span>
-                                                        </div>
-                                                    </div>
-                                                </Select.Option>
-                                            ))}
-                                        </Select> */}
                                     </Form.Item>
                                     {isShowroom ? null : (
                                         <Form.Item
                                             label={<p className="text-base font-semibold">Địa chỉ cụ thể</p>}
-                                            name="address_user"
+                                            name="address"
                                             rules={[
                                                 {
                                                     required: true,
@@ -686,11 +679,17 @@ const BookingPage = () => {
                                                 },
                                             ]}
                                         >
-                                            <Input.TextArea
-                                                className="text-base border-[#02b875]"
-                                                rows={2}
-                                                placeholder=""
-                                            />
+                                            <>
+                                                <p className="text-black mx-2">
+                                                    Lưu ý: hỗ trợ trong bán kính 5km với cửa hàng bạn chọn!
+                                                </p>
+                                                <Input
+                                                    className="text-base border-[#02b875] w-full"
+                                                    placeholder="Nhập địa chỉ"
+                                                    value={address}
+                                                    id="searchBooking"
+                                                />
+                                            </>
                                         </Form.Item>
                                     )}
                                 </Col>
@@ -725,7 +724,7 @@ const BookingPage = () => {
                             </Col>
                         </Col>
                     </Row>
-                    <Form.Item wrapperCol={{ offset: 8, span: 8 }} name="#_user">
+                    <Form.Item wrapperCol={{ offset: 8, span: 8 }} name="#">
                         <Button
                             htmlType="submit"
                             type="primary"
