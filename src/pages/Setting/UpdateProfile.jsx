@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Form, Input, Image, Space, Spin } from 'antd';
 import UploadImage from '../../components/UploadImage';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,7 +8,6 @@ import { Notification } from '../../utils/notifications';
 import _ from 'lodash';
 import { NOTIFICATION_TYPE, UPLOAD_IMAGES_STATUS } from '../../constants/status';
 import { getUser } from '../../api/account';
-import axios from 'axios';
 const prefixSelector = (
     <Form.Item noStyle>
         <span>+85</span>
@@ -21,7 +20,6 @@ const UpdateProfile = () => {
     const [initialValues, setInitialValues] = useState({});
     const dispatch = useDispatch();
     const currentUser = useSelector((state) => state.user.currentUser.values);
-    const statusUpdate = useSelector((state) => state.user.UpdateUser.status);
     const onFinish = (values) => {
         const data = {
             ...values,

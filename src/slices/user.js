@@ -82,7 +82,6 @@ export const userSlice = createSlice({
         },
         [UpdateUser.fulfilled.type]: (state, action) => {
             state.currentUser.values = state.currentUser.values._id == action.payload._id && action.payload;
-            state.UpdateUser.status = 'sussecc';
         },
         [CheckPassword.fulfilled.type]: (state, action) => {
             state.checkPassword = action.payload;
