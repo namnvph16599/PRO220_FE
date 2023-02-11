@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Select, Input } from 'antd';
+import { Button, Select, Input, Empty } from 'antd';
 import { getDistrict } from '../../api/district';
 import _ from 'lodash';
 import { findNearShowroom, searchInListShowroom } from '../../api/showroom';
@@ -9,13 +9,20 @@ const ShowroomModal = ({ setSelectShowroom }) => {
     const [selectZone, setSelectZone] = useState('----chọn tất cả-------');
     const [dataToPreview, setDataToPreview] = useState([]);
     const [searchText, setSearchText] = useState('');
+    const [isData, setIsData] = useState(true);
 
     const fetchAPIFilter = async () => {
         const getDataSearch = await searchInListShowroom({
             district: selectZone == '----chọn tất cả-------' ? '' : selectZone,
             address: searchText,
         });
-        setDataToPreview(getDataSearch.data);
+        if (_.isEmpty(getDataSearch.data)) {
+            setDataToPreview([]);
+            setIsData(false);
+        } else {
+            setDataToPreview(getDataSearch.data);
+            setIsData(true);
+        }
     };
 
     const fetchApiDistrict = async () => {
@@ -31,7 +38,13 @@ const ShowroomModal = ({ setSelectShowroom }) => {
             let longitude = position.coords.longitude.toString();
             let dist = 2;
             const dataUserNearBy = await findNearShowroom({ latitude, longitude, dist });
-            // setDataToPreview(dataUserNearBy.data);
+            if (_.isEmpty(dataUserNearBy.data)) {
+                setDataToPreview([]);
+                setIsData(false);
+            } else {
+                setDataToPreview(dataUserNearBy.data);
+                setIsData(true);
+            }
         });
     };
 
@@ -102,6 +115,11 @@ const ShowroomModal = ({ setSelectShowroom }) => {
                                 </div>
                             </div>
                         ))}
+                        {isData || (
+                            <div className="py-4">
+                                <Empty description={<p>không có dữ liệu</p>} />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

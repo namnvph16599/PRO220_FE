@@ -42,5 +42,9 @@ export const searchInListShowroom = (value) => {
 };
 
 export const findNearShowroom = (value) => {
-    return instance.get(`${URL}/user-near-by`, value);
+    return instance.post(`${URL}/user-near-by`, value);
+};
+
+export const compareUserShowroom = (value) => {
+    return instance.post(`${URL}/user-check`, value);
 };

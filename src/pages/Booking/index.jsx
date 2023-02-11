@@ -4,7 +4,7 @@ import _ from 'lodash';
 import useDocumentTitle from '../../hooks/useDocumentTitle';
 import { Avatar, Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
 import { HOUR_DATE_TIME } from '../../constants/format';
-import { search } from '../../api/showroom';
+import { compareUserShowroom, search } from '../../api/showroom';
 import './booking.css';
 import SpinCustomize from '../../components/Customs/Spin';
 import { createBannerByCustomer } from '../../api/order';
@@ -43,12 +43,32 @@ const BookingPage = () => {
             input: 'searchBooking',
             key: 'CKlzQ1LLayVnG9v67Xs3',
         });
-        geocoder.on('select', (item) => {
-            console.log(item);
-            let coordinates = item.center;
-            coordinate.current.latitude = coordinates[1];
-            coordinate.current.longitude = coordinates[0];
-            setAddress(item.place_name_en);
+        geocoder.on('select', async (item) => {
+            if (_.isEmpty(filter)) {
+                Notification(NOTIFICATION_TYPE.ERROR, 'Bạn chưa chọn showroom!', 'Hãy chọn showroom gần bạn nhất!');
+            } else {
+                let coordinates = item.center;
+                coordinate.current.latitude = coordinates[1];
+                coordinate.current.longitude = coordinates[0];
+                if (_.has(item, 'place_name_vi')) {
+                    setAddress(item.place_name_vi);
+                } else {
+                    setAddress(item.place_name_en);
+                }
+                const checkUserDistance = await compareUserShowroom({
+                    showroomId: filter._id,
+                    latitude: coordinates[1],
+                    longitude: coordinates[0],
+                });
+                if (!checkUserDistance.data) {
+                    setAddress('');
+                    Notification(
+                        NOTIFICATION_TYPE.ERROR,
+                        'Địa chỉ không nằm trong phạm vi hỗ trợ!',
+                        'Hãy chọn showroom gần bạn nhất!',
+                    );
+                }
+            }
         });
     }, [isShowroom == false]);
 
@@ -75,7 +95,7 @@ const BookingPage = () => {
 
     const onFinish = (values) => {
         setCreatingBooking(true);
-        createBannerByCustomer({ ...values, accountId: user._id, showroomId: filter._id || null })
+        createBannerByCustomer({ ...values, address, accountId: user._id, showroomId: filter._id || null })
             .then(({ data: { message } }) => {
                 if (message) {
                     Notification(NOTIFICATION_TYPE.WARNING, message);
@@ -92,7 +112,6 @@ const BookingPage = () => {
                 Notification(NOTIFICATION_TYPE.SUCCESS, 'Bạn đã đặt lịch thành công!');
             })
             .catch((error) => {
-                console.log('error', error);
                 Notification(NOTIFICATION_TYPE.ERROR, error.message);
             })
             .finally(() => {
@@ -116,7 +135,6 @@ const BookingPage = () => {
     };
 
     const handleChange = (newValue) => {
-        console.log(newValue);
         setFilter(newValue);
         setOpenModal(false);
         setIsShowroom(true);
@@ -455,7 +473,7 @@ const BookingPage = () => {
                                 <Col span={24}>
                                     <Form.Item
                                         label={<p className="text-base font-semibold">Họ tên</p>}
-                                        name="name_user"
+                                        name="name"
                                         rules={[
                                             {
                                                 required: true,
@@ -469,7 +487,7 @@ const BookingPage = () => {
                                 <Col span={24}>
                                     <Form.Item
                                         label={<p className="text-base font-semibold">Số điện thoại</p>}
-                                        name="number_phone_user"
+                                        name="number_phone"
                                         rules={[
                                             {
                                                 required: true,
@@ -487,7 +505,7 @@ const BookingPage = () => {
                                 <Col span={24}>
                                     <Form.Item
                                         label={<p className="text-base font-semibold">Email</p>}
-                                        name="email_user"
+                                        name="email"
                                         // rules={[
                                         //     {
                                         //         required: true,
@@ -518,7 +536,7 @@ const BookingPage = () => {
                                 </Col>
                                 <Col span={24}>
                                     <Form.Item
-                                        name="serviceType_user"
+                                        name="serviceType"
                                         label={<p className="text-base font-semibold">Nơi sửa chữa</p>}
                                         rules={[
                                             {
@@ -549,7 +567,7 @@ const BookingPage = () => {
                                         </Select>
                                     </Form.Item>
                                     <Form.Item
-                                        name="description_user"
+                                        name="description"
                                         label={<p className="text-base font-semibold">Ghi chú</p>}
                                     >
                                         <Input.TextArea
@@ -574,7 +592,7 @@ const BookingPage = () => {
                                 <Col span={24}>
                                     <Form.Item
                                         label={<p className="text-base font-semibold">Số km xe đã chạy</p>}
-                                        name="km_user"
+                                        name="km"
                                         rules={[
                                             {
                                                 pattern: R_NUMBER,
@@ -585,7 +603,7 @@ const BookingPage = () => {
                                         <Input className="h-10 text-base border-[#02b875]" placeholder="" />
                                     </Form.Item>
                                     <Form.Item
-                                        name="vehicleType_user"
+                                        name="vehicleType"
                                         label={<p className="text-base font-semibold">Loại xe</p>}
                                         initialValue={SEVICE_TYPE.SHOWROOM}
                                     >
@@ -599,7 +617,7 @@ const BookingPage = () => {
                                     </Form.Item>
                                     <Form.Item
                                         label={<p className="text-base font-semibold">Biển số xe</p>}
-                                        name="licensePlates_user"
+                                        name="licensePlates"
                                         // rules={[
                                         //     {
                                         //         required: true,
@@ -622,7 +640,7 @@ const BookingPage = () => {
                                 </Col>
                                 <Col span={24}>
                                     <Form.Item
-                                        name="showroomId_user"
+                                        name="showroomId"
                                         label={<p className="text-base font-semibold">Cửa hàng</p>}
                                         rules={[
                                             {
@@ -638,7 +656,7 @@ const BookingPage = () => {
                                             >
                                                 <Input
                                                     type="text"
-                                                    value={filter.address}
+                                                    value={filter == '' ? '' : filter.name + ' - ' + filter.address}
                                                     disabled={true}
                                                     placeholder="Chọn cửa hàng sửa chữa"
                                                     className="!cursor-pointer !bg-white py-2 relative !text-black text-base"
@@ -662,7 +680,6 @@ const BookingPage = () => {
                                                 showModal={open}
                                                 footer={null}
                                                 setShowModal={() => setOpenModal(false)}
-                                                handleOkCancel={() => console.log('dsds')}
                                             >
                                                 <ShowroomModal setSelectShowroom={handleChange} />
                                             </ModalCustomize>
@@ -674,7 +691,7 @@ const BookingPage = () => {
                                             name="address"
                                             rules={[
                                                 {
-                                                    required: true,
+                                                    required: address == '' ? true : false,
                                                     message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                                 },
                                             ]}
@@ -684,9 +701,10 @@ const BookingPage = () => {
                                                     Lưu ý: hỗ trợ trong bán kính 5km với cửa hàng bạn chọn!
                                                 </p>
                                                 <Input
-                                                    className="text-base border-[#02b875] w-full"
+                                                    className="text-base border-[#02b875] w-full py-2"
                                                     placeholder="Nhập địa chỉ"
                                                     value={address}
+                                                    onChange={(e) => setAddress(e.target.value)}
                                                     id="searchBooking"
                                                 />
                                             </>
@@ -695,7 +713,7 @@ const BookingPage = () => {
                                 </Col>
                                 <Col span={24}>
                                     <Form.Item
-                                        name="appointmentSchedule_user"
+                                        name="appointmentSchedule"
                                         label={<p className="text-base font-semibold">Thời gian</p>}
                                         rules={[
                                             {
