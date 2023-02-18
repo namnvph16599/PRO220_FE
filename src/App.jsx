@@ -29,6 +29,9 @@ import MaterialManage from './pages/Admin/Material/index';
 import UpdateMaterial from './pages/Admin/Material/DrawerUpdateMaterial'
 import ListOrder from './pages/Setting/Order/ListOrder';
 import DrawerCreateShowroom from './pages/Admin/showRoom/DrawerCreateShowroom';
+import DistrictManage from './pages/Admin/District';
+import DrawerCreateDistrict from './pages/Admin/District/DrawerCreateDistrict';
+import UpdateDistrict from './pages/Admin/District/DrawerUpdateDistrict';
 
 function App () {
     return (
@@ -94,6 +97,9 @@ function App () {
                 <Route path="them-don-hang" element={<CreateOrder />} />
                 <Route path="don-hang/:id" element={<UpdateOrder />} />
                 <Route path="quan-ly-kho" element={<Warehouse />} />
+                <Route path='tinh' element={<DistrictManage/>}/>
+                <Route path='tinh/them' element={<DrawerCreateDistrict/>}/>
+                <Route path='tinh/:id' element={<UpdateDistrict/>}/>
             </Route>
             <Route path="*" element={<PageNotFound />} />
         </Routes>
