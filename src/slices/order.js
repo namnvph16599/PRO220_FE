@@ -53,7 +53,6 @@ export const OrderSlice = createSlice({
     reducers: {},
     extraReducers: {
         [getOrdersAsync.rejected.type]: (state, action) => {
-            console.log('action', action);
             state.orders.loading = false;
             state.orders.errors = true;
         },
