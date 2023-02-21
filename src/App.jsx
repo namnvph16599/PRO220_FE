@@ -26,9 +26,13 @@ import Warehouse from './pages/Admin/Warehouse/Warehouse';
 import CreateOrder from './pages/Admin/Order/CreateOrder';
 import OrderDetail from './pages/Setting/Order/OrderDetail';
 import MaterialManage from './pages/Admin/Material/index';
-import UpdateMaterial from './pages/Admin/Material/DrawerUpdateMaterial';
+import DistrictManage from './pages/Admin/District';
+import DrawerCreateDistrict from './pages/Admin/District/DrawerCreateDistrict';
+import UpdateDistrict from './pages/Admin/District/DrawerUpdateDistrict';
+import UpdateMaterial from './pages/Admin/Material/UpdateMaterial';
 import ListOrder from './pages/Setting/Order/ListOrder';
 import DrawerCreateShowroom from './pages/Admin/showRoom/DrawerCreateShowroom';
+import CreateMaterial from './pages/Admin/Material/CreateMaterial';
 import OrderStatistical from './pages/Admin/Statistical/OrderStatistical';
 
 function App() {
@@ -95,6 +99,10 @@ function App() {
                 <Route path="them-don-hang" element={<CreateOrder />} />
                 <Route path="don-hang/:id" element={<UpdateOrder />} />
                 <Route path="quan-ly-kho" element={<Warehouse />} />
+                <Route path="province" element={<DistrictManage />} />
+                <Route path="province/them" element={<DrawerCreateDistrict />} />
+                <Route path="province/:id" element={<UpdateDistrict />} />
+                <Route path="them-vat-tu" element={<CreateMaterial />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
         </Routes>
