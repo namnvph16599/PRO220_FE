@@ -492,36 +492,28 @@ const UpdateOrder = (props) => {
                                     optionLabelProp="label"
                                     // filterOption={false}
                                 >
-                                    {_.map(materials, ({ materialId: material }) => {
+                                    {_.map(order.materials, ({ materialId, qty, price }) => {
+                                        const material = _.find(
+                                            materials,
+                                            (material) => material.materialId._id === materialId,
+                                        );
+                                        console.log('material', material);
                                         return (
                                             <Select.Option
-                                                key={material._id}
-                                                value={material._id}
+                                                key={materialId}
+                                                value={materialId}
                                                 label={
                                                     <div>
-                                                        <Tooltip title={material.name}>
-                                                            {material.name.length > 40
-                                                                ? material.name.slice(0, 40) + '...'
-                                                                : material.name}{' '}
-                                                        </Tooltip>
-                                                        <InputNumber
-                                                            size="small"
-                                                            value={_.get(
-                                                                _.find(
-                                                                    order.materials,
-                                                                    (item) => item.marterialId === material._id,
-                                                                ),
-                                                                'qty',
-                                                                1,
-                                                            )}
-                                                            min={1}
-                                                            disabled
-                                                            defaultValue={1}
-                                                        />
+                                                        <Tooltip title={material.materialId.name}>
+                                                            {material.materialId.name.length > 40
+                                                                ? material.materialId.name.slice(0, 40) + '...'
+                                                                : material.materialId.name}
+                                                        </Tooltip>{' '}
+                                                        - <span>SL: {qty}</span>
                                                     </div>
                                                 }
                                             >
-                                                {material.name} - {material.price}
+                                                {material.materialId.name} -{price}
                                             </Select.Option>
                                         );
                                     })}

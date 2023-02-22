@@ -165,8 +165,8 @@ const StatusOrder = (props) => {
                 {props.status === 3 && (
                     <Button
                         onClick={() => {
-                            setShowModal('selectMaterials');
                             setIsChangeMaterials(true);
+                            setShowModal('selectMaterials');
                         }}
                         disabled={false}
                         loading={props.loading}
