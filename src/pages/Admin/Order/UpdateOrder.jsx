@@ -178,6 +178,7 @@ const UpdateOrder = (props) => {
         }
     }, [order]);
     const handleChangeSubPrice = (value) => {
+        console.log('value', value);
         const { appointmentSchedule, ...orderOther } = order;
         const price = totalPriceMaterials();
         const total = price + value;
@@ -520,25 +521,34 @@ const UpdateOrder = (props) => {
                                 </Select>
                             </Form.Item>
                             <Form.Item label={<p className="text-base font-semibold">Giá vật tư</p>} name="price">
-                                <Input className="h-10 text-base border-[#02b875]" type="number" disabled />
-                            </Form.Item>
-                            <Form.Item
-                                label={<p className="text-base font-semibold">Phụ phí</p>}
-                                name="subPrice"
-                                rules={[
-                                    {
-                                        pattern: R_NUMBER,
-                                        message: 'Phụ phí không đúng định dạng.',
-                                    },
-                                ]}
-                            >
                                 <InputNumber
                                     className="h-10 w-full text-base border-[#02b875]"
+                                    formatter={(value) => `VNĐ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={(value) => {
+                                        return value.replace(/\VNĐ\s?|(,*)/g, '');
+                                    }}
+                                    disabled
+                                />
+                            </Form.Item>
+                            <Form.Item label={<p className="text-base font-semibold">Phụ phí</p>} name="subPrice">
+                                <InputNumber
+                                    className="h-10 w-full text-base border-[#02b875]"
+                                    formatter={(value) => `VNĐ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={(value) => {
+                                        return value.replace(/\VNĐ\s?|(,*)/g, '');
+                                    }}
                                     onChange={handleChangeSubPrice}
                                 />
                             </Form.Item>
                             <Form.Item label={<p className="text-base font-semibold">Tổng đơn hàng</p>} name="total">
-                                <Input className="h-10 text-base border-[#02b875]" type="number" disabled />
+                                <InputNumber
+                                    className="h-10 w-full text-base border-[#02b875]"
+                                    formatter={(value) => `VNĐ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={(value) => {
+                                        return value.replace(/\VNĐ\s?|(,*)/g, '');
+                                    }}
+                                    disabled
+                                />
                             </Form.Item>
                             {order.status == 4 && (
                                 <Form.Item label={<p className="text-base font-semibold">Phương Thức Thanh Toán :</p>}>

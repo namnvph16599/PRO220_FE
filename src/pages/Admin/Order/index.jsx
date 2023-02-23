@@ -137,7 +137,6 @@ const OrderManage = () => {
                                     <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
                                 </Tooltip>
                             </button>
-
                             <Filter
                                 items={[
                                     {
@@ -207,13 +206,20 @@ const OrderManage = () => {
                             Thêm đơn hàng
                         </Button>
                     </div>
-                    <Table
-                        scroll={{
-                            x: 3000,
-                        }}
-                        columns={columns}
-                        dataSource={orders}
-                    />
+
+                    {loading ? (
+                        <div className="absolute top-1/2 left-1/2">
+                            <SpinCustomize />
+                        </div>
+                    ) : (
+                        <Table
+                            scroll={{
+                                x: 3000,
+                            }}
+                            columns={columns}
+                            dataSource={orders}
+                        />
+                    )}
                 </div>
             }
         </div>
