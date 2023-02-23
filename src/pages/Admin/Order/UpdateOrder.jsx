@@ -497,23 +497,23 @@ const UpdateOrder = (props) => {
                                             materials,
                                             (material) => material.materialId._id === materialId,
                                         );
-                                        console.log('material', material);
                                         return (
                                             <Select.Option
                                                 key={materialId}
                                                 value={materialId}
                                                 label={
                                                     <div>
-                                                        <Tooltip title={material.materialId.name}>
-                                                            {material.materialId.name.length > 40
-                                                                ? material.materialId.name.slice(0, 40) + '...'
-                                                                : material.materialId.name}
-                                                        </Tooltip>{' '}
+                                                        <Tooltip title={_.get(material, 'materialId.name', '') || ''}>
+                                                            {_.get(material, 'materialId.name', '').length > 40
+                                                                ? _.get(material, 'materialId.name', '').slice(0, 40) +
+                                                                  '...'
+                                                                : _.get(material, 'materialId.name', '')}
+                                                        </Tooltip>
                                                         - <span>SL: {qty}</span>
                                                     </div>
                                                 }
                                             >
-                                                {material.materialId.name} -{price}
+                                                {_.get(material, 'materialId.name', '') || ''} -{price}
                                             </Select.Option>
                                         );
                                     })}
