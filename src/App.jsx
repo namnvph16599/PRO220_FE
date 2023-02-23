@@ -30,6 +30,7 @@ import UpdateMaterial from './pages/Admin/Material/UpdateMaterial';
 import ListOrder from './pages/Setting/Order/ListOrder';
 import DrawerCreateShowroom from './pages/Admin/showRoom/DrawerCreateShowroom';
 import CreateMaterial from './pages/Admin/Material/CreateMaterial';
+import DrawerUpdateShowroom from './pages/Admin/showRoom/DrawerUpdateShowroom';
 
 function App() {
     return (
@@ -89,6 +90,7 @@ function App() {
                 <Route path="quan-ly-vat-tu" element={<MaterialManage />} />
                 <Route path="quan-ly-vat-tu/:id" element={<UpdateMaterial />} />
                 <Route path="them-cua-hang" element={<DrawerCreateShowroom />} />
+                <Route path="quan-ly-cua-hang/:id" element={<DrawerUpdateShowroom />} />
                 <Route path="quan-ly-banner/:id" element={<UpdateBanner />} />
                 <Route path="don-hang" element={<OrderManage />} />
                 <Route path="them-don-hang" element={<CreateOrder />} />
