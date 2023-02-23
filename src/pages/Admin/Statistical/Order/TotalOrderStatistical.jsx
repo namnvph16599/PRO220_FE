@@ -244,22 +244,23 @@ const TotalOrderStatistical = (props) => {
                             categories,
                         },
                         yAxis: {
+                            allowDecimals: false,
                             min: 0,
                             title: {
                                 text: null,
                             },
-                            stackLabels: {
-                                enabled: true,
-                                style: {
-                                    fontWeight: 'bold',
-                                    color:
-                                        // theme
-                                        (Highcharts.defaultOptions.title.style &&
-                                            Highcharts.defaultOptions.title.style.color) ||
-                                        'gray',
-                                    textOutline: 'none',
-                                },
-                            },
+                            // stackLabels: {
+                            //     enabled: true,
+                            //     style: {
+                            //         fontWeight: 'bold',
+                            //         color:
+                            //             // theme
+                            //             (Highcharts.defaultOptions.title.style &&
+                            //                 Highcharts.defaultOptions.title.style.color) ||
+                            //             'gray',
+                            //         textOutline: 'none',
+                            //     },
+                            // },
                         },
                         legend: {
                             align: 'center',
@@ -279,9 +280,6 @@ const TotalOrderStatistical = (props) => {
                         plotOptions: {
                             column: {
                                 stacking: 'normal',
-                                dataLabels: {
-                                    enabled: true,
-                                },
                             },
                         },
                         series,
