@@ -54,6 +54,7 @@ const items = [
         ],
     },
     { key: 'Quản lý kho', path: 'quan-ly-kho', icon: <FileDoneOutlined />, label: 'Quản lý kho' },
+    { key: 'Quản lý tỉnh', path: 'province', icon: <FileDoneOutlined />, label: 'Quản lý địa chỉ' },
 ];
 
 const AdminLayout = () => {

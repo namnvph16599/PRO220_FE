@@ -26,11 +26,18 @@ import Warehouse from './pages/Admin/Warehouse/Warehouse';
 import CreateOrder from './pages/Admin/Order/CreateOrder';
 import OrderDetail from './pages/Setting/Order/OrderDetail';
 import MaterialManage from './pages/Admin/Material/index';
+import DistrictManage from './pages/Admin/District';
+import DrawerCreateDistrict from './pages/Admin/District/DrawerCreateDistrict';
+import UpdateDistrict from './pages/Admin/District/DrawerUpdateDistrict';
 import UpdateMaterial from './pages/Admin/Material/UpdateMaterial';
 import ListOrder from './pages/Setting/Order/ListOrder';
 import DrawerCreateShowroom from './pages/Admin/showRoom/DrawerCreateShowroom';
 import CreateMaterial from './pages/Admin/Material/CreateMaterial';
+
 import DrawerUpdateShowroom from './pages/Admin/showRoom/DrawerUpdateShowroom';
+
+import OrderStatistical from './pages/Admin/Statistical/OrderStatistical';
+
 
 function App() {
     return (
@@ -85,6 +92,7 @@ function App() {
                 }
             >
                 <Route path="dang-ky" element={<Register />} />
+                <Route path="thong-ke-don-hang" element={<OrderStatistical />} />
                 <Route path="quan-ly-banner" element={<BannerManage />} />
                 <Route path="quan-ly-cua-hang" element={<ShowRoom />} />
                 <Route path="quan-ly-vat-tu" element={<MaterialManage />} />
@@ -96,6 +104,9 @@ function App() {
                 <Route path="them-don-hang" element={<CreateOrder />} />
                 <Route path="don-hang/:id" element={<UpdateOrder />} />
                 <Route path="quan-ly-kho" element={<Warehouse />} />
+                <Route path="province" element={<DistrictManage />} />
+                <Route path="province/them" element={<DrawerCreateDistrict />} />
+                <Route path="province/:id" element={<UpdateDistrict />} />
                 <Route path="them-vat-tu" element={<CreateMaterial />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
