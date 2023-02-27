@@ -56,3 +56,6 @@ a:hover {
 .ant-image-mask {
     border-radius: 50%;
 }
+.aaa>.ant-row{
+    display: inherit;
+}
