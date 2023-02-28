@@ -203,6 +203,47 @@ const TotalOrderStatistical = (props) => {
                 setSeries(defaultSeriesYear);
                 break;
             default:
+                const defaultSeriesOptions = [
+                    {
+                        name: 'Hủy đơn hàng',
+                        data: [0],
+                        status: 0,
+                    },
+                    {
+                        name: 'Chờ xác nhận',
+                        data: [0],
+                        status: 1,
+                    },
+                    {
+                        name: 'Đã xác nhận',
+                        data: [0],
+                        status: 2,
+                    },
+                    {
+                        name: 'Đang xử lý',
+                        data: [0],
+                        status: 3,
+                    },
+                    {
+                        name: 'Thanh toán',
+                        data: [0],
+                        status: 4,
+                    },
+                    {
+                        name: 'Hoàn thành',
+                        data: [0],
+                        status: 5,
+                    },
+                ];
+                data.forEach((value) => {
+                    console.log('value', value);
+                    defaultSeriesOptions.forEach((series) => {
+                        if (series.status === value.status) {
+                            series.data[0] = ++series.data[0];
+                        }
+                    });
+                });
+                setSeries(defaultSeriesOptions);
         }
     };
 
