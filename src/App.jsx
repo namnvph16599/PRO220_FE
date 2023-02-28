@@ -36,7 +36,12 @@ import CreateMaterial from './pages/Admin/Material/CreateMaterial';
 import Role from './pages/Admin/Manage_Role/Role'
 import Permission from './pages/Admin/Manage_Role/Permission'
 
-function App () {
+import DrawerUpdateShowroom from './pages/Admin/showRoom/DrawerUpdateShowroom';
+
+import OrderStatistical from './pages/Admin/Statistical/OrderStatistical';
+
+
+function App() {
     return (
         <Routes>
             <Route path="/" element={<MainLayout />}>
@@ -89,19 +94,21 @@ function App () {
                 }
             >
                 <Route path="dang-ky" element={<Register />} />
+                <Route path="thong-ke-don-hang" element={<OrderStatistical />} />
                 <Route path="quan-ly-banner" element={<BannerManage />} />
                 <Route path="quan-ly-cua-hang" element={<ShowRoom />} />
                 <Route path="quan-ly-vat-tu" element={<MaterialManage />} />
                 <Route path="quan-ly-vat-tu/:id" element={<UpdateMaterial />} />
                 <Route path="them-cua-hang" element={<DrawerCreateShowroom />} />
+                <Route path="quan-ly-cua-hang/:id" element={<DrawerUpdateShowroom />} />
                 <Route path="quan-ly-banner/:id" element={<UpdateBanner />} />
                 <Route path="don-hang" element={<OrderManage />} />
                 <Route path="them-don-hang" element={<CreateOrder />} />
                 <Route path="don-hang/:id" element={<UpdateOrder />} />
                 <Route path="quan-ly-kho" element={<Warehouse />} />
-                <Route path='tinh' element={<DistrictManage/>}/>
-                <Route path='tinh/them' element={<DrawerCreateDistrict/>}/>
-                <Route path='tinh/:id' element={<UpdateDistrict/>}/>
+                <Route path="province" element={<DistrictManage />} />
+                <Route path="province/them" element={<DrawerCreateDistrict />} />
+                <Route path="province/:id" element={<UpdateDistrict />} />
                 <Route path="them-vat-tu" element={<CreateMaterial />} />
                 <Route path="quan-ly-vai-tro" element={<Role />} />
                 <Route path="quan-ly-quyen" element={<Permission />} />

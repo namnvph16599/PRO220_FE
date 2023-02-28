@@ -45,9 +45,17 @@ const items = [
             { key: 'Quyền và vai trò', path: 'quan-ly-quyen', label: 'Quản lý PermissionRole' },
         ],
     },
-    { key: 'Quản lý cửa hàng', path: 'quan-ly-cua-hang', icon: <FileDoneOutlined />, label: 'Quản lý cửa hàng' },
+    {
+        key: 'Quản lý cửa hàng',
+        label: 'Quản lý cửa hàng',
+        icon: <FileDoneOutlined />,
+        children: [
+            { key: 'Cửa hàng', path: 'quan-ly-cua-hang', label: 'Cửa hàng' },
+            { key: 'Thêm cửa hàng', path: 'them-cua-hang', label: 'Thêm cửa hàng' },
+        ],
+    },
     { key: 'Quản lý kho', path: 'quan-ly-kho', icon: <FileDoneOutlined />, label: 'Quản lý kho' },
-    { key: 'Quản lý tỉnh', path: 'tinh', icon: <FileDoneOutlined />, label: 'Quản lý địa chỉ' },
+    { key: 'Quản lý tỉnh', path: 'province', icon: <FileDoneOutlined />, label: 'Quản lý địa chỉ' },
 ];
 
 const AdminLayout = () => {

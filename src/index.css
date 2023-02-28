@@ -24,13 +24,25 @@ a:hover {
 .ant-btn.ant-btn-sm,
 .btn-primary {
     background-color: var(--primary-color) !important;
+    color: var(--white-color) !important;
+    border: none;
+    outline: none;
 }
 
 .btn-primary:disabled {
     background-color: var(--disabled-color) !important;
 }
+.btn-primary:hover {
+    background-color: var(--primary-color-hover) !important;
+    color: var(--white-color) !important;
+    border: none;
+    outline: none;
+}
 
-.ant-btn.ant-btn-sm:hover {
+.ant-btn.ant-btn-sm:hover,
+.ant-picker-range .ant-picker-active-bar,
+.ant-picker-dropdown .ant-picker-cell-range-start .ant-picker-cell-inner,
+.ant-picker-dropdown .ant-picker-cell-range-end .ant-picker-cell-inner {
     background-color: var(--primary-color-hover) !important;
 }
 
@@ -58,4 +70,15 @@ a:hover {
 }
 .aaa>.ant-row{
     display: inherit;
+}
+
+/* cusomize color antd selector datepicker */
+.ant-select .ant-select-selector:focus-within,
+.ant-picker-focused,
+.ant-picker,
+.ant-picker-cell-inner::before {
+    border: 1px solid var(--primary-color) !important;
+}
+.ant-picker-today-btn {
+    color: var(--primary-color) !important;
 }

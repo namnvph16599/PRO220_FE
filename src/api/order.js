@@ -10,6 +10,10 @@ export const getOrders = (filter) => {
     });
 };
 
+export const getOrdersFilter = (filter) => {
+    return instance.post('/orders-filter', filter);
+};
+
 export const getOrderById = (id) => {
     return instance.get(`${URL}/${id}`);
 };
@@ -48,4 +52,8 @@ export const getUserOrder = (accountId) => {
 
 export const updateOrderUser = (data) => {
     return instance.patch(`orders-customer/${data._id}`, { status: 0 });
-}
+};
+
+export const getTotalOrderByOptions = (data) => {
+    return instance.post('statistical/order-total', data);
+};
