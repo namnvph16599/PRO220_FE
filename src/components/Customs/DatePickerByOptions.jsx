@@ -19,7 +19,8 @@ const DatePickerByOptions = (props) => {
                 style={{ minWidth: 130 }}
                 value={type}
                 onChange={(value) => {
-                    setType(value, props.setType(value));
+                    setType(value);
+                    props.setType(value);
                 }}
             >
                 <Option value="date">Ngày</Option>
