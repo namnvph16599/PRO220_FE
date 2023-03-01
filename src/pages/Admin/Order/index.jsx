@@ -192,6 +192,18 @@ const OrderManage = () => {
                                         key: 'licensePlates',
                                         name: 'Biển kiểm soát',
                                     },
+                                    {
+                                        label: <Space align="center">Ngày tạo</Space>,
+                                        key: 'createdAt',
+                                        type: 'date',
+                                        name: 'Ngày tạo',
+                                    },
+                                    {
+                                        label: <Space align="center">Thời gian sửa chữa</Space>,
+                                        key: 'appointmentSchedule',
+                                        type: 'date',
+                                        name: 'Thời gian sửa chữa',
+                                    },
                                 ]}
                                 onFilter={handleFilter}
                             />

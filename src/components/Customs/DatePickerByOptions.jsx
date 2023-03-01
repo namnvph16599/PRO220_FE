@@ -1,5 +1,4 @@
-import { DatePicker, Select, Space, TimePicker } from 'antd';
-import dayjs from 'dayjs';
+import { DatePicker, Select, Space } from 'antd';
 import { useState } from 'react';
 import { DATE_FORMAT } from '../../constants/format';
 import 'dayjs/locale/vi';
@@ -20,6 +19,7 @@ const DatePickerByOptions = (props) => {
                 value={type}
                 onChange={(value) => {
                     setType(value);
+                    if (props.getTypeWhenOnChangeTime) return;
                     props.setType(value);
                 }}
             >
@@ -29,7 +29,17 @@ const DatePickerByOptions = (props) => {
                 <Option value="year">Năm</Option>
                 <Option value="options">Tùy chọn</Option>
             </Select>
-            <PickerWithType type={type} onChange={props.onChange} />
+            <PickerWithType
+                type={type}
+                onChange={(time) => {
+                    //gui ca time va type
+                    if (props.getTypeWhenOnChangeTime) {
+                        props.onChange(time, type);
+                        return;
+                    }
+                    props.onChange(time);
+                }}
+            />
         </Space>
     );
 };
