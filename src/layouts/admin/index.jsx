@@ -14,6 +14,7 @@ import User from '../User';
 import _ from 'lodash';
 import { PERMISSION_TYPE } from '../../constants/permission';
 import { getRolePermission } from '../../api/permission';
+import { JwtDecode } from '../../utils/auth';
 
 const { Header, Sider, Content } = Layout;
 
@@ -60,7 +61,6 @@ const siderBarItems = [
         children: [
             { key: 'Vai trò', path: 'quan-ly-vai-tro', label: 'Vai trò' },
             { key: 'Quyền', path: 'quan-ly-quyen', label: 'Quản lý quyền' },
-            { key: 'Quyền và vai trò', path: 'quan-ly-quyen', label: 'Quản lý PermissionRole' },
         ],
     },
     {
@@ -140,7 +140,10 @@ const rolePermissionApi = [
     },
 ];
 
+const roleLogin = JwtDecode();
+
 const AdminLayout = () => {
+    // console.log(roleLogin);
     const [collapsed, setCollapsed] = useState(false);
     const [siderBar, setSiderBar] = useState([]);
 
@@ -219,7 +222,7 @@ const AdminLayout = () => {
                     className="menu-admin-bg "
                     defaultSelectedKeys={['1']}
                     mode="inline"
-                    items={siderBar}
+                    items={siderBarItems}
                     onClick={handleClick}
                 />
             </Sider>
