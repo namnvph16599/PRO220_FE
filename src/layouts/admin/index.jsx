@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Outlet, useNavigate, useNavigation } from 'react-router-dom';
 import { Layout, Menu, Dropdown, Space } from 'antd';
+import { useSelector } from 'react-redux';
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -14,7 +15,6 @@ import User from '../User';
 import _ from 'lodash';
 import { PERMISSION_TYPE } from '../../constants/permission';
 import { getRolePermission } from '../../api/permission';
-import { JwtDecode } from '../../utils/auth';
 
 const { Header, Sider, Content } = Layout;
 
@@ -89,63 +89,10 @@ const siderBarItems = [
     },
 ];
 
-const rolePermissionApi = [
-    {
-        _id: 1,
-        listPermissions: [
-            {
-                _id: '6400a8ae75f258dc4c3c8c1d',
-                permissionId: '6400a86775f258dc4c3c8c12',
-                namePermision: 'SHOW',
-                code: 112,
-            },
-            {
-                _id: '6400a8ae75f258dc4c3c8c1d',
-                permissionId: '6400a86775f258dc4c3c8c13',
-                namePermision: 'UPDATE',
-                code: 113,
-            },
-        ],
-        name: 'Quản Lý Cửa Hàng',
-    },
-    {
-        _id: 2,
-        listPermissions: [
-            {
-                _id: '6400a8ae75f258dc4c3c8c1d',
-                permissionId: '6400a86775f258dc4c3c8c12',
-                namePermision: 'CONFIRM',
-                code: 115,
-            },
-            {
-                _id: '6400a8ae75f258dc4c3c8c1d',
-                permissionId: '6400a86775f258dc4c3c8c12',
-                namePermision: 'SHOW',
-                code: 112,
-            },
-        ],
-        name: 'Quản Lý Kho',
-    },
-    {
-        _id: 3,
-        listPermissions: [
-            {
-                _id: '6400a8ae75f258dc4c3c8c1d',
-                permissionId: '6400a86775f258dc4c3c8c12',
-                namePermision: 'SHOW',
-                code: 112,
-            },
-        ],
-        name: 'Quản Lý Đơn Hàng',
-    },
-];
-
-const roleLogin = JwtDecode();
-
 const AdminLayout = () => {
-    // console.log(roleLogin);
     const [collapsed, setCollapsed] = useState(false);
     const [siderBar, setSiderBar] = useState([]);
+    const rolePermission = useSelector((state) => state.role.valueRolePermission.data);
 
     const navigate = useNavigate();
 
@@ -158,7 +105,7 @@ const AdminLayout = () => {
         navigate(`/admin/${path}`);
     };
 
-    const handleCheckIsAllow = () => {
+    const handleCheckIsAllow = (rolePermissionApi) => {
         let listPermissions = [];
         siderBarItems.forEach((siderBarItem) => {
             if (_.some(rolePermissionApi, (rolePermission) => rolePermission.name == siderBarItem.label)) {
@@ -171,7 +118,7 @@ const AdminLayout = () => {
                     return permission;
                     break;
                 case PERMISSION_TYPE.NULL:
-                    return loopCheckRole(permission);
+                    return loopCheckRole(permission, rolePermissionApi);
                     break;
                 default:
                     break;
@@ -180,7 +127,7 @@ const AdminLayout = () => {
         setSiderBar(siderBarList);
     };
 
-    const loopCheckRole = (permission) => {
+    const loopCheckRole = (permission, rolePermissionApi) => {
         const findMatch = rolePermissionApi.find((catePermission) => catePermission.name == permission.label);
         const childrenData = permission.children.filter((children) => {
             if (_.some(findMatch.listPermissions, (rolePermission) => rolePermission.code == children.code))
@@ -190,13 +137,8 @@ const AdminLayout = () => {
     };
 
     useEffect(() => {
-        handleCheckIsAllow();
-    }, []);
-
-    const fetchApiRolePermission = async () => {
-        // const data = await getRolePermission('Quản Lý Cấp 1');
-        // console.log(data);
-    };
+        handleCheckIsAllow(rolePermission);
+    }, [rolePermission]);
 
     return (
         <Layout>
@@ -222,7 +164,7 @@ const AdminLayout = () => {
                     className="menu-admin-bg "
                     defaultSelectedKeys={['1']}
                     mode="inline"
-                    items={siderBarItems}
+                    items={siderBar}
                     onClick={handleClick}
                 />
             </Sider>
