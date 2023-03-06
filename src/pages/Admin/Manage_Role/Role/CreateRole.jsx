@@ -5,6 +5,7 @@ import { getPermission } from '../../../../api/permission';
 import _ from 'lodash';
 import { useDispatch } from 'react-redux';
 import { CreateRoleAsync } from '../../../../slices/role';
+import { hanldInput } from '../../../../slices/capotaliieFirstLetter';
 const CreateRole = ({ onClose }) => {
     const [expandedKeys, setExpandedKeys] = useState([]);
     const [checkedKeys, setCheckedKeys] = useState();
@@ -12,6 +13,8 @@ const CreateRole = ({ onClose }) => {
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const [treeData, setTreeData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [open, setOpen] = useState(false);
+    const [form] = Form.useForm();
     const dispatch = useDispatch();
     const find = (permission) => {
         let parent = {};
@@ -63,6 +66,7 @@ const CreateRole = ({ onClose }) => {
             permissions,
         };
         dispatch(CreateRoleAsync(value));
+        setOpen(true)
         setTimeout(() => {
             onClose({
                 open: false,
@@ -84,9 +88,16 @@ const CreateRole = ({ onClose }) => {
         });
         return box;
     };
+    const onChage = (event) => {
+        const resual = hanldInput(event);
+        form.setFieldsValue({
+            name: resual,
+        });
+    };
     return (
         <div>
             <Form
+                form={form}
                 name="basic"
                 labelCol={{
                     span: 8,
@@ -115,19 +126,13 @@ const CreateRole = ({ onClose }) => {
                         },
                     ]}
                 >
-                    <Input />
+                    <Input onChange={(event) => onChage(event)}/>
                 </Form.Item>
                 <Spin spinning={loading}>
                     <Form.Item
                         label="Lựa Chọn Quyền:"
                         name="name"
                         className="aaa"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'không được bỏ trống tên Quyền!',
-                            },
-                        ]}
                     >
                         <Tree
                             checkable
@@ -148,7 +153,7 @@ const CreateRole = ({ onClose }) => {
                         span: 16,
                     }}
                 >
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" disabled={open}>
                         Submit
                     </Button>
                 </Form.Item>
