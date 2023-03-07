@@ -5,9 +5,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import { useEffect } from 'react';
-import { getAccounts } from '../../../api/account';
+import { getAccounts, removeAccount } from '../../../api/account';
 import { getAllShowroomAsync } from '../../../slices/showroom';
 import CreateAccount from './CreateAccount';
+import { Notification } from '../../../utils/notifications';
+import { NOTIFICATION_TYPE } from '../../../constants/status';
 
 const AccountManager = () => {
     useDocumentTitle('Quản lý thành viên');
@@ -15,6 +17,45 @@ const AccountManager = () => {
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const [open, setOpen] = useState(false);
     const [data, setData] = useState([]);
+
+    const handleRefetch = async () => {
+        setOpen(false);
+        await getAllAccount();
+    };
+
+    const handleRemoveAccount = async (id) => {
+        removeAccount(id)
+            .then(async (res) => {
+                Notification(NOTIFICATION_TYPE.SUCCESS, 'Xóa thành công!');
+                await getAllAccount();
+            })
+            .catch((err) => {
+                Notification(NOTIFICATION_TYPE.ERROR, err.message);
+                console.log('remove-account', err);
+            });
+    };
+
+    const getAllAccount = () => {
+        getAccounts()
+            .then(({ data: res }) => {
+                const newData = res.map((item, index) => {
+                    return {
+                        key: item._id,
+                        ...item,
+                    };
+                });
+                setData(newData);
+
+                console.log(55555, res);
+            })
+            .catch((err) => {
+                console.log(8888, err);
+            });
+    };
+
+    useEffect(() => {
+        (() => getAllAccount())();
+    }, []);
 
     useEffect(() => {
         if (showrooms.length === 0) {
@@ -69,7 +110,7 @@ const AccountManager = () => {
                         <Popconfirm
                             title={`Bạn chắc chắn muốn xóa ${data.name} không?`}
                             onConfirm={() => {
-                                handleRemoveBannerByIds([data._id]);
+                                handleRemoveAccount([data._id]);
                             }}
                             okText="Đồng ý"
                             cancelText="Hủy"
@@ -81,18 +122,6 @@ const AccountManager = () => {
             },
         },
     ];
-    useEffect(() => {
-        (() => {
-            getAccounts()
-                .then(({ data: res }) => {
-                    setData(res);
-                    console.log(55555, res);
-                })
-                .catch((err) => {
-                    console.log(8888, err);
-                });
-        })();
-    }, []);
 
     return (
         <div className="banner-content">
@@ -179,7 +208,7 @@ const AccountManager = () => {
                 </Button>
             </div>
             <Table columns={columns} dataSource={data} />
-            {open && <CreateAccount open={open} onClose={setOpen} />}
+            {open && <CreateAccount open={open} onClose={setOpen} onRefetch={handleRefetch} />}
         </div>
     );
 };
