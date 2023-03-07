@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Popconfirm, Table, Row, Space, Avatar, Button } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import { useEffect } from 'react';
 import { getAccounts, removeAccount } from '../../../api/account';
@@ -10,17 +9,31 @@ import { getAllShowroomAsync } from '../../../slices/showroom';
 import CreateAccount from './CreateAccount';
 import { Notification } from '../../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
+import { getAllRoleAsync } from '../../../slices/role';
+import UpdateAccount from './UpdateAccount';
 
 const AccountManager = () => {
     useDocumentTitle('Quản lý thành viên');
     const dispatch = useDispatch();
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
+    const roles = useSelector((state) => state.role.valueRole);
+
     const [open, setOpen] = useState(false);
+    const [idUpdate, setIdUpdate] = useState();
     const [data, setData] = useState([]);
 
     const handleRefetch = async () => {
         setOpen(false);
         await getAllAccount();
+    };
+
+    const handleRefetchUpdateAccount = (updated) => {
+        const newData = data.map((item) => {
+            if (item._id === updated._id) return updated;
+            return item;
+        });
+        setData(newData);
+        setIdUpdate(null);
     };
 
     const handleRemoveAccount = async (id) => {
@@ -45,11 +58,9 @@ const AccountManager = () => {
                     };
                 });
                 setData(newData);
-
-                console.log(55555, res);
             })
             .catch((err) => {
-                console.log(8888, err);
+                console.log('get acounts err', err);
             });
     };
 
@@ -62,6 +73,11 @@ const AccountManager = () => {
             dispatch(getAllShowroomAsync());
         }
     }, [showrooms]);
+    useEffect(() => {
+        if (roles.length === 0) {
+            dispatch(getAllRoleAsync());
+        }
+    }, [roles]);
 
     const columns = [
         {
@@ -88,7 +104,12 @@ const AccountManager = () => {
         },
         {
             title: 'Vai trò',
-            dataIndex: 'redirectTo',
+            dataIndex: 'roleId',
+            render: (roleId) => {
+                const role = roles.find((role) => role.id === roleId);
+                if (!role) return '';
+                return role.name;
+            },
         },
         {
             title: 'Cửa hàng',
@@ -104,9 +125,7 @@ const AccountManager = () => {
             render: (data) => {
                 return (
                     <Row>
-                        <Link to={data._id}>
-                            <EditOutlined className="text-xl pr-4" />
-                        </Link>
+                        <EditOutlined className="text-xl pr-4" onClick={() => setIdUpdate(data._id)} />
                         <Popconfirm
                             title={`Bạn chắc chắn muốn xóa ${data.name} không?`}
                             onConfirm={() => {
@@ -209,6 +228,9 @@ const AccountManager = () => {
             </div>
             <Table columns={columns} dataSource={data} />
             {open && <CreateAccount open={open} onClose={setOpen} onRefetch={handleRefetch} />}
+            {idUpdate && (
+                <UpdateAccount idUpdate={idUpdate} onClose={setIdUpdate} onRefetch={handleRefetchUpdateAccount} />
+            )}
         </div>
     );
 };
