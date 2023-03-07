@@ -5,7 +5,8 @@ import { getAllRoleAsync } from '../../../slices/role';
 import { createAccount } from '../../../api/account';
 import { Notification } from '../../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
-const CreateAccount = ({ open, onClose }) => {
+import { R_EMAIL, R_NUMBER_PHONE } from '../../../constants/regex';
+const CreateAccount = ({ open, onClose, onRefetch }) => {
     const dispatch = useDispatch();
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const roles = useSelector((state) => state.role.valueRole);
@@ -27,7 +28,7 @@ const CreateAccount = ({ open, onClose }) => {
             .then(({ data: res }) => {
                 Notification(NOTIFICATION_TYPE.SUCCESS, res.message);
                 if (res.data) {
-                    handleClose();
+                    onRefetch();
                 }
             })
             .catch((err) => {
@@ -71,6 +72,10 @@ const CreateAccount = ({ open, onClose }) => {
                                 required: true,
                                 message: 'Quý khách vui lòng không để trống trường thông tin này.',
                             },
+                            {
+                                pattern: R_NUMBER_PHONE,
+                                message: 'Số điện thoại không đúng định dạng.',
+                            },
                         ]}
                     >
                         <Input className="text-base border-[#02b875]" placeholder="Nhập Số điện thoại" />
@@ -83,9 +88,13 @@ const CreateAccount = ({ open, onClose }) => {
                                 required: true,
                                 message: 'Quý khách vui lòng không để trống trường thông tin này.',
                             },
+                            {
+                                pattern: R_EMAIL,
+                                message: 'Email không đúng định dạng.',
+                            },
                         ]}
                     >
-                        <Input className="text-base border-[#02b875]" placeholder="Nhập Email" />
+                        <Input className="text-base border-[#02b875]" placeholder="Nhập Email" type="email" />
                     </Form.Item>
                     <Form.Item
                         label={<p className="text-base font-semibold">Vai trò</p>}
