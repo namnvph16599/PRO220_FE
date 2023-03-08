@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Dropdown, Space } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, saveUserValues } from '../slices/user';
-import { JwtDecode } from '../utils/auth';
-import { ROLE, Token } from '../constants/auth';
+import { isTokenExpired, JwtDecode } from '../utils/auth';
+import { Token } from '../constants/auth';
 import { isEmpty } from 'lodash';
 import jwtDecode from 'jwt-decode';
 
 const User = (props) => {
     const items = [];
     const [isAdmin, setIsAdmin] = useState(false);
+    const [url, setUrl] = useState('');
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.currentUser.values);
     const accessToken = useSelector((state) => state.user.currentUser.accessToken);
     const isLogged = useSelector((state) => state.user.isLogged);
+    const { pathname } = useLocation();
 
     useEffect(() => {
         const userDecode = JwtDecode();
@@ -24,6 +26,23 @@ const User = (props) => {
             setIsAdmin(!!Jwt.role);
         }
     }, [isLogged]);
+    useEffect(() => {
+        const url = window.location.href;
+        const split = url.split('/')[3];
+        setUrl(split);
+    }, []);
+
+    useEffect(() => {
+        (() => {
+            {
+                const roleLogin = JwtDecode();
+                if (roleLogin && isTokenExpired(roleLogin)) {
+                    dispatch(logout());
+                    localStorage.removeItem(Token.accessToken);
+                }
+            }
+        })();
+    }, [pathname]);
     const hanldelogout = () => {
         dispatch(logout());
         localStorage.removeItem(Token.accessToken);
@@ -82,7 +101,7 @@ focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 
                                     </span>
                                 </div>
                                 <ul className="py-1" aria-labelledby="user-menu-button">
-                                    {isAdmin && (
+                                    {isAdmin && url !== 'admin' && (
                                         <li>
                                             <Link
                                                 to="/admin"
@@ -100,15 +119,16 @@ focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 
                                             Tài khoản
                                         </Link>
                                     </li>
-                                    <li>
-                                        <Link
-                                            to="/cai-dat/quan-ly-don-hang"
-                                            className="block py-2 px-4 text-sm text-gray-700 hover:bg-[#02b875] hover:text-white"
-                                        >
-                                            Đơn hàng
-                                        </Link>
-                                    </li>
-
+                                    {!isAdmin && (
+                                        <li>
+                                            <Link
+                                                to="/cai-dat/quan-ly-don-hang"
+                                                className="block py-2 px-4 text-sm text-gray-700 hover:bg-[#02b875] hover:text-white"
+                                            >
+                                                Đơn hàng
+                                            </Link>
+                                        </li>
+                                    )}
                                     <li>
                                         <Link
                                             onClick={hanldelogout}

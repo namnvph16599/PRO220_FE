@@ -5,7 +5,7 @@ import { getPermission, getRolePermission, updateRolePermission } from '../../..
 import _ from 'lodash';
 import { Notification } from '../../../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../../../constants/status';
-import { hanldInput } from '../../../../slices/capotaliieFirstLetter';
+import { hanldInput } from '../../../../utils/capotaliieFirstLetter';
 
 const EditRole = ({ id, onClose }) => {
     const [expandedKeys, setExpandedKeys] = useState();
@@ -18,7 +18,7 @@ const EditRole = ({ id, onClose }) => {
     const [form] = Form.useForm();
     const opens = useRef(0);
     const initialValues = {
-        nameRole: id.name,
+        name: id.name,
     };
     const filterData = (permission, filter) => {
         let parent = {};
@@ -161,7 +161,7 @@ const EditRole = ({ id, onClose }) => {
                         },
                     ]}
                 >
-                    <Input onChange={(event) => onChage(event)} />
+                    <Input onChange={(event) => onChage(event)} disabled />
                 </Form.Item>
                 <Spin spinning={loading}>
                     <Form.Item label="Lựa Chọn Quyền:" name="name" className="aaa">
