@@ -41,6 +41,7 @@ import DrawerUpdateShowroom from './pages/Admin/showRoom/DrawerUpdateShowroom';
 import OrderStatistical from './pages/Admin/Statistical/OrderStatistical';
 import RevenueOrderStatistical from './pages/Admin/Statistical/Order/RevenueOrderStatistical';
 import AccountManager from './pages/Admin/Account';
+import PostManager from './pages/Admin/Post';
 
 function App() {
     return (
@@ -115,6 +116,7 @@ function App() {
                 <Route path="quan-ly-vai-tro" element={<Role />} />
                 <Route path="quan-ly-quyen" element={<Permission />} />
                 <Route path="quan-ly-tai-khoan" element={<AccountManager />} />
+                <Route path="quan-ly-tin-tuc" element={<PostManager />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
         </Routes>
