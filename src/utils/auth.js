@@ -9,7 +9,7 @@ export const JwtDecode = () => {
 
 export const checkAuth = () => {
     const userDecode = JwtDecode();
-    const role = _.get(userDecode, 'role', null);
+    const role = _.get(userDecode, 'roleId', null);
     if (!role) return false;
     return true;
 };
