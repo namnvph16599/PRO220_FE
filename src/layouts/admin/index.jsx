@@ -14,7 +14,6 @@ import './admin-layout.css';
 import User from '../User';
 import _ from 'lodash';
 import { PERMISSION_TYPE } from '../../constants/permission';
-import { getRolePermission } from '../../api/permission';
 
 const { Header, Sider, Content } = Layout;
 
@@ -63,7 +62,13 @@ const siderBarItems = [
             { key: 'Quyền', path: 'quan-ly-quyen', label: 'Quản lý quyền' },
         ],
     },
-    { key: 'Quản lý tài khoản', path: 'quan-ly-tai-khoan', icon: <FileDoneOutlined />, label: 'Quản lý thành viên' },
+    {
+        key: 'Quản lý tài khoản',
+        path: 'quan-ly-tai-khoan',
+        code: PERMISSION_TYPE.CONFIRM,
+        icon: <FileDoneOutlined />,
+        label: 'Quản Lý Thành Viên',
+    },
     {
         key: 'Quản Lý Cửa Hàng',
         label: 'Quản Lý Cửa Hàng',
