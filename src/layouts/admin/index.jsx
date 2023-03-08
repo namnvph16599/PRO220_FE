@@ -63,6 +63,7 @@ const siderBarItems = [
             { key: 'Quyền', path: 'quan-ly-quyen', label: 'Quản lý quyền' },
         ],
     },
+    { key: 'Quản lý tài khoản', path: 'quan-ly-tai-khoan', icon: <FileDoneOutlined />, label: 'Quản lý thành viên' },
     {
         key: 'Quản Lý Cửa Hàng',
         label: 'Quản Lý Cửa Hàng',
