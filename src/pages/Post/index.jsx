@@ -39,6 +39,9 @@ const Posts = () => {
                 const uniqueById = getUniqueListBy(mergePost, '_id');
                 setPosts(uniqueById);
             })
+            .catch((err) => {
+                console.log('get post user err', err);
+            })
             .finally(() => {
                 setLoading(false);
                 setLoadMore(false);
@@ -52,7 +55,7 @@ const Posts = () => {
     };
 
     return (
-        <div className="container relative mx-auto py-16 bg-blue-300">
+        <div className="container relative mx-auto py-16">
             {loading ? (
                 <div className="absolute top-1/2 left-1/2">
                     <SpinCustomize />

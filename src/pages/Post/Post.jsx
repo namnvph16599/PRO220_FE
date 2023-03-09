@@ -5,19 +5,26 @@ import { getPostByTitle } from '../../api/post';
 import SpinCustomize from '../../components/Customs/Spin';
 import './post.css';
 import { HOUR_DATE_TIME } from '../../constants/format';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
 
 const Post = () => {
     const params = useParams();
     const [loading, setLoading] = useState(false);
+    const [title, setTitle] = useState('');
     const [post, setPost] = useState({});
+    useDocumentTitle(title);
 
     useEffect(() => {
-        const title = params['*'];
-        if (!title) return;
+        const slug = params['*'];
+        if (!slug) return;
+        setTitle(slug);
         setLoading(true);
-        getPostByTitle(title)
+        getPostByTitle(slug)
             .then(({ data }) => {
                 setPost(data);
+            })
+            .catch((error) => {
+                console.log('get post by title err', error);
             })
             .finally(() => {
                 setLoading(false);
