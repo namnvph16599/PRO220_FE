@@ -57,7 +57,7 @@ const Header = () => {
                             </li>
                             <li>
                                 <Link
-                                    to="#"
+                                    to="tin-tuc"
                                     className="block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875]"
                                     aria-current="page"
                                 >
