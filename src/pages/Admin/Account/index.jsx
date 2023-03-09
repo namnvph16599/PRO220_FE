@@ -86,8 +86,6 @@ const AccountManager = () => {
         setRoleFilter(roles.map((role) => ({ label: role.name, value: role.id })));
     }, [roles]);
 
-    console.log('roleFilter', roleFilter);
-
     const columns = [
         {
             title: 'Tên',
