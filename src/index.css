@@ -37,9 +37,9 @@ h6 {
     outline: none;
 }
 
-.btn-primary:disabled {
+/* .btn-primary:disabled {
     background-color: var(--disabled-color) !important;
-}
+} */
 .btn-primary:hover {
     background-color: var(--primary-color-hover) !important;
     color: var(--white-color) !important;

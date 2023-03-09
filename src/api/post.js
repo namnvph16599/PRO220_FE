@@ -4,6 +4,7 @@ import instance from './instance';
 export const getPosts = async (filter) => {
     return instance.post('/posts', filter);
 };
+
 export const createPost = async (data) => {
     return instance.post('/post', data);
 };
@@ -18,4 +19,8 @@ export const updatePost = async (data) => {
 
 export const getPostById = async (id) => {
     return instance.get(`/post/${id}`);
+};
+
+export const getPostByTitle = async (title) => {
+    return instance.post(`/post-by-title`, { title });
 };

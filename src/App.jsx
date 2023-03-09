@@ -41,8 +41,10 @@ import DrawerUpdateShowroom from './pages/Admin/showRoom/DrawerUpdateShowroom';
 import OrderStatistical from './pages/Admin/Statistical/OrderStatistical';
 import RevenueOrderStatistical from './pages/Admin/Statistical/Order/RevenueOrderStatistical';
 import AccountManager from './pages/Admin/Account';
+
 import PostManager from './pages/Admin/Post';
-import Post from './pages/Post';
+import Posts from './pages/Post';
+import Post from './pages/Post/Post';
 
 function App() {
     return (
@@ -51,7 +53,8 @@ function App() {
                 <Route index element={<HomePage />} />
                 <Route path="about" element={<AboutPage />} />
                 <Route path="dat-lich" element={<BookingPage />} />
-                <Route path="tin-tuc" element={<Post />} />
+                <Route path="tin-tuc" element={<Posts />} />
+                <Route path="tin-tuc/*" element={<Post />} />
                 <Route
                     path="dang-nhap"
                     element={
