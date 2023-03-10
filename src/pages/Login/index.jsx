@@ -88,7 +88,7 @@ const Login = () => {
                                 >
                                     Đăng nhập
                                 </Button>
-                                <p className="my-5 text-center">
+                                <p className="my-5 pb-6 text-center">
                                     Chưa có tài khoản?
                                     <Link to="/dang-ky" className="text-base rounded text-[#02b875] text-underline">
                                         {' '}

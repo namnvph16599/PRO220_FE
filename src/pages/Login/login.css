@@ -3,7 +3,8 @@
         no-repeat top left/100% #dfdfdf;
     padding: 64px 0;
 }
-.login-content {
+.login-content,
+.register-content {
     background-color: #fff;
     width: 500px;
     margin: 0 auto;
