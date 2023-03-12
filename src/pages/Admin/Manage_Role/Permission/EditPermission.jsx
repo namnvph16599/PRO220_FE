@@ -167,7 +167,6 @@ const EditPermission = ({ id, onClose }) => {
                             message="Nếu bạn chỉnh sửa quyền việc này sẽ ảnh đến các vai trò (Role) đang tồn tại trong hệ thống. Cân nhắc kỹ trước khi chỉnh sửa"
                             type="warning"
                             showIcon
-                            closable
                         />
                     </Modal>
                     <Form.Item
