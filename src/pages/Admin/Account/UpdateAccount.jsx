@@ -40,6 +40,7 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
     }, [idUpdate]);
     useEffect(() => {
         if (!isEmpty(data)) {
+            console.log('data', data);
             let filter = showrooms.find((item) => item._id === data.showroomId);
             setChecked([...checkShowroom, filter]);
         }
@@ -50,6 +51,7 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
                 dispatch(getAllRoleAsync());
             })();
         }
+        console.log('roles', roles);
     }, [roles]);
     const handleClose = () => {
         onClose(false);
