@@ -18,12 +18,17 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(false);
     const [checked, setChecked] = useState([]);
-
+    const [openSelect, setOpenSelect] = useState(false);
     const [data, setData] = useState({});
 
     useEffect(() => {
         getUser(idUpdate)
             .then(({ data: res }) => {
+                if (res.roleId.name == 'Quản Lý') {
+                    setOpenSelect(true);
+                } else {
+                    setOpenSelect(false);
+                }
                 setData({
                     ...res,
                     roleId: res.roleId._id,
@@ -35,7 +40,6 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
     }, [idUpdate]);
     useEffect(() => {
         if (!isEmpty(data)) {
-            console.log('data', data);
             let filter = showrooms.find((item) => item._id === data.showroomId);
             setChecked([...checkShowroom, filter]);
         }
@@ -46,7 +50,6 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
                 dispatch(getAllRoleAsync());
             })();
         }
-        console.log('roles', roles);
     }, [roles]);
     const handleClose = () => {
         onClose(false);
@@ -63,6 +66,14 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
             .finally(() => {
                 setUpdating(false);
             });
+    };
+    const handleChange = (value) => {
+        const name = roles.find((item) => item.id == value);
+        if (name.name == 'Quản Lý') {
+            setOpenSelect(true);
+        } else {
+            setOpenSelect(false);
+        }
     };
     return (
         <div>
@@ -142,6 +153,7 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
                                 }}
                                 className="h-10 text-base border-[#02b875]"
                                 placeholder="Chọn cửa hàng"
+                                onChange={handleChange}
                             >
                                 {roles.map((role) => {
                                     return (
@@ -154,24 +166,28 @@ const UpdateAccount = ({ idUpdate, onClose, onRefetch, checkShowroom }) => {
                                 })}
                             </Select>
                         </Form.Item>
-                        <Form.Item
-                            label={<p className="text-base font-semibold">Cửa hàng</p>}
-                            name="showroomId"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                                },
-                            ]}
-                        >
-                            <Select className="h-10 text-base border-[#02b875]" placeholder="Chọn cửa hàng">
-                                {checked.map((showroom) => (
-                                    <Option value={showroom._id} key={showroom._id}>
-                                        {showroom.name}
-                                    </Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
+                        {!openSelect ? (
+                            ''
+                        ) : (
+                            <Form.Item
+                                label={<p className="text-base font-semibold">Cửa hàng</p>}
+                                name="showroomId"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Quý khách vui lòng không để trống trường thông tin này.',
+                                    },
+                                ]}
+                            >
+                                <Select className="h-10 text-base border-[#02b875]" placeholder="Chọn cửa hàng">
+                                    {checked.map((showroom) => (
+                                        <Option value={showroom._id} key={showroom._id}>
+                                            {showroom.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        )}
                         <div className="absolute bottom-0 flex align-center">
                             <Form.Item>
                                 <Button
