@@ -7,7 +7,7 @@ export const getAccounts = async (filter) => {
     return instance.post(URL, filter);
 };
 export const createAccount = async (data) => {
-    return instance.post('account', data);
+    return instance.post('/account', data);
 };
 
 export const removeAccount = async (id) => {
