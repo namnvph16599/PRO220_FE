@@ -16,9 +16,11 @@ import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../constants/regex';
 import { disabledDate, disabledDateTime } from '../../utils/date';
 import ModalCustomize from '../../components/Customs/ModalCustomize';
 import ShowroomModal from './showroomModal';
+import { useNavigate } from 'react-router-dom';
 
 const BookingPage = () => {
     useDocumentTitle('Đặt lịch');
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.currentUser.values);
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
@@ -96,20 +98,17 @@ const BookingPage = () => {
     const onFinish = (values) => {
         setCreatingBooking(true);
         createBannerByCustomer({ ...values, address, accountId: user._id, showroomId: filter._id || null })
-            .then(({ data: { message } }) => {
-                if (message) {
-                    Notification(NOTIFICATION_TYPE.WARNING, message);
+            .then(({ data }) => {
+                if (data.message) {
+                    Notification(NOTIFICATION_TYPE.WARNING, data.message);
                     return;
                 }
+                Notification(NOTIFICATION_TYPE.SUCCESS, 'Bạn đã đặt lịch thành công!');
                 if (isLogged) {
-                    Notification(
-                        NOTIFICATION_TYPE.SUCCESS,
-                        'Bạn đã đặt lịch thành công!',
-                        'Theo dõi lịch trong phần đơn hàng!',
-                    );
+                    navigate(`/cai-dat/quan-ly-don-hang/${data._id}`);
                     return null;
                 }
-                Notification(NOTIFICATION_TYPE.SUCCESS, 'Bạn đã đặt lịch thành công!');
+                navigate('/');
             })
             .catch((error) => {
                 Notification(NOTIFICATION_TYPE.ERROR, error.message);
