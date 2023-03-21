@@ -196,7 +196,10 @@ const BookingPage = () => {
                                                 },
                                             ]}
                                         >
-                                            <Input className="h-10 text-base border-[#02b875]" />
+                                            <Input
+                                                className="h-10 text-base border-[#02b875]"
+                                                disabled={_.get(user, 'number_phone', false)}
+                                            />
                                         </Form.Item>
                                     </Col>
                                     <Col span={24}>
@@ -499,7 +502,10 @@ const BookingPage = () => {
                                             },
                                         ]}
                                     >
-                                        <Input className="h-10 text-base border-[#02b875]" />
+                                        <Input
+                                            className="h-10 text-base border-[#02b875]"
+                                            disabled={_.get(user, 'number_phone', false)}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={24}>
