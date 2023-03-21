@@ -3,16 +3,14 @@ import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Token } from '../../constants/auth';
-import { NOTIFICATION_TYPE } from '../../constants/status';
+import { R_NUMBER_PHONE } from '../../constants/regex';
 import { loginAsync } from '../../slices/user';
-import { Notification } from '../../utils/notifications';
 import './login.css';
 const Login = () => {
     const user = useSelector((state) => state.user);
     const isLogged = useSelector((state) => state.user.isLogged);
 
     const dispatch = useDispatch();
-    const notificationRef = useRef('');
     const navigate = useNavigate();
     useEffect(() => {
         if (user.currentUser.accessToken !== '') {
@@ -46,8 +44,10 @@ const Login = () => {
                                 name="number_phone"
                                 rules={[
                                     { required: true, message: 'Vui lòng nhập Số điện thoại!' },
-                                    { min: 10, message: 'Số điện thoại không đúng định dạng!' },
-                                    { max: 11, message: 'Số điện thoại không đúng định dạng!' },
+                                    {
+                                        pattern: R_NUMBER_PHONE,
+                                        message: 'Số điện thoại không đúng định dạng.',
+                                    },
                                 ]}
                             >
                                 <Input className="py-2 text-base" placeholder="Số điện thoại" />
