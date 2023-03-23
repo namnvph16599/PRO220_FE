@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import useDocumentTitle from '../../hooks/useDocumentTitle';
-import { Avatar, Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
-import { HOUR_DATE_TIME } from '../../constants/format';
+import { Avatar, Button, Col, DatePicker, Form, Input, Row, Select, TimePicker } from 'antd';
+import { HOUR_DATE_TIME, DATE_FORMAT } from '../../constants/format';
 import { compareUserShowroom, search } from '../../api/showroom';
 import './booking.css';
 import SpinCustomize from '../../components/Customs/Spin';
@@ -12,11 +12,13 @@ import { Notification } from '../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../constants/status';
 import { getAllShowroomAsync } from '../../slices/showroom';
 import { SEVICE_TYPE, VEHICLE_TYPE } from '../../constants/order';
-import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../constants/regex';
-import { disabledDate, disabledDateTime } from '../../utils/date';
+import { R_NUMBER, R_NUMBER_PHONE } from '../../constants/regex';
+import { disabledDate, disabledDateTime, setHourISODate } from '../../utils/date';
 import ModalCustomize from '../../components/Customs/ModalCustomize';
 import ShowroomModal from './showroomModal';
 import { useNavigate } from 'react-router-dom';
+import HourPicker from '../../components/HourPicker';
+import dayjs from 'dayjs';
 
 const BookingPage = () => {
     useDocumentTitle('Đặt lịch');
@@ -29,6 +31,7 @@ const BookingPage = () => {
     const [creatingBooking, setCreatingBooking] = useState(false);
     const [isShowroom, setIsShowroom] = useState(true);
     const [date, setDate] = useState(new Date());
+    const [hour, setHour] = useState('8:00');
     const [showroomsFilter, setShowroomsFilter] = useState([]);
     const [filter, setFilter] = useState('');
     const [initialValues, setInitialValues] = useState({});
@@ -96,8 +99,15 @@ const BookingPage = () => {
     }, [showrooms]);
 
     const onFinish = (values) => {
+        const myDate = setHourISODate(date, hour);
         setCreatingBooking(true);
-        createBannerByCustomer({ ...values, address, accountId: user._id, showroomId: filter._id || null })
+        createBannerByCustomer({
+            ...values,
+            appointmentSchedule: myDate,
+            address,
+            accountId: user._id,
+            showroomId: filter._id || null,
+        })
             .then(({ data }) => {
                 if (data.message) {
                     Notification(NOTIFICATION_TYPE.WARNING, data.message);
@@ -462,7 +472,14 @@ const BookingPage = () => {
                 >
                     <h1 className="text-center text-xl font-semibold text-[#1f2125] pt-8 ">ĐẶT LỊCH DỊCH VỤ</h1>
                     <Row className="pt-8 font-mono" gutter={[8, 16]} wrap>
-                        <Col span={12}>
+                        <Col
+                            xs={{
+                                span: 24,
+                            }}
+                            lg={{
+                                span: 12,
+                            }}
+                        >
                             <Col span={24}>
                                 <Col span={24} className="pb-6">
                                     <Avatar
@@ -584,7 +601,14 @@ const BookingPage = () => {
                                 </Col>
                             </Col>
                         </Col>
-                        <Col span={12}>
+                        <Col
+                            xs={{
+                                span: 24,
+                            }}
+                            lg={{
+                                span: 12,
+                            }}
+                        >
                             <Col span={24}>
                                 <Col span={24} className="pb-6">
                                     <Avatar
@@ -716,38 +740,43 @@ const BookingPage = () => {
                                         </Form.Item>
                                     )}
                                 </Col>
-                                <Col span={24}>
-                                    <Form.Item
-                                        name="appointmentSchedule"
-                                        label={<p className="text-base font-semibold">Thời gian</p>}
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                                            },
-                                        ]}
-                                    >
-                                        <DatePicker
-                                            size="large"
-                                            className="w-full border-[#02b875]"
-                                            placeholder="Vui lòng chọn thời gian"
-                                            format={HOUR_DATE_TIME}
-                                            disabledDate={disabledDate}
-                                            disabledTime={disabledDateTime}
-                                            showToday
-                                            value={date}
-                                            onChange={(date, dateString) => {
-                                                const dateStringConvert = new Date(dateString);
-                                                setDate(dateStringConvert);
-                                            }}
-                                            showTime
-                                        />
-                                    </Form.Item>
-                                </Col>
+                                <Row gutter={16}>
+                                    <Col span={12}>
+                                        <Form.Item
+                                            label={
+                                                <p className="text-base font-semibold">
+                                                    <span className="text-[#ff4d4f] text-base">* </span>Ngày
+                                                </p>
+                                            }
+                                        >
+                                            <DatePicker
+                                                size="large"
+                                                defaultValue={dayjs()}
+                                                format={DATE_FORMAT}
+                                                mode="date"
+                                                className="w-full border-[#02b875]"
+                                                placeholder="Ngày"
+                                                showToday
+                                                onChange={(date, dateString) => setDate(dateString)}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={12}>
+                                        <Form.Item
+                                            label={
+                                                <p className="text-base font-semibold">
+                                                    <span className="text-[#ff4d4f] text-base">* </span>Giờ
+                                                </p>
+                                            }
+                                        >
+                                            <HourPicker onChange={(value) => setHour(value)} format={'HH'} />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
                             </Col>
                         </Col>
                     </Row>
-                    <Form.Item wrapperCol={{ offset: 8, span: 8 }} name="#">
+                    <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
                         <Button
                             htmlType="submit"
                             type="primary"
