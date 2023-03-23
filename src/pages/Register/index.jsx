@@ -187,7 +187,7 @@ const Register = () => {
                             name="password"
                             rules={[
                                 { required: true, message: 'Vui lòng nhập Mật khẩu!' },
-                                { min: 6, message: 'Mật khẩu phải đủ 8 ký tự!' },
+                                { min: 8, message: 'Mật khẩu phải đủ 8 ký tự!' },
                             ]}
                         >
                             <Input.Password className="py-2 text-base" type="password" placeholder="Mật khẩu" />
