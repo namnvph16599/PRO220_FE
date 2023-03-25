@@ -21,6 +21,8 @@ import HourPicker from '../../components/HourPicker';
 import dayjs from 'dayjs';
 import app from '../Register/fisebase_config';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
+import { ModalOtp } from '../Booking/modalOTP';
+
 const auth = getAuth(app);
 
 const onCaptchVerify = () => {
@@ -72,6 +74,9 @@ const BookingPage = () => {
     const [address, setAddress] = useState('');
     const [service_type, setService_type] = useState([]);
     const [otp, setOtp] = useState('');
+    const [loadingVerify, setLoadingVerify] = useState(false);
+    const [openOpt, setOpenOtp] = useState(false);
+    const [dataForm, setDataForm] = useState({});
 
     const coordinate = useRef({
         latitude: '',
@@ -83,17 +88,16 @@ const BookingPage = () => {
         window.confirmationResult
             .confirm(otp)
             .then((result) => {
-                // User signed in successfully.
-                setIsVerify(true);
-                Notification(NOTIFICATION_TYPE.WARNING, 'Xác thực thành công!', 'Vui lòng nhập các trường còn thiếu.');
+                // call api create order and register tk
+                console.log('ok');
+                setOpenOtp(false);
+                setDataForm({});
+                Notification(NOTIFICATION_TYPE.SUCCESS, 'Đặt lich thanh cong!');
             })
             .catch((error) => {
                 Notification(NOTIFICATION_TYPE.ERROR, 'Đã có lỗi xảy ra!', formatErrorMessageSendOTP(error.message));
                 if (formatErrorMessageSendOTP(error.message) === 'Hết thời gian xác thực OTP!') {
                     setOtp('');
-                    setIsVerify(false);
-                    setSendOTP(false);
-                    setLoadingSendOTP(false);
                 }
             })
             .finally(() => {
@@ -108,7 +112,7 @@ const BookingPage = () => {
         signInWithPhoneNumber(auth, phoneConvert, appVerifier)
             .then((confirmationResult) => {
                 window.confirmationResult = confirmationResult;
-                // setSendOTP(true);
+                setOpenOtp(true);
             })
             .catch((error) => {
                 Notification(
@@ -116,9 +120,6 @@ const BookingPage = () => {
                     'Đã có lỗi xảy ra! Vui lòng thử lại',
                     formatErrorMessageSendOTP(error.message),
                 );
-            })
-            .finally(() => {
-                // setLoadingSendOTP(false);
             });
     };
 
@@ -189,9 +190,8 @@ const BookingPage = () => {
         })
             .then(({ data }) => {
                 if (data.message) {
-                    console.log(data.number_phone);
                     onSignInSubmit(data.number_phone);
-                    // Notification(NOTIFICATION_TYPE.WARNING, data.message);
+                    setDataForm(data);
                     return;
                 }
                 Notification(NOTIFICATION_TYPE.SUCCESS, 'Bạn đã đặt lịch thành công!');
@@ -849,6 +849,9 @@ const BookingPage = () => {
                             </Button>
                         </Form.Item>
                     </Form>
+                    <ModalCustomize showModal={openOpt} footer={null} setShowModal={() => setOpenOtp(false)}>
+                        <ModalOtp otp={otp} setOtp={setOtp} verifyCode={verifyCode} loadingVerify={loadingVerify} />
+                    </ModalCustomize>
                 </>
             )}
         </div>

@@ -1,8 +1,8 @@
 import React from 'react';
-
-const modalOTP = ({ setOtp, verifyCode, loadingVerify }) => {
+import { Button, Input } from 'antd';
+export const ModalOtp = ({ otp, setOtp, loadingVerify, verifyCode }) => {
     return (
-        <div>
+        <div className="pt-6">
             <Input
                 type="text"
                 className="w-full h-10 rouded py-2 text-base"
@@ -21,5 +21,3 @@ const modalOTP = ({ setOtp, verifyCode, loadingVerify }) => {
         </div>
     );
 };
-
-export default modalOTP;
