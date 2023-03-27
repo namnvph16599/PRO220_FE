@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
+    Table,
     Avatar,
     Button,
     Col,
@@ -36,6 +37,8 @@ import { useGetParam } from '../../../utils/param';
 import { paymentVNPay, sendMail, updateStatusBill } from '../../../api/payment';
 import { WalletOutlined } from '@ant-design/icons';
 import { SolutionOutlined } from '@ant-design/icons/lib/icons';
+import { useReactToPrint } from 'react-to-print';
+import ComponentToPrint from './ComponentToPrint';
 
 const UpdateOrder = (props) => {
     useDocumentTitle('Cập nhật đơn hàng');
@@ -57,6 +60,8 @@ const UpdateOrder = (props) => {
     const [loading, setLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [statusPayment, setStatusPayment] = useState(false);
+    const componentRef = useRef(null);
+
     const payment = async () => {
         if (values == 1) {
             setOpenModal(true);
@@ -215,6 +220,67 @@ const UpdateOrder = (props) => {
                 setLoadingUpdateStatus(false);
             });
     };
+
+    const handleSaveClick = () => {
+        console.log('Save button clicked');
+        // do something
+    };
+
+    const handleCloseClick = () => {
+        console.log('Cancel button clicked');
+        // do something
+    };
+
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+    });
+
+    // const handlePrint = useReactToPrint({
+    //     content: componentRef.current,
+    //     documentTitle: 'AwesomeFileName',
+    //     //   onBeforeGetContent: handleOnBeforeGetContent,
+    //     //   onBeforePrint: handleBeforePrint,
+    //     //   onAfterPrint: handleAfterPrint,
+    //     //   removeAfterPrint: true,
+    // });
+
+    const columns = [
+        {
+            title: 'Tên vật tư',
+            dataIndex: 'name',
+        },
+        {
+            title: 'Số lượng',
+            className: 'column-money',
+            dataIndex: 'qty',
+            align: 'right',
+        },
+        {
+            title: 'Giá',
+            dataIndex: 'price',
+        },
+    ];
+
+    const data = [
+        {
+            key: '1',
+            name: 'Bugi',
+            qty: '1',
+            price: '10.000',
+        },
+        {
+            key: '2',
+            name: 'Lốp trước',
+            qty: '1',
+            price: '300.000',
+        },
+        {
+            key: '3',
+            name: 'Má phanh',
+            qty: '1',
+            price: '70.000',
+        },
+    ];
 
     return (
         <div>
@@ -524,7 +590,66 @@ const UpdateOrder = (props) => {
                                 </Form.Item>
                             )}
                         </Col>
+                        <Col span={12}>
+                            <Col span={24} className="pb-6">
+                                <Avatar
+                                    size={34}
+                                    icon={<p className="text-base font-semibold leading-8">4</p>}
+                                    style={{ backgroundColor: '#02b875' }}
+                                />
+                                <span className="text-base pl-4 font-medium">Hóa đơn</span>
+                            </Col>
+
+                            <div ref={componentRef} className="p-5">
+                                <p className="text-center font-bold text-[16px]">Hệ thống sữa chữa xe máy Dodoris</p>
+                                <p className="text-center">
+                                    Địa chỉ: 191 Phạm Văn Đông, Xuân Đỉnh, Bắc Từ Liêm, Hà Nội
+                                </p>
+                                <p>
+                                    khách hàng: <span className="font-bold">Huy Cắt Moi</span>
+                                </p>
+                                <p>Số DT: 08754654646</p>
+                                <p>Dịch vụ: sữa chữa tại cửa hàng</p>
+                                <p className="mb-3">
+                                    Thời gian: <span>9h80 / 30-04-2023</span>
+                                </p>
+                                <Table
+                                    columns={columns}
+                                    dataSource={data}
+                                    bordered
+                                    title={() => <p className="font-bold">Vật tư</p>}
+                                    pagination={false}
+                                />
+                                <div className="my-3 w-full">
+                                    <div className="flex gap-10">
+                                        <p>Tổng</p>
+                                        <p>
+                                            <span className="font-bold"> 380.000</span> vnd
+                                        </p>
+                                    </div>
+                                    <div className="flex gap-10">
+                                        <p>Giảm giá</p>
+                                        <p>
+                                            <span className="font-bold"> 0</span> vnd
+                                        </p>
+                                    </div>
+                                    <div className="flex gap-10">
+                                        <p>phí dịch vụ</p>
+                                        <p>
+                                            <span className="font-bold"> 0</span> vnd
+                                        </p>
+                                    </div>
+                                    <div className="flex gap-10">
+                                        <p>Tổng Thanh Toán</p>
+                                        <p>
+                                            <span className="font-bold text-red-600"> 380.000</span> vnd
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
                     </Row>
+
                     <Modal
                         open={openModal}
                         title="Thanh Toán"
@@ -549,7 +674,7 @@ const UpdateOrder = (props) => {
                                     values == 0 ? '' : 'btn-primary'
                                 } text-white bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out font-medium rounded-lg text-sm text-center mr-3 md:mr-0`}
                                 disabled={values == 0 ? true : false}
-                                onClick={() => payment()}
+                                onClick={() => handlePrint()}
                             >
                                 Thanh Toán
                             </Button>
@@ -567,6 +692,14 @@ const UpdateOrder = (props) => {
                     </Form.Item>
                 </Form>
             )}
+            {/* <ReactToPrint
+                trigger={() => {
+                    // NOTE: could just as easily return <SomeComponent />. Do NOT pass an `onClick` prop
+                    // to the root node of the returned component as it will be overwritten.
+                    return <a href="#" ref={tringer}></a>;
+                }}
+                content={() => componentRef.current}
+            /> */}
         </div>
     );
 };
