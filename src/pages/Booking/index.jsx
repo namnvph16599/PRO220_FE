@@ -22,6 +22,7 @@ import dayjs from 'dayjs';
 import app from '../Register/fisebase_config';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 import { ModalOtp } from '../Booking/modalOTP';
+import ServiceType from './serviceType';
 
 const auth = getAuth(app);
 
@@ -76,6 +77,8 @@ const BookingPage = () => {
     const [otp, setOtp] = useState('');
     const [loadingVerify, setLoadingVerify] = useState(false);
     const [openOpt, setOpenOtp] = useState(false);
+    const [serviceType, setServiceType] = useState({});
+    const [isTypeService, setIsServiceEmpty] = useState(true);
     const [dataForm, setDataForm] = useState({});
 
     const coordinate = useRef({
@@ -181,6 +184,7 @@ const BookingPage = () => {
     const onFinish = (values) => {
         const myDate = setHourISODate(date, hour);
         setCreatingBooking(true);
+        // if (_.isEmpty(serviceType)) setIsServiceEmpty(true);
         createBannerByCustomer({
             ...values,
             appointmentSchedule: myDate,
@@ -628,42 +632,19 @@ const BookingPage = () => {
                                     </Col>
                                     <Col span={24}>
                                         <Form.Item
-                                            name="serviceType"
-                                            label={<p className="text-base font-semibold">Dịch vụ sửa chữa</p>}
+                                            name="serviceSelect"
                                             rules={[
                                                 {
-                                                    required: true,
+                                                    required: isTypeService,
                                                     message: 'Quý khách vui lòng không để trống trường thông tin này.',
                                                 },
                                             ]}
-                                            initialValue={SEVICE_TYPE.SHOWROOM}
                                         >
-                                            <Select
-                                                size="large"
-                                                placeholder="Sửa chữa tại..."
-                                                className="h-10 text-base border-[#02b875]"
-                                                onSelect={(value) => {
-                                                    if (
-                                                        value === SEVICE_TYPE.SHOWROOM ||
-                                                        value === SEVICE_TYPE.CONTACT_RESCUE
-                                                    ) {
-                                                        setIsShowroom(true);
-                                                        setService_type([]);
-                                                        setAddress('');
-                                                        setFilter('');
-                                                        return;
-                                                    }
-                                                    setIsShowroom(false);
-                                                }}
-                                            >
-                                                <Select.Option value={SEVICE_TYPE.SHOWROOM}>
-                                                    Sửa chữa/ Bảo dưỡng tại cửa hàng.
-                                                </Select.Option>
-                                                <Select.Option value={SEVICE_TYPE.RESCUE}>Cứu hộ 24/7</Select.Option>
-                                                <Select.Option value={SEVICE_TYPE.CONTACT_RESCUE}>
-                                                    Nhận về sửa chữa
-                                                </Select.Option>
-                                            </Select>
+                                            <ServiceType
+                                                serviceSelect={serviceType}
+                                                getService={setServiceType}
+                                                handleEmpty={setIsServiceEmpty}
+                                            />
                                         </Form.Item>
                                         <Form.Item
                                             name="description"

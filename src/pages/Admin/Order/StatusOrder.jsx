@@ -138,6 +138,7 @@ const StatusOrder = (props) => {
                 onSubmitStatus();
         }
     };
+    console.log(current);
     return (
         <div className="status-content py-4">
             {contextHolder}
@@ -175,15 +176,19 @@ const StatusOrder = (props) => {
                         Chỉnh sửa vật tư
                     </Button>
                 )} */}
-                <Button
-                    onClick={handleChangeStatus}
-                    disabled={disabled}
-                    loading={props.loading}
-                    type="primary"
-                    className="btn-primary h-10 px-4 text-white bg-![#02b875] hover:bg-[#09915f] hover:!text-white font-medium rounded-lg text-base "
-                >
-                    Chuyển trạng thái
-                </Button>
+                {current == 5 ? (
+                    ''
+                ) : (
+                    <Button
+                        onClick={handleChangeStatus}
+                        disabled={disabled}
+                        loading={props.loading}
+                        type="primary"
+                        className="btn-primary h-10 px-4 text-white bg-![#02b875] hover:bg-[#09915f] hover:!text-white font-medium rounded-lg text-base "
+                    >
+                        Chuyển trạng thái
+                    </Button>
+                )}
             </div>
             {showModal === 'cancel' && (
                 <ModalCustomize
