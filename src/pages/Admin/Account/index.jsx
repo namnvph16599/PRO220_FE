@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DeleteOutlined, EditOutlined, SyncOutlined } from '@ant-design/icons';
-import { Popconfirm, Table, Row, Space, Avatar, Button, Tooltip } from 'antd';
+import { Popconfirm, Table, Row, Space, Avatar, Button, Tooltip, Tag } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import { getAccounts, removeAccount } from '../../../api/account';
@@ -11,6 +11,7 @@ import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { getAllRoleAsync } from '../../../slices/role';
 import UpdateAccount from './UpdateAccount';
 import Filter from '../../../components/Filter/Filter';
+import { isEmpty } from 'lodash';
 
 const AccountManager = () => {
     useDocumentTitle('Quản lý thành viên');
@@ -23,6 +24,7 @@ const AccountManager = () => {
     const [data, setData] = useState([]);
     const [roleFilter, setRoleFilter] = useState([]);
     const [showroomsFilter, setShowroomsFilter] = useState([]);
+    const [checkShowroom, setCheckShowroom] = useState([]);
 
     const handleRefetch = async () => {
         setOpen(false);
@@ -46,14 +48,13 @@ const AccountManager = () => {
             })
             .catch((err) => {
                 Notification(NOTIFICATION_TYPE.ERROR, err.message);
-                console.log('remove-account', err);
             });
     };
 
     const getAllAccount = (filter) => {
         getAccounts(filter)
             .then(({ data: res }) => {
-                const newData = res.map((item, index) => {
+                const newData = res.map((item) => {
                     return {
                         key: item._id,
                         ...item,
@@ -61,9 +62,7 @@ const AccountManager = () => {
                 });
                 setData(newData);
             })
-            .catch((err) => {
-                console.log('get acounts err', err);
-            });
+            .catch((err) => {});
     };
 
     useEffect(() => {
@@ -72,11 +71,18 @@ const AccountManager = () => {
 
     useEffect(() => {
         if (showrooms.length === 0) {
-            dispatch(getAllShowroomAsync());
+            dispatch(getAllShowroomAsync(data));
             return;
         }
         setShowroomsFilter(showrooms.map((showroom) => ({ label: showroom.name, value: showroom._id })));
     }, [showrooms]);
+    useEffect(() => {
+        if (!isEmpty(data) && !isEmpty(showrooms)) {
+            const a = data.map((item) => item.showroomId);
+            const checkShowroom = showrooms.filter((item) => !a.includes(item._id));
+            setCheckShowroom(checkShowroom);
+        }
+    }, [data, showrooms]);
     useEffect(() => {
         if (roles.length === 0) {
             dispatch(getAllRoleAsync());
@@ -90,6 +96,7 @@ const AccountManager = () => {
         {
             title: 'Tên',
             dataIndex: 'name',
+            key: 'name',
             render: (name, data) => {
                 return (
                     <Space>
@@ -104,14 +111,17 @@ const AccountManager = () => {
         {
             title: 'Số điện thoại',
             dataIndex: 'number_phone',
+            key: 'number_phone',
         },
         {
             title: 'Email',
             dataIndex: 'email',
+            key: 'email',
         },
         {
             title: 'Vai trò',
             dataIndex: 'roleId',
+            key: 'roleId',
             render: (roleId) => {
                 const role = roles.find((role) => role.id === roleId);
                 if (!role) return '';
@@ -121,15 +131,21 @@ const AccountManager = () => {
         {
             title: 'Cửa hàng',
             dataIndex: 'showroomId',
+            key: 'showroomId',
             render: (showroomId) => {
                 const showroom = showrooms.find((showroom) => showroom._id === showroomId);
-                if (!showroom) return '';
+                if (!showroom)
+                    return (
+                        <Tag color={'geekblue'} key={'ds'}>
+                            {'không có cửa hàng'.toUpperCase()}
+                        </Tag>
+                    );
                 return showroom.name;
             },
         },
         {
             title: '',
-            render: (data) => {
+            render: (data, index) => {
                 return (
                     <Row>
                         <EditOutlined className="text-xl pr-4" onClick={() => setIdUpdate(data._id)} />
@@ -203,10 +219,17 @@ const AccountManager = () => {
                     Thêm thành viên
                 </Button>
             </div>
-            <Table columns={columns} dataSource={data} />
-            {open && <CreateAccount open={open} onClose={setOpen} onRefetch={handleRefetch} />}
+            <Table columns={columns} dataSource={data} rowKey="key" />
+            {open && (
+                <CreateAccount open={open} onClose={setOpen} onRefetch={handleRefetch} checkShowroom={checkShowroom} />
+            )}
             {idUpdate && (
-                <UpdateAccount idUpdate={idUpdate} onClose={setIdUpdate} onRefetch={handleRefetchUpdateAccount} />
+                <UpdateAccount
+                    idUpdate={idUpdate}
+                    onClose={setIdUpdate}
+                    onRefetch={handleRefetchUpdateAccount}
+                    checkShowroom={checkShowroom}
+                />
             )}
         </div>
     );

@@ -97,3 +97,17 @@ h6 {
     background-color: var(--primary-color) !important;
     color: var(--white-color) !important;
 }
+/* css .ant-slider-track */
+
+.ant-slider-track {
+    background-color: #02b875 !important;
+}
+
+.icon-admin{
+    display: flex;
+    align-items: center !important;
+}
+/* css inputn */
+.ant-input:focus {
+    border-color: var(--primary-color) !important;
+}
