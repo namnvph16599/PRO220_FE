@@ -815,7 +815,7 @@ const BookingPage = () => {
                                                         mode="date"
                                                         disabledDate={(current) => {
                                                             const hourPresent = dayjs().format('HH');
-                                                            if (+hourPresent > 17)
+                                                            if (!+hourPresent || +hourPresent >= 17)
                                                                 return dayjs().add(1, 'days') >= current;
                                                             return dayjs().add(-1, 'days') >= current;
                                                         }}
