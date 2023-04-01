@@ -65,7 +65,7 @@ const BookingPage = () => {
     const [loadingInital, setLoadingInital] = useState(true);
     const [creatingBooking, setCreatingBooking] = useState(false);
     const [isShowroom, setIsShowroom] = useState(true);
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(dayjs().add(1, 'day'));
     const [hour, setHour] = useState('8:00');
     const [showroomsFilter, setShowroomsFilter] = useState([]);
     const [filter, setFilter] = useState('');
@@ -791,13 +791,19 @@ const BookingPage = () => {
                                                 >
                                                     <DatePicker
                                                         size="large"
-                                                        defaultValue={dayjs()}
+                                                        defaultValue={date}
                                                         format={DATE_FORMAT}
                                                         mode="date"
+                                                        disabledDate={(current) => {
+                                                            const hourPresent = dayjs().format('HH');
+                                                            if (!+hourPresent || +hourPresent >= 17)
+                                                                return dayjs().add(1, 'days') >= current;
+                                                            return dayjs().add(-1, 'days') >= current;
+                                                        }}
                                                         className="w-full border-[#02b875]"
                                                         placeholder="Ngày"
                                                         showToday
-                                                        onChange={(date, dateString) => setDate(dateString)}
+                                                        onChange={(dateValue, dateString) => setDate(dateValue)}
                                                     />
                                                 </Form.Item>
                                             </Col>
@@ -809,7 +815,11 @@ const BookingPage = () => {
                                                         </p>
                                                     }
                                                 >
-                                                    <HourPicker onChange={(value) => setHour(value)} format={'HH'} />
+                                                    <HourPicker
+                                                        datePicker={date}
+                                                        onChange={(value) => setHour(value)}
+                                                        format={'HH'}
+                                                    />
                                                 </Form.Item>
                                             </Col>
                                         </Row>

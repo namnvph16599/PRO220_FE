@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { Checkbox, Col, Row } from 'antd';
 
-const SubServices = () => {
-    const [value, setValue] = useState([]);
+const SubServices = ({ value, setValue }) => {
     const onChange = (checkedValues) => {
         setValue(checkedValues);
-        console.log('checked = ', checkedValues);
     };
     return (
-        <Checkbox.Group className="w-full" onChange={onChange} defaultValue={value}>
+        <Checkbox.Group className="w-full" onChange={(value) => onChange(value)} defaultValue={value}>
             <Row>
                 <Col span={8}>
                     <Checkbox value="A">Bão dưỡng toàn bộ</Checkbox>
@@ -29,16 +27,19 @@ const SubServices = () => {
                     <Checkbox value="F">Vệ sinh sện xe</Checkbox>
                 </Col>
                 <Col span={8}>
-                    <Checkbox value="E">Vệ sinh Pô xe</Checkbox>
+                    <Checkbox value="G">Vệ sinh Pô xe</Checkbox>
                 </Col>
                 <Col span={8}>
-                    <Checkbox value="E">Vệ sinh bình xăng</Checkbox>
+                    <Checkbox value="H">Vệ sinh bình xăng</Checkbox>
                 </Col>
                 <Col span={8}>
-                    <Checkbox value="E">Rửa xe</Checkbox>
+                    <Checkbox value="L">Rửa xe</Checkbox>
                 </Col>
                 <Col span={8}>
-                    <Checkbox value="E">Thay dầu</Checkbox>
+                    <Checkbox value="M">Thay dầu</Checkbox>
+                </Col>
+                <Col span={8}>
+                    <Checkbox value="K">Cứu hộ xe</Checkbox>
                 </Col>
             </Row>
         </Checkbox.Group>

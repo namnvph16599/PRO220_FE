@@ -61,6 +61,7 @@ const UpdateOrder = (props) => {
     const [openModal, setOpenModal] = useState(false);
     const [statusPayment, setStatusPayment] = useState(false);
     const componentRef = useRef(null);
+    const [subService, setSubService] = useState([]);
 
     const payment = async () => {
         if (values == 1) {
@@ -94,6 +95,7 @@ const UpdateOrder = (props) => {
             }
         })();
     }, [responseCode]);
+
     const updateStatusOrder = async () => {
         const value = {
             id: id,
@@ -230,18 +232,26 @@ const UpdateOrder = (props) => {
 
     const columns = [
         {
-            title: 'Tên vật tư',
+            title: 'Tên vật tư & Công việc',
             dataIndex: 'name',
+            width: '50%',
         },
         {
             title: 'Số lượng',
             className: 'column-money',
             dataIndex: 'qty',
-            align: 'right',
         },
         {
-            title: 'Giá',
+            title: 'Đơn giá',
             dataIndex: 'price',
+        },
+        {
+            title: 'Tiền P.Tùng',
+            dataIndex: 'partPrice',
+        },
+        {
+            title: 'Tiền Công',
+            dataIndex: 'priceWorking',
         },
     ];
 
@@ -529,16 +539,7 @@ const UpdateOrder = (props) => {
                                     })}
                                 </Select>
                             </Form.Item>
-                            <Form.Item label={<p className="text-base font-semibold">Giá vật tư</p>} name="price">
-                                <InputNumber
-                                    className="h-10 w-full text-base border-[#02b875]"
-                                    formatter={(value) => `VNĐ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                    parser={(value) => {
-                                        return value.replace(/\VNĐ\s?|(,*)/g, '');
-                                    }}
-                                    disabled
-                                />
-                            </Form.Item>
+
                             {isShowroom ? null : (
                                 <Form.Item label={<p className="text-base font-semibold">Phụ phí</p>} name="subPrice">
                                     <InputNumber
@@ -552,16 +553,6 @@ const UpdateOrder = (props) => {
                                 </Form.Item>
                             )}
 
-                            <Form.Item label={<p className="text-base font-semibold">Tổng đơn hàng</p>} name="total">
-                                <InputNumber
-                                    className="h-10 w-full text-base border-[#02b875]"
-                                    formatter={(value) => `VNĐ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                    parser={(value) => {
-                                        return value.replace(/\VNĐ\s?|(,*)/g, '');
-                                    }}
-                                    disabled
-                                />
-                            </Form.Item>
                             <Col span={24}>
                                 <Col span={24} className="pb-6">
                                     <Avatar
@@ -571,7 +562,7 @@ const UpdateOrder = (props) => {
                                     />
                                     <span className="text-base pl-4 font-medium">Dịch vụ khác</span>
                                 </Col>
-                                <SubServices />
+                                <SubServices value={subService} setValue={setSubService} />
                             </Col>
                         </Col>
                         <Col span={12}>
