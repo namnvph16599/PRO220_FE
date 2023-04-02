@@ -56,21 +56,23 @@ const SelectMaterials = (props) => {
     };
 
     const handleRemoveMaterial = (id) => {
+        handleGiveBackMaterial(id);
         const otherMaterialIds = materialIds.filter((materialId) => materialId !== id);
         handleOnChangeMaterial(otherMaterialIds);
     };
+
     const handleGiveBackMaterial = (id) => {
-        const data = order.materials.find((value) => value.materialId === id);
+        const data = props.order.materials.find((value) => value.materialId === id);
         const dataPost = {
-            idShowroom: props.order.showroomId,
+            showroomId: props.order.showroomId,
             material: {
                 materialId: id,
-                quantity: data.qty,
+                qty: data.qty,
             },
         };
         //tra laij vat tu
         giveBackMaterial(dataPost);
-        //luu lai order
+        // luu lai order
     };
 
     const handleOnChangeMaterial = (newMarterials) => {
@@ -81,15 +83,28 @@ const SelectMaterials = (props) => {
                 'materialId.price',
                 0,
             );
+            const name = _.get(
+                _.find(materialsDefault, (value) => value.materialId._id === marterial),
+                'materialId.name',
+                0,
+            );
             const qty = _.get(
                 _.find(selectedMaterials, (item) => item.materialId === marterial, {}),
                 'qty',
                 1,
             );
+            const priceInitial = _.get(
+                _.find(selectedMaterials, (item) => item.materialId === marterial, {}),
+                'priceInitial',
+                1,
+            );
+
             return {
                 materialId: marterial,
                 qty,
                 price,
+                name,
+                priceInitial,
             };
         });
         setSelectedMaterials(materialsWithQuantity);
@@ -97,13 +112,12 @@ const SelectMaterials = (props) => {
 
     return (
         <ModalCustomize
-            title={!props.isChangeMaterials ? 'Chuyển trạng thái: Đang xử lý' : 'Chỉnh sửa vật tư'}
             showModal={props.showModal}
             setShowModal={props.setShowModal}
             value={materialIds}
             footer={true}
             onSubmit={() => {
-                //handle change materials
+                // handle change materials
                 if (props.isChangeMaterials) {
                     const materialsNew = [];
                     _.forEach(selectedMaterials, (item) => {
@@ -157,7 +171,7 @@ const SelectMaterials = (props) => {
                     materialIds,
                     reasons: [],
                 });
-                props.setShowModal();
+                props.setShowModal(false);
             }}
             disabled={true}
             width={'60%'}
@@ -255,6 +269,7 @@ const SelectMaterials = (props) => {
                                                                 materialId: materialSeleted.materialId,
                                                                 qty: value,
                                                                 price: materialSeleted.price,
+                                                                name: materialSeleted.name,
                                                             };
                                                         }
                                                         return materialSeleted;
@@ -263,7 +278,11 @@ const SelectMaterials = (props) => {
                                                 setSelectedMaterials(materialsWithQuantity);
                                             }}
                                         />
-                                        <button onClick={() => handleRemoveMaterial(selectedMaterial.materialId)}>
+                                        <button
+                                            onClick={() => {
+                                                handleRemoveMaterial(selectedMaterial.materialId);
+                                            }}
+                                        >
                                             <CloseCircleOutlined />
                                         </button>
                                     </span>
