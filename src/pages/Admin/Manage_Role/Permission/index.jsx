@@ -18,6 +18,7 @@ const index = () => {
     const Loading = useSelector((state) => state.role.loading);
     const [id, setId] = useState('');
     const data = useRef([]);
+    const [showroomsFilter, setShowroomsFilter] = useState([]);
     const columns = [
         {
             title: 'Name',
@@ -60,12 +61,13 @@ const index = () => {
         });
         setDataTree(value);
         data.current = value;
+        setShowroomsFilter(value.map((item) => ({ label: item.name, value: item.key })));
     }, [listPermission]);
     const handleFilter = (values) => {
-        if (values.name == '') {
-            setDataTree(dataTree);
+        if (values.nameId.length == 0) {
+            setDataTree(data.current);
         } else {
-            setDataTree(dataTree.filter((item) => item.name == hanldInput(values.name)));
+            setDataTree(data.current.filter((item) => values.nameId.includes(item.key)));
         }
     };
     const handleFilters = () => {
@@ -88,7 +90,10 @@ const index = () => {
                             items={[
                                 {
                                     label: <Space align="center">Tên Quyền</Space>,
-                                    key: 'name',
+                                    key: 'nameId',
+                                    type: 'select',
+                                    mode: 'multiple',
+                                    values:showroomsFilter,
                                     name: 'Tên Quyền....',
                                 },
                             ]}
