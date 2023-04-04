@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Space, Table, Tag, Spin } from 'antd';
+import { Space, Table, Tag, Spin, Button } from 'antd';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import DrawerCreateRole from './DrawerCreateRole';
 import { getAllRoleAsync } from '../../../../slices/role';
@@ -54,23 +54,23 @@ const index = () => {
                     tags: ['cool', 'teacher'],
                 };
             });
-            const newData = showdata.filter((item)=>item.name !== 'Admin')
+            const newData = showdata.filter((item) => item.name !== 'Admin');
             setData(newData);
         })();
     }, [Role]);
     return (
         <div>
-            <button
-                type="button"
-                onClick={() => OpenShowDrawer()}
-                className="focus:outline-none h-10 text-white bg-[#02b875] hover:bg-[#09915f] focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-base px-5 py-2.5 my-5"
-            >
-                <PlusOutlined className="pr-2 text-white " />
-                Thêm
-            </button>
+            <div className="flex justify-between">
+                <Button onClick={() => OpenShowDrawer()} className="btn-primary text-white mr-5" type="primary">
+                    Thêm quyền
+                </Button>
+                <p className="p-5">
+                    Số lượng: <span className="font-bold">{data?.length}</span>
+                </p>
+            </div>
             <>
                 <Spin spinning={Loading}>
-                    <Table columns={columns} dataSource={data} />;
+                    <Table columns={columns} dataSource={data} />
                     <DrawerCreateRole
                         open={open}
                         onClose={(data) => {
