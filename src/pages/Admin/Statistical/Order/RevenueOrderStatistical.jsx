@@ -13,19 +13,36 @@ import { setCategoriesByType } from '../../../../utils/statistical';
 
 const defaultSeries = [
     {
-        name: 'Chưa thanh toán',
+        type: 'column',
+        name: 'Chi phí',
         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     },
     {
-        name: 'Đã thanh toán',
+        type: 'column',
+        name: 'Doanh thu',
         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    },
+    {
+        type: 'column',
+        name: 'Lợi nhuận',
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    },
+    {
+        type: 'spline',
+        name: 'Line doanh thu',
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        marker: {
+            lineWidth: 2,
+            lineColor: Highcharts.getOptions().colors[3],
+            fillColor: 'white',
+        },
     },
 ];
 const RevenueOrderStatistical = () => {
     useDocumentTitle('Thống kê doanh thu');
     const dispatch = useDispatch();
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
-    const [time, setTime] = useState();
+    const [time, setTime] = useState(dayjs());
     const [type, setType] = useState('date');
     const [categories, setCategories] = useState([]);
     const [series, setSeries] = useState(defaultSeries);
@@ -50,6 +67,7 @@ const RevenueOrderStatistical = () => {
         if (time && showroomIdSeleted) {
             getOrderRevenue({ type, time, showroomId: showroomIdSeleted })
                 .then(({ data: res }) => {
+                    console.log('res', res);
                     setData(res);
                 })
                 .catch((err) => {
@@ -64,17 +82,26 @@ const RevenueOrderStatistical = () => {
         switch (type) {
             case 'date':
                 const defaultSeriesClone = _.cloneDeep(defaultSeries);
-                _.forEach(data.paymented, (item) => {
+                _.forEach(data, (item) => {
+                    console.log('item', item);
                     const hour = dayjs(item.createdAt).hour();
-                    const idx = `[1].data[${hour}]`;
-                    const valuePrev = _.get(defaultSeriesClone, idx, 0);
-                    _.set(defaultSeriesClone, idx, valuePrev + _.get(item, 'total', 0));
-                });
-                _.forEach(data.not_payment, (item) => {
-                    const hour = dayjs(item.createdAt).hour();
-                    const idx = `[0].data[${hour}]`;
-                    const valuePrev = _.get(defaultSeriesClone, idx, 0);
-                    _.set(defaultSeriesClone, idx, valuePrev + _.get(item, 'total', 0));
+                    console.log('hour', hour);
+                    //tinh chi phi
+                    const expense = _.reduce(
+                        item.materials,
+                        (total, material) => {
+                            const totalMaterial = material.qty * material.price;
+                            return total + totalMaterial;
+                        },
+                        0,
+                    );
+                    const idxExpense = `[0].data[${hour}]`;
+                    const expensePrev = _.get(defaultSeriesClone, idxExpense, 0);
+                    _.set(defaultSeriesClone, idxExpense, expensePrev + expense);
+                    //tinh loi nhuan
+                    const profit = item.total - expense;
+                    console.log(111, profit);
+                    //tinh doanh thu
                 });
                 setSeries(defaultSeriesClone);
                 break;
@@ -215,9 +242,6 @@ const RevenueOrderStatistical = () => {
                     <HighchartsReact
                         highcharts={Highcharts}
                         options={{
-                            chart: {
-                                type: 'line',
-                            },
                             title: {
                                 text: null,
                             },
@@ -237,19 +261,22 @@ const RevenueOrderStatistical = () => {
                                     },
                                 },
                             },
-                            plotOptions: {
-                                line: {
-                                    dataLabels: {
-                                        enabled: true,
-                                        formatter: function () {
-                                            const value = this.y;
-                                            if (!value) return '';
-                                            const valueFormat = value.toLocaleString('en') + ' VNĐ';
-                                            return valueFormat;
-                                        },
-                                    },
-                                    enableMouseTracking: false,
-                                },
+                            // plotOptions: {
+                            //     line: {
+                            //         dataLabels: {
+                            //             enabled: true,
+                            //             formatter: function () {
+                            //                 const value = this.y;
+                            //                 if (!value) return '';
+                            //                 const valueFormat = value.toLocaleString('en') + ' VNĐ';
+                            //                 return valueFormat;
+                            //             },
+                            //         },
+                            //         enableMouseTracking: false,
+                            //     },
+                            // },
+                            tooltip: {
+                                valueSuffix: ' million liters',
                             },
                             series,
                         }}
