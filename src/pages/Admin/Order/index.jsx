@@ -51,7 +51,6 @@ const OrderManage = () => {
             title: 'Loại hình dịch vụ',
             dataIndex: 'serviceType',
             render: (servviceType) => {
-                console.log('servviceType', servviceType);
                 switch (servviceType) {
                     case SEVICE_TYPE.SHOWROOM:
                         return 'Sửa chữa/ Bảo dưỡng tại cửa hàng.';
