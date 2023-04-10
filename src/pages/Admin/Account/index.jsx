@@ -54,11 +54,9 @@ const AccountManager = () => {
     const getAllAccount = (filter) => {
         getAccounts(filter)
             .then(({ data: res }) => {
-                const newData = res.map((item) => {
-                    return {
-                        key: item._id,
-                        ...item,
-                    };
+                const Data = res.filter((item) => item.roleId !== '640317c7f28e238735a29128');
+                const newData = Data.map((item) => {
+                    return { key: item._id, ...item };
                 });
                 setData(newData);
             })
@@ -125,7 +123,7 @@ const AccountManager = () => {
             render: (roleId) => {
                 const role = roles.find((role) => role.id === roleId);
                 if (!role) return '';
-                return role.name;
+                return role.name !== 'Admin' && role.name;
             },
         },
         {
@@ -173,6 +171,9 @@ const AccountManager = () => {
         <div className="banner-content">
             <div className="flex justify-between align-center pb-4">
                 <div>
+                    <Button onClick={() => setOpen(true)} className="btn-primary text-white mr-5" type="primary">
+                        Thêm thành viên
+                    </Button>
                     <button className="pr-6" onClick={() => handleFilter()}>
                         <Tooltip title="Làm mới đơn hàng">
                             <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
@@ -215,9 +216,11 @@ const AccountManager = () => {
                         onFilter={handleFilter}
                     />
                 </div>
-                <Button onClick={() => setOpen(true)} className="btn-primary text-white" type="primary">
-                    Thêm thành viên
-                </Button>
+                <>
+                    <p className="p-5">
+                        Số lượng: <span className="font-bold">{data?.length}</span>
+                    </p>
+                </>
             </div>
             <Table columns={columns} dataSource={data} rowKey="key" />
             {open && (

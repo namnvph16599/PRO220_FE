@@ -1,21 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import {
-    Table,
-    Avatar,
-    Button,
-    Col,
-    DatePicker,
-    Form,
-    Input,
-    InputNumber,
-    Row,
-    Select,
-    Tooltip,
-    Radio,
-    Space,
-    Modal,
-    Alert,
-} from 'antd';
+import { Table, Avatar, Button, Col, DatePicker, Form, Input, Row, Radio, Space, Modal, Alert } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getOrderById, updateOrderStatus } from '../../../api/order';
@@ -24,7 +8,6 @@ import dayjs from 'dayjs';
 import SpinCustomize from '../../../components/Customs/Spin';
 import { ORDER_STATUS, SEVICE_TYPE, VEHICLE_TYPE } from '../../../constants/order';
 import { HOUR_DATE_TIME } from '../../../constants/format';
-import StatusOrder from './StatusOrder';
 import './order.css';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import { disabledDate, disabledDateTime } from '../../../utils/date';
@@ -32,30 +15,15 @@ import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../../constants/regex';
 import { Notification } from '../../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { getMaterialsWarehouseAsync } from '../../../slices/warehouse';
-import { updateOrderAsync } from '../../../slices/order';
 import { useGetParam } from '../../../utils/param';
-import { paymentVNPay, sendMail, updateStatusBill } from '../../../api/payment';
-import { WalletOutlined } from '@ant-design/icons';
+import { sendMail, updateStatusBill } from '../../../api/payment';
 import { RightOutlined, SolutionOutlined } from '@ant-design/icons/lib/icons';
 import { useReactToPrint } from 'react-to-print';
 import SubServices from './SubServices';
 import StatusOrderDisplay from './StatusOrderDisplay';
 import SelectMaterials from './SelectMaterials';
 import { updateOrder } from '../../../api/order';
-
-const dataSubService = [
-    { _id: 1, name: 'Bảo dưỡng toàn bộ', fee: 280000 },
-    { _id: 2, name: 'Vệ sinh kim phun', fee: 120000 },
-    { _id: 3, name: 'Vệ sinh lọc gió', fee: 90000 },
-    { _id: 4, name: 'Vệ sinh buồng đốt', fee: 100000 },
-    { _id: 5, name: 'Vệ sinh nồi xe', fee: 170000 },
-    { _id: 6, name: 'Vệ sinh sện xe', fee: 80000 },
-    { _id: 7, name: 'Vệ sinh Pô xe', fee: 75000 },
-    { _id: 8, name: 'Rửa xe', fee: 25000 },
-    { _id: 9, name: 'Thay dầu', fee: 15000 },
-    { _id: 10, name: 'Vệ sinh bình xăng', fee: 105000 },
-    { _id: 11, name: 'Cứu hộ xe', fee: 100000 },
-];
+import { getApiSubService } from '../../../api/service';
 
 const UpdateOrder = (props) => {
     useDocumentTitle('Cập nhật đơn hàng');
@@ -63,7 +31,6 @@ const UpdateOrder = (props) => {
     const orders = useSelector((state) => state.order.orders.values);
     const materials = useSelector((state) => state.warehouse.materials.value);
     const showroomId = useSelector((state) => state.user.currentUser.values.showroomId);
-    const updating = useSelector((state) => state.order.updateOrder.loading);
     const errors = useSelector((state) => state.order.updateOrder.errors);
     const [values, setValues] = useState(0);
     const { id } = useParams();
@@ -71,9 +38,7 @@ const UpdateOrder = (props) => {
     const [initialValues, setInitialValues] = useState({});
     const [isShowroom, setIsShowroom] = useState(true);
     const [date, setDate] = useState(new Date());
-    const [loadingUpdateStatus, setLoadingUpdateStatus] = useState(false);
     const [form] = Form.useForm();
-    const [responseCode] = useGetParam('vnp_ResponseCode');
     const [loading, setLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [statusPayment, setStatusPayment] = useState(false);
@@ -88,6 +53,7 @@ const UpdateOrder = (props) => {
     const [total, setTotal] = useState(0);
     const [dateStart, setDateStart] = useState(new Date());
     const [dateFinish, setDateFinish] = useState(new Date());
+    const [dataSubService, setDataSubService] = useState([]);
 
     const payment = async () => {
         if (values == 1) {
@@ -109,6 +75,15 @@ const UpdateOrder = (props) => {
     const onChange = (e) => {
         setValues(e.target.value);
     };
+
+    const fetchSubService = async () => {
+        const dataSub = await getApiSubService();
+        setDataSubService(dataSub.data);
+    };
+
+    useEffect(() => {
+        fetchSubService();
+    }, []);
 
     useEffect(() => {
         if (statusPayment) {
@@ -231,7 +206,7 @@ const UpdateOrder = (props) => {
                 price: material.price,
                 qty: material.qty,
                 name: material.name,
-                priceImport: material.priceImport,
+                priceInitial: material.priceInitial,
                 unit: material.unit,
                 partPrice: material.qty * material.price,
             };
@@ -256,6 +231,7 @@ const UpdateOrder = (props) => {
             materialIds: orders.materialIds,
             reasons: orders.reasons,
             total: total,
+            tg_tra_xe: status >= 4 ? dateFinish : null,
             status,
         })
             .then(({ data }) => {
@@ -324,9 +300,9 @@ const UpdateOrder = (props) => {
 
     const onFinish = async (data) => {
         const _id = order._id;
-        const dataOrder = await updateOrder(_id, data);
+        const dataOrder = await updateOrder(_id, { ...data, status: order.status });
         if (dataOrder) {
-            Notification(NOTIFICATION_TYPE.SUCCESS, 'Cập nhật thêm thông tin thành công');
+            Notification(NOTIFICATION_TYPE.SUCCESS, 'Cập nhật thông tin thành công');
             setOrder(dataOrder.data);
         }
     };
@@ -574,7 +550,11 @@ const UpdateOrder = (props) => {
                                                 format={HOUR_DATE_TIME}
                                                 disabledDate={disabledDate}
                                                 disabledTime={disabledDateTime}
-                                                value={dateStart}
+                                                value={
+                                                    order?.tg_nhan_xe == null
+                                                        ? dayjs(dateStart).format(HOUR_DATE_TIME)
+                                                        : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)
+                                                }
                                                 showNow={false}
                                                 // onChange={(date, dateString) => {
                                                 //     const dateStringConvert = new Date(dateString);
@@ -585,28 +565,8 @@ const UpdateOrder = (props) => {
                                         </Form.Item>
                                     </Col>
 
-                                    {/* <Col span={24}>
-                                        <Form.Item
-                                            label={<p className="text-base font-semibold">Thời gian trả xe thực tế</p>}
-                                            name="tg_tra_xe"
-                                        >
-                                            <DatePicker
-                                                disabled
-                                                size="large"
-                                                className="w-full border-[#02b875]"
-                                                placeholder="Vui lòng chọn thời gian"
-                                                format={HOUR_DATE_TIME}
-                                                disabledDate={disabledDate}
-                                                disabledTime={disabledDateTime}
-                                                value={dateFinish}
-                                                showNow={false}
-                                                showTime
-                                            />
-                                        </Form.Item>
-                                    </Col> */}
-
                                     <Button
-                                        type="primary"
+                                        // type="primary"
                                         htmlType="submit"
                                         className="btn-primary text-white bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out
                         font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
@@ -637,6 +597,7 @@ const UpdateOrder = (props) => {
                                 showModal={showModal}
                                 setShowModal={setShowModal}
                                 handleOkCancel={(data) => {
+                                    // console.log(data.materials);
                                     updateMaterials(order._id, data);
                                 }}
                             />
@@ -735,8 +696,8 @@ const UpdateOrder = (props) => {
                                         <p className="w-full font-bold text-red-600 text-[30px] text-center">
                                             Phiếu Sửa Chữa
                                         </p>
-                                        <p className="text-center font-bold text-[16px]">{order?.showroom.name}</p>
-                                        <p className="text-center py-2">Địa chỉ: {order.showroom.address}</p>
+                                        <p className="text-center font-bold text-[16px]">{order?.showroomName}</p>
+                                        <p className="text-center py-2">Địa chỉ: {order?.showroomAddress}</p>
                                         <p>
                                             khách hàng: <span className="font-bold">{order?.name}</span>
                                         </p>
@@ -744,20 +705,14 @@ const UpdateOrder = (props) => {
                                         <p>Dịch vụ: {order?.serviceType}</p>
                                         <p>
                                             Thời gian đặt lịch:{' '}
-                                            <span>
-                                                {new Date(order?.appointmentSchedule).toLocaleString('en-GB', {
-                                                    timeZone: 'UTC',
-                                                })}
-                                            </span>
+                                            <span>{dayjs(order?.appointmentSchedule).format(HOUR_DATE_TIME)}</span>
                                         </p>
                                         <p>
                                             Thời gian nhận xe thực tế:{' '}
                                             <span>
                                                 {order?.tg_nhan_xe == null
-                                                    ? ''
-                                                    : new Date(order?.tg_nhan_xe).toLocaleString('en-GB', {
-                                                          timeZone: 'UTC',
-                                                      })}
+                                                    ? dayjs(dateStart).format(HOUR_DATE_TIME)
+                                                    : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
                                             </span>
                                         </p>
                                         <p>
@@ -765,9 +720,7 @@ const UpdateOrder = (props) => {
                                             <span>
                                                 {order?.tg_tra_xe == null
                                                     ? ''
-                                                    : new Date(order?.tg_tra_xe).toLocaleString('en-GB', {
-                                                          timeZone: 'UTC',
-                                                      })}
+                                                    : dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
                                             </span>
                                         </p>
                                         <p>Loại xe: {order?.vehicleType}</p>
@@ -788,7 +741,7 @@ const UpdateOrder = (props) => {
                                                 <p className="font-bold">Tổng Thanh Toán (đã bao gồm VAT)</p>
                                                 <p>
                                                     <span className="font-bold text-red-600">
-                                                        {(total + total * order?.VAT)?.toLocaleString('en') + ' VNĐ'}
+                                                        {Math.round(total + 0.1 * total).toLocaleString('en') + ' VNĐ'}
                                                     </span>
                                                 </p>
                                             </div>
@@ -829,7 +782,7 @@ const UpdateOrder = (props) => {
                                 <Alert
                                     message="Notes :"
                                     description={`Xác nhận khách đã thanh toán ${
-                                        order.total.toLocaleString('en') + ' VNĐ'
+                                        Math.round(order.total * 0.1 + order.total).toLocaleString('en') + ' VNĐ'
                                     }.`}
                                     type="info"
                                     showIcon

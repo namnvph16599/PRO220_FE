@@ -79,25 +79,33 @@ const SelectMaterials = (props) => {
         setMaterialIds(newMarterials);
         const materialsWithQuantity = _.map(newMarterials, (marterial) => {
             const price = _.get(
-                _.find(materialsDefault, (value) => value.materialId._id === marterial),
+                _.find(materialsDefault, (value) => value.materialId._id == marterial),
                 'materialId.price',
                 0,
             );
             const name = _.get(
-                _.find(materialsDefault, (value) => value.materialId._id === marterial),
+                _.find(materialsDefault, (value) => value.materialId._id == marterial),
                 'materialId.name',
-                0,
             );
             const qty = _.get(
-                _.find(selectedMaterials, (item) => item.materialId === marterial, {}),
+                _.find(selectedMaterials, (item) => item.materialId == marterial, {}),
                 'qty',
                 1,
             );
             const priceInitial = _.get(
-                _.find(selectedMaterials, (item) => item.materialId === marterial, {}),
-                'priceInitial',
-                1,
+                _.find(materialsDefault, (value) => value.materialId._id == marterial),
+                'materialId.priceInitial',
             );
+
+            const unit = _.get(
+                _.find(materialsDefault, (value) => value.materialId._id == marterial),
+                'materialId.unit',
+            );
+
+            // console.log(name);
+            // console.log(priceInitial);
+            // console.log(unit);
+            // console.log(marterial);
 
             return {
                 materialId: marterial,
@@ -105,6 +113,7 @@ const SelectMaterials = (props) => {
                 price,
                 name,
                 priceInitial,
+                unit,
             };
         });
         setSelectedMaterials(materialsWithQuantity);
@@ -127,7 +136,7 @@ const SelectMaterials = (props) => {
                         );
                         //case 1: them vat tu moi
                         if (!existMaterial) {
-                            materialsNew.push(_.omit(item, ['price']));
+                            materialsNew.push(_.omit(item, ['price', 'unit', 'priceInitial']));
                             return;
                         }
                         //case 2: tra vat tu
@@ -209,7 +218,10 @@ const SelectMaterials = (props) => {
                                 <InfiniteScroll dataLength={materials.length} scrollableTarget="scrollableDiv">
                                     <List
                                         dataSource={materials}
-                                        renderItem={({ materialId: { _id, name, price }, quantity }) => {
+                                        renderItem={({
+                                            materialId: { _id, name, price, unit, priceInitial },
+                                            quantity,
+                                        }) => {
                                             return (
                                                 <List.Item key={_id}>
                                                     <button
@@ -269,7 +281,9 @@ const SelectMaterials = (props) => {
                                                                 materialId: materialSeleted.materialId,
                                                                 qty: value,
                                                                 price: materialSeleted.price,
-                                                                name: materialSeleted.name,
+                                                                // name: materialSeleted.name,
+                                                                // unit: materialSeleted.unit,
+                                                                // priceInitial: materialSeleted.priceInitial,
                                                             };
                                                         }
                                                         return materialSeleted;
