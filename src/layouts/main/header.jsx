@@ -1,15 +1,29 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import User from '../User';
 import { JwtDecode } from '../../utils/auth';
 import { useSelector } from 'react-redux';
 
 const Header = () => {
-    const [activeMenu, setActiveMenu] = useState('home');
     const a = useSelector((state) => state.user.currentUser.values);
-    const handleClick = (menu) => {
-        setActiveMenu(menu);
-    };
+    const location = useLocation();
+    const [activeMenu, setActiveMenu] = useState('home');
+
+    useEffect(() => {
+        const pathname = location.pathname;
+        if (pathname === '/') {
+            setActiveMenu('home');
+        } else if (pathname === '/dat-lich') {
+            setActiveMenu('booking');
+        } else if (pathname === '/dich-vu-cua-chung-toi') {
+            setActiveMenu('services');
+        } else if (pathname === '/gioi-thieu') {
+            setActiveMenu('about');
+        } else if (pathname === '/tin-tuc') {
+            setActiveMenu('news');
+        }
+    }, [location]);
+        
     return (
         <header className="header-main">
             <nav className="bg-white border-gray-200 px-2 sm:px-4 py-2.5">
@@ -32,7 +46,6 @@ const Header = () => {
                                     className={`block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875] ${
                                         activeMenu === 'home' ? 'active' : ''
                                     }`}
-                                    onClick={() => handleClick('home')}
                                     aria-current="page"
                                 >
                                     Trang chủ
@@ -47,7 +60,7 @@ const Header = () => {
                                         className={`block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875] ${
                                             activeMenu === 'booking' ? 'active' : ''
                                         }`}
-                                        onClick={() => handleClick('booking')}
+
                                         aria-current="page"
                                     >
                                         Đặt lịch
@@ -56,11 +69,10 @@ const Header = () => {
                             )}
                             <li>
                                 <Link
-                                    to="#"
+                                    to="dich-vu-cua-chung-toi"
                                     className={`block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875] ${
                                         activeMenu === 'services' ? 'active' : ''
                                     }`}
-                                    onClick={() => handleClick('services')}
                                     aria-current="page"
                                 >
                                     Dịch vụ của chúng tôi
@@ -72,7 +84,6 @@ const Header = () => {
                                     className={`block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875] ${
                                         activeMenu === 'about' ? 'active' : ''
                                     }`}
-                                    onClick={() => handleClick('about')}
                                     aria-current="page"
                                 >
                                     Giới thiệu
@@ -84,7 +95,6 @@ const Header = () => {
                                     className={`block py-2 pl-3 pr-4 text-base text-[#3c3c3c] rounded md:bg-transparent md:p-0 hover:text-[#02b875] ${
                                         activeMenu === 'news' ? 'active' : ''
                                     }`}
-                                    onClick={() => handleClick('news')}
                                     aria-current="page"
                                 >
                                     Tin tức
