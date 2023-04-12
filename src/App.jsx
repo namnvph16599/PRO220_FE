@@ -47,6 +47,7 @@ import Post from './pages/Post/Post';
 import ServiceManager from './pages/Admin/ServiceManage';
 import CreateService from './pages/Admin/ServiceManage/CreateService';
 import UpdateService from './pages/Admin/ServiceManage/UpdateService';
+import TotalOrderStatisticalByStatus from './pages/Admin/Statistical/Order/TotalOrderStatisticalByStatus';
 import TotalOrderStatistical from './pages/Admin/Statistical/Order/TotalOrderStatistical';
 
 function App() {
@@ -106,6 +107,7 @@ function App() {
             >
                 <Route path="dang-ky" element={<Register />} />
                 <Route path="thong-ke-don-hang" element={<TotalOrderStatistical />} />
+                <Route path="thong-ke-don-hang-theo-trang-thai" element={<TotalOrderStatisticalByStatus />} />
                 <Route path="thong-ke-doanh-thu" element={<RevenueOrderStatistical />} />
                 <Route path="quan-ly-banner" element={<BannerManage />} />
                 <Route path="quan-ly-cua-hang" element={<ShowRoom />} />
