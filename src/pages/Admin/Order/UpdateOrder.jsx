@@ -556,10 +556,6 @@ const UpdateOrder = (props) => {
                                                         : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)
                                                 }
                                                 showNow={false}
-                                                // onChange={(date, dateString) => {
-                                                //     const dateStringConvert = new Date(dateString);
-                                                //     setDateStart(dateStringConvert);
-                                                // }}
                                                 showTime
                                             />
                                         </Form.Item>
@@ -597,7 +593,6 @@ const UpdateOrder = (props) => {
                                     showModal={showModal}
                                     setShowModal={setShowModal}
                                     handleOkCancel={(data) => {
-                                        // console.log(data.materials);
                                         updateMaterials(order._id, data);
                                     }}
                                 />
