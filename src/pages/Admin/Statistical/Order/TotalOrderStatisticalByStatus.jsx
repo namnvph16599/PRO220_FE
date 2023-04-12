@@ -270,7 +270,6 @@ const TotalOrderStatisticalByStatus = (props) => {
                     },
                 ];
                 data.forEach((value) => {
-                    console.log('value', value);
                     defaultSeriesOptions.forEach((series) => {
                         if (series.status === value.status) {
                             series.data[0] = ++series.data[0];
@@ -297,7 +296,7 @@ const TotalOrderStatisticalByStatus = (props) => {
             <div className="rounded border border-solid border-inherit p-6 my-4">
                 <div className="flex justify-between items-center pb-4">
                     <div span={12}>
-                        <h3 className="font-bold text-lg">Số lượng đơn hàng</h3>
+                        <h3 className="font-bold text-lg">Số lượng đơn hàng theo trạng thái</h3>
                     </div>
                     <div span={12}>
                         <DatePickerByOptions onChange={setTime} setType={setType} />
