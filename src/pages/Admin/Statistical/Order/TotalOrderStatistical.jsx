@@ -6,6 +6,8 @@ import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import { getTotalOrderByOptions } from '../../../../api/order';
 import { setCategoriesByType } from '../../../../utils/statistical';
+import { Fragment } from 'react';
+import ShowroomPicker from '../../../../components/ShowroomPicker';
 
 const defaultSeries = [
     {
@@ -40,11 +42,12 @@ const defaultSeries = [
     },
 ];
 const TotalOrderStatistical = (props) => {
-    const [time, setTime] = useState();
+    const [time, setTime] = useState(dayjs());
     const [type, setType] = useState('date');
     const [data, setData] = useState([]);
     const [categories, setCategories] = useState([]);
     const [series, setSeries] = useState(defaultSeries);
+    const [showroomId, setShowroomId] = useState('');
 
     useEffect(() => {
         setCategoriesByType(type, time, setCategories);
@@ -54,7 +57,38 @@ const TotalOrderStatistical = (props) => {
     const handleSetSeries = () => {
         switch (type) {
             case 'date':
-                const defaultSeriesClone = _.cloneDeep(defaultSeries);
+                const defaultSeriesClone = [
+                    {
+                        name: 'Hủy đơn hàng',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 0,
+                    },
+                    {
+                        name: 'Chờ xác nhận',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 1,
+                    },
+                    {
+                        name: 'Đã xác nhận',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 2,
+                    },
+                    {
+                        name: 'Đang xử lý',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 3,
+                    },
+                    {
+                        name: 'Thanh toán',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 4,
+                    },
+                    {
+                        name: 'Hoàn thành',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        status: 5,
+                    },
+                ];
                 data.forEach((value) => {
                     const hour = dayjs(value.createdAt).hour();
                     defaultSeriesClone.forEach((series) => {
@@ -246,88 +280,90 @@ const TotalOrderStatistical = (props) => {
                 setSeries(defaultSeriesOptions);
         }
     };
-
     useEffect(() => {
-        if (time && props.showroomId) {
-            getTotalOrderByOptions({ time, showroomId: props.showroomId, type })
+        if (time && showroomId) {
+            getTotalOrderByOptions({ time, showroomId, type })
                 .then(({ data }) => {
                     setData(data);
                 })
                 .catch((err) => {
-                    console.log('filtererr,er', err);
+                    console.log('getTotalOrderByOptions-err-status', err);
                 });
         }
-    }, [time, props.showroomId, type]);
+    }, [time, showroomId, type]);
     return (
-        <div className="rounded border border-solid border-inherit p-6 my-4">
-            <div className="flex justify-between items-center pb-4">
-                <div span={12}>
-                    <h3 className="font-bold text-lg">Số lượng đơn hàng</h3>
+        <Fragment>
+            <ShowroomPicker onChangeShowroom={setShowroomId} />
+            <div className="rounded border border-solid border-inherit p-6 my-4">
+                <div className="flex justify-between items-center pb-4">
+                    <div span={12}>
+                        <h3 className="font-bold text-lg">Số lượng đơn hàng</h3>
+                    </div>
+                    <div span={12}>
+                        <DatePickerByOptions onChange={setTime} setType={setType} />
+                    </div>
                 </div>
-                <div span={12}>
-                    <DatePickerByOptions onChange={setTime} setType={setType} />
-                </div>
-            </div>
-            <div>
-                <HighchartsReact
-                    highcharts={Highcharts}
-                    options={{
-                        colors: ['#ff4d4f', '#10A19D', '#6C4AB6', '#2146C7', '#FED049', '#02b875'],
-                        chart: {
-                            type: 'column',
-                            marginBottom: 100,
-                        },
-                        title: {
-                            text: null,
-                            align: 'left',
-                        },
-                        xAxis: {
-                            categories,
-                        },
-                        yAxis: {
-                            allowDecimals: false,
-                            min: 0,
+                <div>
+                    <HighchartsReact
+                        highcharts={Highcharts}
+                        options={{
+                            colors: ['#ff4d4f', '#10A19D', '#6C4AB6', '#2146C7', '#FED049', '#02b875'],
+                            chart: {
+                                type: 'column',
+                                marginBottom: 100,
+                            },
                             title: {
                                 text: null,
+                                align: 'left',
                             },
-                            // stackLabels: {
-                            //     enabled: true,
-                            //     style: {
-                            //         fontWeight: 'bold',
-                            //         color:
-                            //             // theme
-                            //             (Highcharts.defaultOptions.title.style &&
-                            //                 Highcharts.defaultOptions.title.style.color) ||
-                            //             'gray',
-                            //         textOutline: 'none',
-                            //     },
-                            // },
-                        },
-                        legend: {
-                            align: 'center',
-                            verticalAlign: 'bottom',
-                            x: 0,
-                            y: 0,
-                            floating: true,
-                            backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
-                            borderColor: '#CCC',
-                            borderWidth: 1,
-                            shadow: false,
-                        },
-                        tooltip: {
-                            headerFormat: '<b>{point.x}</b><br/>',
-                            pointFormat: '{series.name}: {point.y}<br/>Tổng đơn hàng: {point.stackTotal}',
-                        },
-                        plotOptions: {
-                            column: {
-                                stacking: 'normal',
+                            xAxis: {
+                                categories,
                             },
-                        },
-                        series,
-                    }}
-                />
+                            yAxis: {
+                                allowDecimals: false,
+                                min: 0,
+                                title: {
+                                    text: null,
+                                },
+                                // stackLabels: {
+                                //     enabled: true,
+                                //     style: {
+                                //         fontWeight: 'bold',
+                                //         color:
+                                //             // theme
+                                //             (Highcharts.defaultOptions.title.style &&
+                                //                 Highcharts.defaultOptions.title.style.color) ||
+                                //             'gray',
+                                //         textOutline: 'none',
+                                //     },
+                                // },
+                            },
+                            legend: {
+                                align: 'center',
+                                verticalAlign: 'bottom',
+                                x: 0,
+                                y: 0,
+                                floating: true,
+                                backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
+                                borderColor: '#CCC',
+                                borderWidth: 1,
+                                shadow: false,
+                            },
+                            tooltip: {
+                                headerFormat: '<b>{point.x}</b><br/>',
+                                pointFormat: '{series.name}: {point.y}<br/>Tổng đơn hàng: {point.stackTotal}',
+                            },
+                            plotOptions: {
+                                column: {
+                                    stacking: 'normal',
+                                },
+                            },
+                            series,
+                        }}
+                    />
+                </div>
             </div>
-        </div>
+        </Fragment>
     );
 };
 
