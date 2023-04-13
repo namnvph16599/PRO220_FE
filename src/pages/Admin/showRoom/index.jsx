@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import _, { isEmpty } from 'lodash';
 import { EditOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Input, Space, Table, Button, Spin, Tooltip } from 'antd';
+import { Input, Space, Table, Button, Spin, Tooltip, Switch } from 'antd';
 import './showroom.css';
 import { getAllShowroomAsync } from '../../../slices/showroom';
 import Highlighter from 'react-highlight-words';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import { getDistrict } from '../../../api/district';
 // import Filter from '../../../../components/Filter/Filter';
-import { getShowroomById } from '../../../api/showroom';
+import { getShowroomById, updateShowroom } from '../../../api/showroom';
 import { JwtDecode } from '../../../utils/auth';
 import Filter from '../../../components/Filter/Filter';
 
@@ -45,6 +45,15 @@ const ShowRoom = () => {
             const dataDistrict = await getDistrict();
             setZone(dataDistrict.data);
         } catch (error) {}
+    };
+
+    const handleStopShowroom = async (id, checked) => {
+        await updateShowroom({ id: id, enabled: checked });
+        if (local.role == 'Admin') {
+            setTimeout(() => dispatch(getAllShowroomAsync()), 100);
+        } else {
+            setTimeout(() => dispatch(fetchApiShowroomAccount()), 100);
+        }
     };
 
     useEffect(() => {
@@ -152,13 +161,26 @@ const ShowRoom = () => {
             ),
         },
         {
-            title: 'Kho ảnh',
-            render: (url) => (
-                // <a target="_blank" href={url} className="text-[#02b875]">
-                //     <img src={url} alt="" />
-                // </a>
-                <p>comming soon</p>
-            ),
+            title: 'Trạng thái hoạt động',
+            dataIndex: '',
+            // align: 'center',
+            render: (value) => {
+                return (
+                    <>
+                        <Switch
+                            checked={value?.enabled}
+                            onChange={(checked) => {
+                                handleStopShowroom(value._id, checked);
+                            }}
+                        />
+                        {value?.enabled ? (
+                            <p className="py-1 text-[#02b875]">Đang hoạt động </p>
+                        ) : (
+                            <p className="py-1 text-[#3b3d3c]">Đã dừng hoạt động </p>
+                        )}
+                    </>
+                );
+            },
         },
         {
             title: 'Địa điểm',
@@ -179,7 +201,7 @@ const ShowRoom = () => {
             dataIndex: 'phone',
         },
         {
-            title: 'Cửa hàng',
+            title: 'Cửa hàng tại',
             dataIndex: 'districtId',
             render: (districtId) => _.get(_.find(zone, ['_id', districtId]), 'name', ''),
         },
