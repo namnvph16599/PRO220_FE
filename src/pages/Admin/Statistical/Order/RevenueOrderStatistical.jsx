@@ -7,6 +7,8 @@ import HighchartsReact from 'highcharts-react-official';
 import DatePickerByOptions from '../../../../components/Customs/DatePickerByOptions';
 import { getOrderRevenue } from '../../../../api/order';
 import { setCategoriesByType } from '../../../../utils/statistical';
+import PermissionCheck from '../../../../components/permission/PermissionCheck';
+import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../../constants/permission';
 
 const defaultSeries = [
     {
