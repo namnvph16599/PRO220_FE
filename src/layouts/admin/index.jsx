@@ -24,8 +24,13 @@ const siderBarItems = [
         code: PERMISSION_TYPE.CONFIRM,
         icon: <PieChartOutlined />,
         children: [
-            { key: 'Thống kê đơn hàng', path: 'thong-ke-don-hang', label: 'Thống kê đơn hàng' },
-            { key: 'Thống kê doanh thu', path: 'thong-ke-doanh-thu', label: 'Thống kê doanh thu' },
+            { key: 'Thống kê đơn hàng', path: 'thong-ke-don-hang', label: 'Đơn hàng' },
+            {
+                key: 'Thống kê trạng thái đơn hàng',
+                path: 'thong-ke-don-hang-theo-trang-thai',
+                label: 'Trạng thái đơn hàng',
+            },
+            { key: 'Thống kê doanh thu', path: 'thong-ke-doanh-thu', label: 'Doanh thu' },
         ],
     },
     {
@@ -109,6 +114,13 @@ const siderBarItems = [
         code: PERMISSION_TYPE.CONFIRM,
         icon: <FileDoneOutlined />,
         label: PERMISSION_LABLEL.NEWS_MANAGE,
+    },
+    {
+        key: 'Quản người dùng',
+        path: 'quan-ly-nguoi-dung',
+        code: PERMISSION_TYPE.CONFIRM,
+        icon: <FileDoneOutlined />,
+        label: PERMISSION_LABLEL.USER_MANAGER,
     },
 ];
 
