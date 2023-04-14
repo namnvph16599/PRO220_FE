@@ -119,7 +119,7 @@ const RevenueOrderStatistical = () => {
                     },
                 ];
                 _.forEach(data, (item) => {
-                    const hour = dayjs(item.createdAt).hour();
+                    const hour = dayjs(item.tg_nhan_xe).hour();
                     //tinh chi phi
                     const expense = priceMaterials(item.materials);
                     const total = _.get(item, 'total', 0);
@@ -170,7 +170,7 @@ const RevenueOrderStatistical = () => {
                     },
                 ];
                 _.forEach(data, (item) => {
-                    const dayOfWeek = dayjs(item.createdAt).day();
+                    const dayOfWeek = dayjs(item.tg_nhan_xe).day();
                     const formatDayOfWeek = dayOfWeek ? dayOfWeek - 1 : 6;
                     //tinh chi phi
                     const expense = priceMaterials(item.materials);
@@ -225,7 +225,7 @@ const RevenueOrderStatistical = () => {
                     },
                 ];
                 _.forEach(data, (item) => {
-                    const dayOfMonth = +dayjs(item.createdAt).format('DD');
+                    const dayOfMonth = +dayjs(item.tg_nhan_xe).format('DD');
                     let weekOfMonth = 0;
                     if (dayOfMonth > 7 && dayOfMonth <= 14) weekOfMonth = 1;
                     if (dayOfMonth > 14 && dayOfMonth <= 21) weekOfMonth = 2;
@@ -279,14 +279,8 @@ const RevenueOrderStatistical = () => {
                         },
                     },
                 ];
-                _.forEach(data.paymented, (item) => {
-                    const createdAtFormat = dayjs(item.createdAt).format('MM') - 1;
-                    const idx = `[1].data[${createdAtFormat}]`;
-                    const valuePrev = _.get(defaultSeriesYear, idx, 0);
-                    _.set(defaultSeriesYear, idx, valuePrev + _.get(item, 'total', 0));
-                });
                 _.forEach(data, (item) => {
-                    const months = dayjs(item.createdAt).format('MM') - 1;
+                    const months = dayjs(item.tg_nhan_xe).format('MM') - 1;
                     //tinh chi phi
                     const expense = priceMaterials(item.materials);
                     const total = _.get(item, 'total', 0);
