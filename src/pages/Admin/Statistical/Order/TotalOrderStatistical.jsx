@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import _ from 'lodash';
+import useDocumentTitle from '../../../../hooks/useDocumentTitle';
 import DatePickerByOptions from '../../../../components/Customs/DatePickerByOptions';
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
@@ -16,6 +17,7 @@ const defaultSeries = [
     },
 ];
 const TotalOrderStatistical = (props) => {
+    useDocumentTitle('Thống kê đơn hàng');
     const [time, setTime] = useState(dayjs());
     const [type, setType] = useState('date');
     const [data, setData] = useState([]);

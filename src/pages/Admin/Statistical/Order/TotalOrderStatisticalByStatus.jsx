@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import DatePickerByOptions from '../../../../components/Customs/DatePickerByOptions';
@@ -6,7 +6,7 @@ import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import { getTotalOrderByOptions } from '../../../../api/order';
 import { setCategoriesByType } from '../../../../utils/statistical';
-import { Fragment } from 'react';
+import useDocumentTitle from '../../../../hooks/useDocumentTitle';
 import ShowroomPicker from '../../../../components/ShowroomPicker';
 
 const defaultSeries = [
@@ -42,6 +42,7 @@ const defaultSeries = [
     },
 ];
 const TotalOrderStatisticalByStatus = (props) => {
+    useDocumentTitle('Thống kê đơn hàng theo trạng thái');
     const [time, setTime] = useState(dayjs());
     const [type, setType] = useState('date');
     const [data, setData] = useState([]);
