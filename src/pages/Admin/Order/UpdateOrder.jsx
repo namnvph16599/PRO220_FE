@@ -15,7 +15,6 @@ import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../../constants/regex';
 import { Notification } from '../../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { getMaterialsWarehouseAsync } from '../../../slices/warehouse';
-import { useGetParam } from '../../../utils/param';
 import { sendMail, updateStatusBill } from '../../../api/payment';
 import { RightOutlined, SolutionOutlined } from '@ant-design/icons/lib/icons';
 import { useReactToPrint } from 'react-to-print';
@@ -24,6 +23,7 @@ import StatusOrderDisplay from './StatusOrderDisplay';
 import SelectMaterials from './SelectMaterials';
 import { updateOrder } from '../../../api/order';
 import { getApiSubService } from '../../../api/service';
+import { useNavigate } from 'react-router-dom';
 
 const UpdateOrder = (props) => {
     useDocumentTitle('Cập nhật đơn hàng');
@@ -32,7 +32,7 @@ const UpdateOrder = (props) => {
     const materials = useSelector((state) => state.warehouse.materials.value);
     const showroomId = useSelector((state) => state.user.currentUser.values.showroomId);
     const errors = useSelector((state) => state.order.updateOrder.errors);
-    const [values, setValues] = useState(0);
+
     const { id } = useParams();
     const [order, setOrder] = useState({});
     const [initialValues, setInitialValues] = useState({});
@@ -54,11 +54,10 @@ const UpdateOrder = (props) => {
     const [dateStart, setDateStart] = useState(new Date());
     const [dateFinish, setDateFinish] = useState(new Date());
     const [dataSubService, setDataSubService] = useState([]);
+    const navigate = useNavigate();
 
     const payment = async () => {
-        if (values == 1) {
-            setOpenModal(true);
-        }
+        setOpenModal(true);
     };
 
     const handleOk = async () => {
@@ -71,9 +70,6 @@ const UpdateOrder = (props) => {
     };
     const handleCancel = () => {
         setOpenModal(false);
-    };
-    const onChange = (e) => {
-        setValues(e.target.value);
     };
 
     const fetchSubService = async () => {
@@ -88,6 +84,9 @@ const UpdateOrder = (props) => {
     useEffect(() => {
         if (statusPayment) {
             Notification(NOTIFICATION_TYPE.SUCCESS, 'Thanh toán thành công');
+            // setTimeout(() => {
+            //     navigate('/admin/don-hang');
+            // }, 3000);
         }
     }, [statusPayment]);
 
@@ -226,7 +225,7 @@ const UpdateOrder = (props) => {
     };
 
     const handleChangeStatus = async (status, order) => {
-         if (status == 4 && total == 0) {
+        if (status == 4 && total == 0) {
             Notification(
                 NOTIFICATION_TYPE.WARNING,
                 'Giá trị của đơn hàng không phù hợp',
@@ -751,21 +750,6 @@ const UpdateOrder = (props) => {
                                             </div>
                                         </div>
                                     </div>
-
-                                    {order.status == 4 && (
-                                        <Form.Item
-                                            name="money"
-                                            label={<p className="text-base font-semibold">Phương Thức Thanh Toán :</p>}
-                                        >
-                                            <Radio.Group onChange={onChange} value={values}>
-                                                <Space direction="vertical">
-                                                    <Radio value={1}>
-                                                        Thanh toán tiền mặt <SolutionOutlined />
-                                                    </Radio>
-                                                </Space>
-                                            </Radio.Group>
-                                        </Form.Item>
-                                    )}
                                 </Col>
                             </Row>
 
@@ -796,10 +780,7 @@ const UpdateOrder = (props) => {
                                 {order.status == 4 && (
                                     <Button
                                         type="primary"
-                                        className={`${
-                                            values == 0 ? '' : 'btn-primary'
-                                        } text-white bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out font-medium rounded-lg text-sm text-center mr-3 md:mr-0`}
-                                        disabled={values == 0 ? true : false}
+                                        className={`text-white !bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out font-medium rounded-lg text-sm text-center mr-3 md:mr-0`}
                                         onClick={() => handlePrint()}
                                     >
                                         Thanh Toán
