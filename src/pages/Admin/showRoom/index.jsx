@@ -13,6 +13,8 @@ import { getDistrict } from '../../../api/district';
 import { getShowroomById, updateShowroom } from '../../../api/showroom';
 import { JwtDecode } from '../../../utils/auth';
 import Filter from '../../../components/Filter/Filter';
+import PermissionCheck from '../../../components/permission/PermissionCheck';
+import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../constants/permission';
 
 const ShowRoom = () => {
     useDocumentTitle('Quản lý cửa hàng');
@@ -167,12 +169,17 @@ const ShowRoom = () => {
             render: (value) => {
                 return (
                     <>
-                        <Switch
-                            checked={value?.enabled}
-                            onChange={(checked) => {
-                                handleStopShowroom(value._id, checked);
-                            }}
-                        />
+                        <PermissionCheck
+                            permissionHas={{ label: PERMISSION_LABLEL.SHOWROOM_MANAGE, code: PERMISSION_TYPE.UPDATE }}
+                        >
+                            <Switch
+                                checked={value?.enabled}
+                                onChange={(checked) => {
+                                    handleStopShowroom(value._id, checked);
+                                }}
+                            />
+                        </PermissionCheck>
+
                         {value?.enabled ? (
                             <p className="py-1 text-[#02b875]">Đang hoạt động </p>
                         ) : (
@@ -209,9 +216,13 @@ const ShowRoom = () => {
             title: '',
             render: (data) => {
                 return (
-                    <Link to={data._id}>
-                        <EditOutlined className="text-xl pr-4" />
-                    </Link>
+                    <PermissionCheck
+                        permissionHas={{ label: PERMISSION_LABLEL.SHOWROOM_MANAGE, code: PERMISSION_TYPE.UPDATE }}
+                    >
+                        <Link to={data._id}>
+                            <EditOutlined className="text-xl pr-4" />
+                        </Link>
+                    </PermissionCheck>
                 );
             },
         },
