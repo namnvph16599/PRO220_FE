@@ -1,14 +1,11 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import _ from 'lodash';
 import dayjs from 'dayjs';
-import { useDispatch, useSelector } from 'react-redux';
 import useDocumentTitle from '../../../../hooks/useDocumentTitle';
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
-import { Select } from 'antd';
 import DatePickerByOptions from '../../../../components/Customs/DatePickerByOptions';
 import { getOrderRevenue } from '../../../../api/order';
-import { getAllShowroomAsync } from '../../../../slices/showroom';
 import { setCategoriesByType } from '../../../../utils/statistical';
 
 const defaultSeries = [
@@ -40,23 +37,12 @@ const defaultSeries = [
 ];
 const RevenueOrderStatistical = () => {
     useDocumentTitle('Thống kê doanh thu');
-    const dispatch = useDispatch();
-    const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const [time, setTime] = useState(dayjs());
     const [type, setType] = useState('date');
     const [categories, setCategories] = useState([]);
     const [series, setSeries] = useState(defaultSeries);
     const [data, setData] = useState([]);
-    const [showroomIdSeleted, setShowroomIdSeleted] = useState();
-
-    useEffect(() => {
-        if (showrooms.length === 0) {
-            dispatch(getAllShowroomAsync());
-        }
-        if (!showroomIdSeleted && showrooms.length > 0) {
-            setShowroomIdSeleted(showrooms[0]._id);
-        }
-    }, [showrooms]);
+    const [showroomId, setShowroomId] = useState('');
 
     useEffect(() => {
         setCategoriesByType(type, time, setCategories);
@@ -64,8 +50,8 @@ const RevenueOrderStatistical = () => {
     }, [data]);
 
     useEffect(() => {
-        if (time && showroomIdSeleted) {
-            getOrderRevenue({ type, time, showroomId: showroomIdSeleted })
+        if (time && showroomId) {
+            getOrderRevenue({ type, time, showroomId })
                 .then(({ data: res }) => {
                     setData(res);
                 })
@@ -73,10 +59,7 @@ const RevenueOrderStatistical = () => {
                     console.log('getOrderRevenue', err);
                 });
         }
-    }, [time, showroomIdSeleted, type]);
-    const handleChange = (value) => {
-        setShowroomIdSeleted(value);
-    };
+    }, [time, showroomId, type]);
 
     const priceMaterials = (materials) => {
         return _.reduce(
@@ -353,15 +336,7 @@ const RevenueOrderStatistical = () => {
     };
     return (
         <Fragment>
-            <Select
-                size="large"
-                value={showroomIdSeleted}
-                style={{
-                    width: 400,
-                }}
-                onChange={handleChange}
-                options={showrooms.map((showroom) => ({ value: showroom._id, label: showroom.name }))}
-            />
+            <ShowroomPicker onChangeShowroom={setShowroomId} />
             <div className="rounded border border-solid border-inherit p-6 my-4">
                 <div className="flex justify-between items-center pb-4">
                     <div span={12}>
