@@ -90,7 +90,7 @@ const TotalOrderStatisticalByStatus = (props) => {
                     },
                 ];
                 data.forEach((value) => {
-                    const hour = dayjs(value.createdAt).hour();
+                    const hour = dayjs(value.appointmentSchedule).hour();
                     defaultSeriesClone.forEach((series) => {
                         if (series.status === value.status) {
                             series.data[hour] = ++series.data[hour];
@@ -133,7 +133,7 @@ const TotalOrderStatisticalByStatus = (props) => {
                     },
                 ];
                 data.forEach((value) => {
-                    const dayOfWeek = dayjs(value.createdAt).day();
+                    const dayOfWeek = dayjs(value.appointmentSchedule).day();
                     const formatDayOfWeek = dayOfWeek ? dayOfWeek - 1 : 6;
                     defaultSeriesWeek.forEach((series) => {
                         if (series.status === value.status) {
@@ -179,7 +179,7 @@ const TotalOrderStatisticalByStatus = (props) => {
                     },
                 ];
                 data.forEach((value) => {
-                    const createdAtNumber = +dayjs(value.createdAt).format('DD');
+                    const createdAtNumber = +dayjs(value.appointmentSchedule).format('DD');
                     let idx = 0;
                     if (createdAtNumber > 7 && createdAtNumber <= 14) idx = 1;
                     if (createdAtNumber > 14 && createdAtNumber <= 21) idx = 2;
@@ -227,7 +227,7 @@ const TotalOrderStatisticalByStatus = (props) => {
                     },
                 ];
                 data.forEach((value) => {
-                    const createdAtFormat = dayjs(value.createdAt).format('MM');
+                    const createdAtFormat = dayjs(value.appointmentSchedule).format('MM');
                     defaultSeriesYear.forEach((series) => {
                         if (series.status === value.status) {
                             series.data[createdAtFormat - 1] = ++series.data[createdAtFormat - 1];
