@@ -7,7 +7,7 @@ import HighchartsReact from 'highcharts-react-official';
 import DatePickerByOptions from '../../../../components/Customs/DatePickerByOptions';
 import { getOrderRevenue } from '../../../../api/order';
 import { setCategoriesByType } from '../../../../utils/statistical';
-
+import ShowroomPicker from '../../../../components/ShowroomPicker';
 const defaultSeries = [
     {
         type: 'column',
