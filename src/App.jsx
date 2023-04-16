@@ -49,8 +49,9 @@ import CreateService from './pages/Admin/ServiceManage/CreateService';
 import UpdateService from './pages/Admin/ServiceManage/UpdateService';
 import TotalOrderStatisticalByStatus from './pages/Admin/Statistical/Order/TotalOrderStatisticalByStatus';
 import TotalOrderStatistical from './pages/Admin/Statistical/Order/TotalOrderStatistical';
+import GeneralWarehouse from './pages/Admin/Warehouse/GeneralWarehouse';
 
-function App() {
+function App () {
     return (
         <Routes>
             <Route path="/" element={<MainLayout />}>
@@ -120,6 +121,7 @@ function App() {
                 <Route path="them-don-hang" element={<CreateOrder />} />
                 <Route path="don-hang/:id" element={<UpdateOrder />} />
                 <Route path="quan-ly-kho" element={<Warehouse />} />
+                <Route path="quan-ly-kho/general-warehouse" element={<GeneralWarehouse />} />
                 <Route path="province" element={<DistrictManage />} />
                 <Route path="province/them" element={<DrawerCreateDistrict />} />
                 <Route path="province/:id" element={<UpdateDistrict />} />
