@@ -57,7 +57,7 @@ const RevenueOrderStatistical = () => {
                     setData(res);
                 })
                 .catch((err) => {
-                    console.log('getOrderRevenue', err);
+                    return;
                 });
         }
     }, [time, showroomId, type]);
