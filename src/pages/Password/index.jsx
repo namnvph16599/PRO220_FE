@@ -181,7 +181,7 @@ const ChangePassword = () => {
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Please input your password!',
+                                        message: 'Vui lòng không bỏ trống!',
                                     },
                                     { min: 8, message: 'Mật khẩu phải đủ 8 ký tự!' },
                                 ]}
