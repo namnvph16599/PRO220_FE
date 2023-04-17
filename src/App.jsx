@@ -50,8 +50,9 @@ import UpdateService from './pages/Admin/ServiceManage/UpdateService';
 import TotalOrderStatisticalByStatus from './pages/Admin/Statistical/Order/TotalOrderStatisticalByStatus';
 import TotalOrderStatistical from './pages/Admin/Statistical/Order/TotalOrderStatistical';
 import GeneralWarehouse from './pages/Admin/Warehouse/GeneralWarehouse';
+import PasswordRetrieval from './pages/Password';
 
-function App () {
+function App() {
     return (
         <Routes>
             <Route path="/" element={<MainLayout />}>
@@ -61,6 +62,7 @@ function App () {
                 <Route path="tin-tuc" element={<Posts />} />
                 <Route path="tin-tuc/*" element={<Post />} />
                 <Route path="gioi-thieu" element={<AboutPage />} />
+                <Route path="quen-mat-khau" element={<PasswordRetrieval />} />
                 <Route
                     path="dang-nhap"
                     element={
