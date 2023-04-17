@@ -39,7 +39,6 @@ const index = () => {
         })();
     }, []);
     const handleFilter = (values) => {
-        console.log('values', values);
         if (values.nameId.length !== 0) {
             setData(data.filter((item) => values.nameId.includes(item.key)));
         }
@@ -49,24 +48,31 @@ const index = () => {
     };
     return (
         <div>
-            <button className="pr-6" onClick={() => handleFilters()}>
-                <Tooltip title="Làm mới account">
-                    <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
-                </Tooltip>
-            </button>
-            <Filter
-                items={[
-                    {
-                        label: <Space align="center">Tên Tài Khoản</Space>,
-                        key: 'nameId',
-                        type: 'select',
-                        mode: 'multiple',
-                        values: filterData,
-                        name: 'Tên Tài Khoản....',
-                    },
-                ]}
-                onFilter={handleFilter}
-            />
+            <div className='className="flex justify-between"'>
+                <div>
+                    <button className="pr-6" onClick={() => handleFilters()}>
+                        <Tooltip title="Làm mới tài khoản">
+                            <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
+                        </Tooltip>
+                    </button>
+                    <Filter
+                        items={[
+                            {
+                                label: <Space align="center">Tên Tài Khoản</Space>,
+                                key: 'nameId',
+                                type: 'select',
+                                mode: 'multiple',
+                                values: filterData,
+                                name: 'Tên Tài Khoản....',
+                            },
+                        ]}
+                        onFilter={handleFilter}
+                    />
+                </div>
+                <p className="p-5">
+                    Số lượng: <span className="font-bold">{data?.length}</span>
+                </p>
+            </div>
             <Spin tip="Loading..." spinning={loading}>
                 <Table columns={columns} dataSource={data} />
             </Spin>
