@@ -8,6 +8,8 @@ import DatePickerByOptions from '../../../../components/Customs/DatePickerByOpti
 import { getOrderRevenue } from '../../../../api/order';
 import { setCategoriesByType } from '../../../../utils/statistical';
 import ShowroomPicker from '../../../../components/ShowroomPicker';
+import { Col, Row } from 'antd';
+import { DollarOutlined, RiseOutlined, ShopOutlined } from '@ant-design/icons';
 
 const defaultSeries = [
     {
@@ -44,6 +46,9 @@ const RevenueOrderStatistical = () => {
     const [series, setSeries] = useState(defaultSeries);
     const [data, setData] = useState([]);
     const [showroomId, setShowroomId] = useState('');
+    const [totalExpense, setTotalExpense] = useState(0);
+    const [totalProfit, setTotalProfit] = useState(0);
+    const [totalRevenue, setTotalRevenue] = useState(0);
 
     useEffect(() => {
         setCategoriesByType(type, time, setCategories);
@@ -57,7 +62,7 @@ const RevenueOrderStatistical = () => {
                     setData(res);
                 })
                 .catch((err) => {
-                    return;
+                    console.log('getOrderRevenue-err', err);
                 });
         }
     }, [time, showroomId, type]);
@@ -73,6 +78,9 @@ const RevenueOrderStatistical = () => {
         );
     };
     const handleSetSeries = () => {
+        let total_expense = 0;
+        let total_profit = 0;
+        let total_revenue = 0;
         switch (type) {
             case 'date':
                 const defaultSeriesClone = [
@@ -120,6 +128,10 @@ const RevenueOrderStatistical = () => {
                     const idxTotalColumn = `[1].data[${hour}]`;
                     const idxTotalLine = `[3].data[${hour}]`;
                     const totalPrev = _.get(defaultSeriesClone, idxTotalColumn, 0);
+
+                    total_expense = total_expense + expense;
+                    total_profit = total_profit + profit;
+                    total_revenue = total_revenue + total;
                     _.set(defaultSeriesClone, idxTotalColumn, totalPrev + total);
                     _.set(defaultSeriesClone, idxTotalLine, totalPrev + total);
                 });
@@ -172,6 +184,9 @@ const RevenueOrderStatistical = () => {
                     const idxTotalColumn = `[1].data[${formatDayOfWeek}]`;
                     const idxTotalLine = `[3].data[${formatDayOfWeek}]`;
                     const totalPrev = _.get(defaultSeriesWeek, idxTotalColumn, 0);
+                    total_expense = total_expense + expense;
+                    total_profit = total_profit + profit;
+                    total_revenue = total_revenue + total;
                     _.set(defaultSeriesWeek, idxTotalColumn, totalPrev + total);
                     _.set(defaultSeriesWeek, idxTotalLine, totalPrev + total);
                 });
@@ -230,6 +245,9 @@ const RevenueOrderStatistical = () => {
                     const idxTotalColumn = `[1].data[${weekOfMonth}]`;
                     const idxTotalLine = `[3].data[${weekOfMonth}]`;
                     const totalPrev = _.get(defaultSeriesMonths, idxTotalColumn, 0);
+                    total_expense = total_expense + expense;
+                    total_profit = total_profit + profit;
+                    total_revenue = total_revenue + total;
                     _.set(defaultSeriesMonths, idxTotalColumn, totalPrev + total);
                     _.set(defaultSeriesMonths, idxTotalLine, totalPrev + total);
                 });
@@ -280,6 +298,9 @@ const RevenueOrderStatistical = () => {
                     const idxTotalColumn = `[1].data[${months}]`;
                     const idxTotalLine = `[3].data[${months}]`;
                     const totalPrev = _.get(defaultSeriesYear, idxTotalColumn, 0);
+                    total_expense = total_expense + expense;
+                    total_profit = total_profit + profit;
+                    total_revenue = total_revenue + total;
                     _.set(defaultSeriesYear, idxTotalColumn, totalPrev + total);
                     _.set(defaultSeriesYear, idxTotalLine, totalPrev + total);
                 });
@@ -329,55 +350,114 @@ const RevenueOrderStatistical = () => {
                     const idxTotalColumn = `[1].data[0]`;
                     const idxTotalLine = `[3].data[0]`;
                     const totalPrev = _.get(defaultSeriesOptions, idxTotalColumn, 0);
+                    total_expense = total_expense + expense;
+                    total_profit = total_profit + profit;
+                    total_revenue = total_revenue + total;
                     _.set(defaultSeriesOptions, idxTotalColumn, totalPrev + total);
                     _.set(defaultSeriesOptions, idxTotalLine, totalPrev + total);
                 });
                 setSeries(defaultSeriesOptions);
         }
+        setTotalExpense(total_expense);
+        setTotalProfit(total_profit);
+        setTotalRevenue(total_revenue);
     };
     return (
         <Fragment>
             <ShowroomPicker onChangeShowroom={setShowroomId} />
-            <div className="rounded border border-solid border-inherit p-6 my-4">
-                <div className="flex justify-between items-center pb-4">
-                    <div span={12}>
-                        <h3 className="font-bold text-lg">Thống kê doanh thu</h3>
-                    </div>
-                    <div span={12}>
-                        <DatePickerByOptions onChange={setTime} setType={setType} />
-                    </div>
-                </div>
-                <div>
-                    <HighchartsReact
-                        highcharts={Highcharts}
-                        options={{
-                            title: {
-                                text: null,
-                            },
-                            xAxis: {
-                                categories,
-                            },
-                            yAxis: {
-                                title: {
-                                    text: null,
-                                },
-                                labels: {
-                                    formatter: function () {
-                                        const value = this.value;
-                                        if (!value) return value;
-                                        const valueFormat = value.toLocaleString('en') + ' VNĐ';
-                                        return valueFormat;
+            <Row gutter={16}>
+                <Col span={18}>
+                    <div className="rounded border border-solid border-inherit p-6 my-4">
+                        <div className="flex justify-between items-center pb-4">
+                            <div span={12}>
+                                <h3 className="font-bold text-lg">Thống kê doanh thu</h3>
+                            </div>
+                            <div span={12}>
+                                <DatePickerByOptions onChange={setTime} setType={setType} />
+                            </div>
+                        </div>
+                        <div>
+                            <HighchartsReact
+                                highcharts={Highcharts}
+                                options={{
+                                    title: {
+                                        text: null,
                                     },
-                                },
-                            },
-                            tooltip: {
-                                valueSuffix: ' VNĐ',
-                            },
-                            series,
-                        }}
-                    />
-                </div>
-            </div>
+                                    xAxis: {
+                                        categories,
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: null,
+                                        },
+                                        labels: {
+                                            formatter: function () {
+                                                const value = this.value;
+                                                if (!value) return value;
+                                                const valueFormat = value.toLocaleString('en') + ' VNĐ';
+                                                return valueFormat;
+                                            },
+                                        },
+                                    },
+                                    tooltip: {
+                                        valueSuffix: ' VNĐ',
+                                    },
+                                    series,
+                                }}
+                            />
+                        </div>
+                    </div>
+                </Col>
+                <Col span={6} className=" my-4 rounded border border-solid border-inherit">
+                    <Row align="middle" className="mt-6">
+                        <Col span={4} className="pl-4">
+                            <span>
+                                <ShopOutlined style={{ fontSize: '32px', color: '#02b875' }} />
+                            </span>
+                        </Col>
+                        <Col>
+                            <div>
+                                <p className="text-[#676E72] text-lg">Tổng chi phí</p>
+                                <p className="text-[#202C38] text-xl font-semibold">
+                                    {totalExpense.toLocaleString('en')} VNĐ
+                                </p>
+                            </div>
+                        </Col>
+                    </Row>
+                    <hr className="mx-12 my-6" />
+                    <Row align="middle" className="mt-6">
+                        <Col span={4} className="pl-4">
+                            <span>
+                                <RiseOutlined style={{ fontSize: '32px', color: '#02b875' }} />
+                            </span>
+                        </Col>
+                        <Col>
+                            <div>
+                                <p className="text-[#676E72] text-lg">Tổng lợi nhuận</p>
+                                <p className="text-[#202C38] text-xl font-semibold">
+                                    {totalProfit.toLocaleString('en')} VNĐ
+                                </p>
+                            </div>
+                        </Col>
+                    </Row>
+                    <hr className="mx-12 my-6" />
+                    <Row align="middle" className="mt-6">
+                        <Col span={4} className="pl-4">
+                            <span>
+                                <DollarOutlined style={{ fontSize: '32px', color: '#02b875' }} />
+                            </span>
+                        </Col>
+                        <Col>
+                            <div>
+                                <p className="text-[#676E72] text-lg">Tổng doanh thu</p>
+                                <p className="text-[#202C38] text-2xl font-semibold">
+                                    {totalRevenue.toLocaleString('en')} VNĐ
+                                </p>
+                            </div>
+                        </Col>
+                    </Row>
+                </Col>
+            </Row>
         </Fragment>
     );
 };
