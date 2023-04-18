@@ -1,6 +1,8 @@
 import React, { Fragment, useState, useEffect } from 'react';
+import { Button, Col, Row } from 'antd';
 import _ from 'lodash';
 import dayjs from 'dayjs';
+import { DollarOutlined, RiseOutlined, ShopOutlined } from '@ant-design/icons';
 import useDocumentTitle from '../../../../hooks/useDocumentTitle';
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
@@ -8,8 +10,8 @@ import DatePickerByOptions from '../../../../components/Customs/DatePickerByOpti
 import { getOrderRevenue } from '../../../../api/order';
 import { setCategoriesByType } from '../../../../utils/statistical';
 import ShowroomPicker from '../../../../components/ShowroomPicker';
-import { Col, Row } from 'antd';
-import { DollarOutlined, RiseOutlined, ShopOutlined } from '@ant-design/icons';
+import { CSVLink } from 'react-csv';
+import { DATE_FORMAT } from '../../../../constants/format';
 
 const defaultSeries = [
     {
@@ -49,6 +51,7 @@ const RevenueOrderStatistical = () => {
     const [totalExpense, setTotalExpense] = useState(0);
     const [totalProfit, setTotalProfit] = useState(0);
     const [totalRevenue, setTotalRevenue] = useState(0);
+    const [csvData, setCsvData] = useState([]);
 
     useEffect(() => {
         setCategoriesByType(type, time, setCategories);
@@ -76,6 +79,75 @@ const RevenueOrderStatistical = () => {
             },
             0,
         );
+    };
+
+    const handleExport = (event, done) => {
+        switch (type) {
+            case 'week':
+                const csvExport = categories.map((category) => ({
+                    time: category + `/${dayjs().format('YYYY')}`,
+                    expense: 0,
+                    profit: 0,
+                    revenue: 0,
+                }));
+                _.forEach(data, (item) => {
+                    const idx = csvExport.findIndex(
+                        (value) => value.time === dayjs(item.tg_nhan_xe).format(DATE_FORMAT),
+                    );
+                    const expense = priceMaterials(item.materials);
+                    const total = _.get(item, 'total', 0);
+                    const profit = total - expense;
+                    csvExport[idx].expense = csvExport[idx].expense + expense;
+                    csvExport[idx].revenue = csvExport[idx].revenue + total;
+                    csvExport[idx].profit = csvExport[idx].profit + profit;
+                });
+                setCsvData(csvExport);
+                done(true);
+                break;
+            case 'month':
+                const csvMonth = categories.map((category) => ({
+                    time: category,
+                    expense: 0,
+                    profit: 0,
+                    revenue: 0,
+                }));
+                _.forEach(data, (item) => {
+                    const dayOfMonth = +dayjs(item.tg_nhan_xe).format('DD');
+                    let weekOfMonth = 0;
+                    if (dayOfMonth > 7 && dayOfMonth <= 14) weekOfMonth = 1;
+                    if (dayOfMonth > 14 && dayOfMonth <= 21) weekOfMonth = 2;
+                    if (dayOfMonth > 21 && dayOfMonth <= 28) weekOfMonth = 3;
+                    if (dayOfMonth > 28) weekOfMonth = 4;
+                    const expense = priceMaterials(item.materials);
+                    const total = _.get(item, 'total', 0);
+                    const profit = total - expense;
+                    csvMonth[weekOfMonth].expense = csvMonth[weekOfMonth].expense + expense;
+                    csvMonth[weekOfMonth].revenue = csvMonth[weekOfMonth].revenue + total;
+                    csvMonth[weekOfMonth].profit = csvMonth[weekOfMonth].profit + profit;
+                });
+                setCsvData(csvMonth);
+                done(true);
+                break;
+            default:
+                const csvYear = categories.map((category) => ({
+                    time: category,
+                    expense: 0,
+                    profit: 0,
+                    revenue: 0,
+                }));
+                _.forEach(data, (item) => {
+                    const months = dayjs(item.tg_nhan_xe).format('MM') - 1;
+                    const expense = priceMaterials(item.materials);
+                    const total = _.get(item, 'total', 0);
+                    const profit = total - expense;
+                    csvYear[months].expense = csvYear[months].expense + expense;
+                    csvYear[months].revenue = csvYear[months].revenue + total;
+                    csvYear[months].profit = csvYear[months].profit + profit;
+                });
+                setCsvData(csvYear);
+                done(true);
+                break;
+        }
     };
     const handleSetSeries = () => {
         let total_expense = 0;
@@ -165,6 +237,7 @@ const RevenueOrderStatistical = () => {
                         },
                     },
                 ];
+
                 _.forEach(data, (item) => {
                     const dayOfWeek = dayjs(item.tg_nhan_xe).day();
                     const formatDayOfWeek = dayOfWeek ? dayOfWeek - 1 : 6;
@@ -364,7 +437,32 @@ const RevenueOrderStatistical = () => {
     };
     return (
         <Fragment>
-            <ShowroomPicker onChangeShowroom={setShowroomId} />
+            <Row justify="space-between">
+                <Col>
+                    <ShowroomPicker onChangeShowroom={setShowroomId} />
+                </Col>
+                <Col>
+                    {(type === 'week' || type === 'month' || type === 'year') && (
+                        <Button className="btn-primary text-white mr-5" type="primary" disabled={data.length === 0}>
+                            <CSVLink
+                                data={csvData}
+                                headers={[
+                                    { label: 'Thời gian', key: 'time' },
+                                    { label: 'Chi phí', key: 'expense' },
+                                    { label: 'Lợi nhuận', key: 'profit' },
+                                    { label: 'Doanh thu', key: 'revenue' },
+                                ]}
+                                asyncOnClick={true}
+                                separator={';'}
+                                filename={'Thống kê doanh thu.csv'}
+                                onClick={handleExport}
+                            >
+                                Xuất excel
+                            </CSVLink>
+                        </Button>
+                    )}
+                </Col>
+            </Row>
             <Row gutter={16}>
                 <Col span={18}>
                     <div className="rounded border border-solid border-inherit p-6 my-4">
