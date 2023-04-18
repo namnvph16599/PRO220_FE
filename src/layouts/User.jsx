@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Avatar, Divider, Dropdown, List, Skeleton, Space } from 'antd';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import { Avatar, Dropdown, List, Skeleton, Space } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, saveUserValues } from '../slices/user';
 import { isTokenExpired, JwtDecode } from '../utils/auth';
@@ -12,6 +11,7 @@ import { BellOutlined } from '@ant-design/icons';
 import { getOrderNotifications, updateOrderNotifications } from '../api/order';
 import dayjs from 'dayjs';
 import { HOUR_DATE_TIME } from '../constants/format';
+import { getApiNotifications } from '../api/notification';
 
 const User = (props) => {
     const items = [];
@@ -23,11 +23,10 @@ const User = (props) => {
     const isLogged = useSelector((state) => state.user.isLogged);
     const [roleInJwt, setRoleInJwt] = useState(false);
     const [dataOrderNoti, setDataOrderNoti] = useState([]);
-
+    const userDecode = JwtDecode();
     const { pathname } = useLocation();
 
     useEffect(() => {
-        const userDecode = JwtDecode();
         if (!isEmpty(userDecode) || !isEmpty(accessToken)) {
             const Jwt = userDecode ? userDecode : jwtDecode(accessToken);
             setRoleInJwt(Jwt?.role == 'Quản Lý' || Jwt?.role == 'Nhân Viên Kho' ? true : false);
@@ -44,16 +43,18 @@ const User = (props) => {
 
     useEffect(() => {
         (async () => {
-            const roleLogin = JwtDecode();
-            if (roleLogin && isTokenExpired(roleLogin)) {
+            if (userDecode && isTokenExpired(userDecode)) {
                 dispatch(logout());
                 localStorage.removeItem(Token.accessToken);
             }
-            switch (roleLogin?.role) {
+            switch (userDecode?.role) {
                 case 'Quản Lý':
-                    const dataNoti = await getOrderNotifications({ showroomId: roleLogin?.showroomId });
+                    const dataNoti = await getOrderNotifications({ showroomId: userDecode?.showroomId });
                     setDataOrderNoti(dataNoti?.data);
-
+                    break;
+                case 'Nhân Viên Kho':
+                    const dataNotiPart = await getApiNotifications();
+                    setDataOrderNoti(dataNotiPart?.data);
                     break;
 
                 default:
@@ -75,6 +76,15 @@ const User = (props) => {
             item?.appointmentSchedule,
         ).format(HOUR_DATE_TIME)}`,
         content: item._id,
+    }));
+
+    const listDataNotiPart = dataOrderNoti.map((item) => ({
+        href: `/admin/quan-ly-kho?showroomId=${item.showroomId}&materialId=${item.materialId}`,
+        title: `Cửa hàng ${item.nameShowroom} đang yêu cầu vật tư`,
+        avatar: `${item.imageShowroom}`,
+        description: `đã gửi yêu cầu cấp vật tư - ${item.nameMaterial} -
+         vào lúc ${dayjs(item?.createdAt).format(HOUR_DATE_TIME)}`,
+        content: '',
     }));
 
     return (
@@ -139,7 +149,7 @@ const User = (props) => {
                                             <List
                                                 itemLayout="vertical"
                                                 size="small"
-                                                dataSource={listData}
+                                                dataSource={userDecode?.role == 'Quản Lý' ? listData : listDataNotiPart}
                                                 renderItem={(item) => (
                                                     <List.Item>
                                                         <Skeleton loading={false} active avatar>
@@ -151,9 +161,11 @@ const User = (props) => {
                                                                     <a
                                                                         className="font-light"
                                                                         href={item.href}
-                                                                        onClick={() =>
-                                                                            updateOrderNotifications(item.content)
-                                                                        }
+                                                                        onClick={() => {
+                                                                            if (userDecode?.role == 'Quản Lý') {
+                                                                                updateOrderNotifications(item.content);
+                                                                            }
+                                                                        }}
                                                                     >
                                                                         {item.title}
                                                                     </a>
