@@ -16,7 +16,7 @@ import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
 import React, { useEffect, useRef, useState, useMemo, useReducer } from 'react';
 import { exchangePart, getWarehouseByShowroomId, updateQuantityOnePart } from '../../../api/warehouse';
 import ListShowroom from './ListShowrom';
-import { getShowrooms } from '../../../api/showroom';
+import { getShowroomById, getShowrooms } from '../../../api/showroom';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import useDocumentTitle from '../../../hooks/useDocumentTitle';
 import _ from 'lodash';
@@ -25,7 +25,8 @@ import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../constants/permissio
 import Exchange from './Exchange';
 import ModalCustomize from '../../../components/Customs/ModalCustomize';
 import Filter from '../../../components/Filter/Filter';
-import { Link } from 'react-router-dom';
+import { Link, useParams, useLocation } from 'react-router-dom';
+import queryString from 'query-string';
 
 const noti = (type, message, description) => {
     notification[type]({
@@ -76,7 +77,7 @@ const Warehouse = () => {
     const [totals, setTotals] = useState(0);
     const { showroomId } = JwtDecode();
     const [listShowroom, setListShowroom] = useState([]);
-    const [options, setOptions] = useState();
+    const [options, setOptions] = useState(true);
     const datas = useRef([]);
     const initialState = {
         idCurrentShowroom: showroomId,
@@ -86,7 +87,6 @@ const Warehouse = () => {
         quantityCurrent: 0,
         idPart: '',
     };
-
     const reducer = (state, action) => {
         switch (action.type) {
             case 'UPDATE_CURRENT_SHOWROOM':
@@ -104,6 +104,10 @@ const Warehouse = () => {
         }
     };
 
+    // const { search } = useLocation();
+    // const queryParams = queryString.parse(search);
+    // console.log(queryParams);
+
     const [state, dispatch] = useReducer(reducer, initialState);
 
     let searchInput = useRef(null);
@@ -112,6 +116,8 @@ const Warehouse = () => {
 
     const fetchApiWarehouse = async () => {
         try {
+            const showroomData = await getShowroomById(state.idCurrentShowroom);
+            console.log(showroomData);
             const dataWarehouse = await getWarehouseByShowroomId(state.idCurrentShowroom);
             const data = dataWarehouse.data.handleData.map((item) => {
                 return {
@@ -119,6 +125,7 @@ const Warehouse = () => {
                     name: item.materialId.name,
                     quantity: item.quantity,
                     unit: item.materialId.unit,
+                    image: showroomData.data.images[0],
                 };
             });
             setData(data);
@@ -127,6 +134,10 @@ const Warehouse = () => {
                 {
                     value: 'soluong',
                     label: 'sản phẩm đã hết',
+                },
+                {
+                    value: 'ex',
+                    label: 'ex',
                 },
             ]);
             setTotals(dataWarehouse.data.totals);
@@ -152,6 +163,7 @@ const Warehouse = () => {
         try {
             const dataUpdatePart = await exchangePart(obj);
             await fetchApiWarehouse(state.idCurrentShowroom);
+            noti(NOTIFICATION_TYPE.SUCCESS, `Chuyển vật tư thành công`);
             setKeyChange({});
             dispatch({
                 type: 'RESET',
@@ -313,7 +325,9 @@ const Warehouse = () => {
                         <PermissionCheck
                             permissionHas={{ label: PERMISSION_LABLEL.WAREHOUSE_MANAGE, code: PERMISSION_TYPE.SHOW }}
                         >
-                            <Button type="primary">Yêu cầu vật</Button>
+                            <Button type="primary" onClick={() => console.log(record)}>
+                                Yêu cầu vật
+                            </Button>
                         </PermissionCheck>
                     </>
                 );
@@ -347,6 +361,10 @@ const Warehouse = () => {
                         ...row,
                     },
                 };
+                if (row.quantity <= item.quantity) {
+                    noti(NOTIFICATION_TYPE.WARNING, `Số lượng nhập vào phải lớn hơn hiện tại là ${item.quantity}`);
+                    return;
+                }
                 const isSuccess = await updateQuantityOnePart(saveDataToDB);
                 if (isSuccess.data.success) {
                     noti(NOTIFICATION_TYPE.SUCCESS, 'Cập nhật số lượng thành công');
@@ -405,30 +423,11 @@ const Warehouse = () => {
     }, [state.idCurrentShowroom]);
 
     const handleChange = (value) => {
-        if (value == 'sort') {
-            for (let i = 0; i < data.length; i++) {
-                for (let j = i + 1; j < data.length; j++) {
-                    if (data[i].quantity > data[j].quantity) {
-                        const temp = data[i];
-                        data[i] = data[j];
-                        data[j] = temp;
-                    }
-                }
-            }
-            setData(data);
-        } else {
-            const a = data.filter((item) => item.quantity === 0);
-            setData(a);
-        }
+        const a = data.filter((item) => item.quantity === 0);
+        setData(a);
     };
     const handleFilter = (values = {}) => {
         setData(datas.current);
-        setOptions([
-            {
-                value: 'soluong',
-                label: 'sản phẩm đã hết',
-            },
-        ])
     };
     return (
         <>
@@ -454,14 +453,9 @@ const Warehouse = () => {
                                 <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
                             </Tooltip>
                         </button>
-                        <Select
-                            style={{
-                                width: 140,
-                            }}
-                            onChange={handleChange}
-                            options={options}
-                            placeholder="Lựa chọn"
-                        />
+                        <Button onClick={handleChange} className="btn-primary text-white" type="primary">
+                            lọc sản phẩm đã hết
+                        </Button>
                         <div className="flex justify-end pr-4">
                             <p className="text-[18px]">
                                 Số lượng: <span className="font-bold">{data?.length}</span>
