@@ -22,11 +22,12 @@ const OrderManage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
-    const [options, setOptions] = useState([]);
     const orders = useSelector((state) => state.order.orders.values);
     const loading = useSelector((state) => state.order.orders.loading);
+    const [options, setOptions] = useState([]);
     const [handleOrder, setHandleOrder] = useState([]);
     const [csvData, setCsvData] = useState([]);
+    const [showroomIdSelected, setShowroomIdSelected] = useState('');
     const jwtDecode = JwtDecode();
     const columns = [
         {
@@ -94,7 +95,7 @@ const OrderManage = () => {
             if (jwtDecode.showroomId) {
                 await handleFilter({ showroomId: jwtDecode.showroomId });
             }
-            setOptions(setData);
+            setOptions([{ label: 'Chọn cửa hàng', value: '' }, ...setData]);
         })();
     }, []);
     useEffect(() => {
@@ -131,14 +132,34 @@ const OrderManage = () => {
     }, [showrooms]);
 
     const handleFilter = async (values = {}) => {
-        await dispatch(getOrdersAsync(values));
+        await dispatch(getOrdersAsync({ ...values }));
     };
     const handleFilterShowroom = async (value) => {
+        setShowroomIdSelected(value);
+        if (!value) {
+            setHandleOrder(orders);
+            return;
+        }
         const { data } = await getOrderShowroom(value);
         const handleOrder = data.map((order) => {
             return { ...order, key: order._id };
         });
         setHandleOrder(handleOrder);
+    };
+    const handleRefresh = () => {
+        if (JwtDecode.showroomId) {
+            handleFilter({ showroomId: JwtDecode.showroomId });
+            return;
+        }
+        handleFilter();
+    };
+    const handleChangeFilter = (values = {}) => {
+        const showroomId = showroomIdSelected || jwtDecode.showroomId;
+        if (showroomId) {
+            handleFilter({ ...values, showroomId });
+            return;
+        }
+        handleFilter({ ...values });
     };
     return (
         <div className="banner-content">
@@ -146,7 +167,7 @@ const OrderManage = () => {
                 <div>
                     <div className="flex justify-between align-center pb-4">
                         <div>
-                            <button className="pr-6" onClick={() => handleFilter()}>
+                            <button className="pr-6" onClick={handleRefresh}>
                                 <Tooltip title="Làm mới đơn hàng">
                                     <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
                                 </Tooltip>
@@ -209,12 +230,13 @@ const OrderManage = () => {
                                         name: 'Thời gian sửa chữa',
                                     },
                                 ]}
-                                onFilter={handleFilter}
+                                onFilter={handleChangeFilter}
                             />
                             {jwtDecode.role == 'Admin' ? (
                                 <>
                                     <Select
-                                        defaultValue={'Mời bạn lựa chọn'}
+                                        className="pl-2"
+                                        defaultValue={''}
                                         options={options}
                                         onChange={handleFilterShowroom}
                                     />
