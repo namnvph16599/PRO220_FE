@@ -5,10 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import { getOrdersAsync } from '../../../slices/order';
 import { getAllShowroomAsync } from '../../../slices/showroom';
-import { EditOutlined, SyncOutlined } from '@ant-design/icons';
-import { Button, Select, Space, Table, Tooltip } from 'antd';
+import { SyncOutlined } from '@ant-design/icons';
+import { Button, Select, Space, Table, Tag, Tooltip } from 'antd';
 import { HOUR_DATE_TIME } from '../../../constants/format';
-import { ORDER_STATUS, SEVICE_TYPE } from '../../../constants/order';
+import { ORDER_STATUS } from '../../../constants/order';
 import SpinCustomize from '../../../components/Customs/Spin';
 import Filter from '../../../components/Filter/Filter';
 import { CSVLink } from 'react-csv';
@@ -22,11 +22,12 @@ const OrderManage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
-    const [options, setOptions] = useState([]);
     const orders = useSelector((state) => state.order.orders.values);
     const loading = useSelector((state) => state.order.orders.loading);
+    const [options, setOptions] = useState([]);
     const [handleOrder, setHandleOrder] = useState([]);
     const [csvData, setCsvData] = useState([]);
+    const [showroomIdSelected, setShowroomIdSelected] = useState('');
     const jwtDecode = JwtDecode();
     const columns = [
         {
@@ -54,62 +55,31 @@ const OrderManage = () => {
         {
             title: 'Loại hình dịch vụ',
             dataIndex: 'serviceType',
-            render: (servviceType) => {
-                switch (servviceType) {
-                    case SEVICE_TYPE.SHOWROOM:
-                        return 'Sửa chữa/ Bảo dưỡng tại cửa hàng.';
-
-                    case SEVICE_TYPE.RESCUE:
-                        return 'Cứu hộ 24/7';
-
-                    case SEVICE_TYPE.CONTACT_RESCUE:
-                        return 'Nhận về sửa chữa';
-
-                    default:
-                        return '';
-                }
-            },
         },
         {
             title: 'Thời gian sửa chữa',
             dataIndex: 'appointmentSchedule',
             render: (date) => dayjs(date).format(HOUR_DATE_TIME),
         },
-
-        {
-            title: 'Mô tả',
-            dataIndex: 'description',
-        },
-        {
-            title: 'Phụ phí',
-            dataIndex: 'subPrice',
-            render: (value) => value && value.toLocaleString('en') + ' VNĐ',
-        },
-        {
-            title: 'giảm giá',
-            render: () => '10%',
-        },
         {
             title: 'Tổng tiền',
             dataIndex: 'total',
-            render: (value) => value && value.toLocaleString('en') + ' VNĐ',
+            render: (value) =>
+                value > 0 ? (
+                    value.toLocaleString('en') + ' VNĐ'
+                ) : (
+                    <Tag color={'volcano'} key={'loser'}>
+                        chưa thanh toán
+                    </Tag>
+                ),
         },
         {
             title: 'Cửa hàng sửa chữa',
             dataIndex: 'showroomId',
             render: (showroomId) => _.get(_.find(showrooms, ['_id', showroomId]), 'name', ''),
         },
-        {
-            title: '',
-            render: (data) => {
-                return (
-                    <Link to={data._id}>
-                        <EditOutlined className="text-xl pr-4" />
-                    </Link>
-                );
-            },
-        },
     ];
+
     useEffect(() => {
         (async () => {
             const { data } = await getShowrooms();
@@ -119,8 +89,13 @@ const OrderManage = () => {
                     value: item._id,
                 };
             });
-            setOptions(setData);
-            handleFilter();
+            if (jwtDecode.role === 'Admin') {
+                await handleFilter();
+            }
+            if (jwtDecode.showroomId) {
+                await handleFilter({ showroomId: jwtDecode.showroomId });
+            }
+            setOptions([{ label: 'Chọn cửa hàng', value: '' }, ...setData]);
         })();
     }, []);
     useEffect(() => {
@@ -129,7 +104,7 @@ const OrderManage = () => {
         });
         setHandleOrder(handleOrder);
     }, [orders]);
-    useEffect(() => {
+    const handleExport = (event, done) => {
         const newCsvData = orders.map((order) => {
             const status = ORDER_STATUS[order.status];
             return {
@@ -137,30 +112,54 @@ const OrderManage = () => {
                 number_phone: order.number_phone,
                 email: order.email,
                 status,
+                vehicleType: order.vehicleType,
+                licensePlates: order.licensePlates,
+                serviceType: order.serviceType,
                 appointmentSchedule: dayjs(order.appointmentSchedule).format(HOUR_DATE_TIME),
+                tg_tra_xe: dayjs(order.tg_tra_xe).format(HOUR_DATE_TIME),
                 showroomId: _.get(_.find(showrooms, ['_id', order.showroomId]), 'name', ''),
-                total: (order.total && order.total.toLocaleString('en') + ' VNĐ') || '',
+                total: (order.total && order.total.toLocaleString('en') + ' VNĐ') || 0,
+                totalWithVat: (order.totalWithVat && order.totalWithVat.toLocaleString('en') + ' VNĐ') || 0,
             };
         });
         setCsvData(newCsvData);
-    }, [orders]);
-
+        done(true);
+    };
     useEffect(() => {
         if (_.isEmpty(showrooms)) {
             dispatch(getAllShowroomAsync());
         }
     }, [showrooms]);
 
-    const handleFilter = (values = {}) => {
-        dispatch(getOrdersAsync(values));
+    const handleFilter = async (values = {}) => {
+        await dispatch(getOrdersAsync({ ...values }));
     };
     const handleFilterShowroom = async (value) => {
+        setShowroomIdSelected(value);
+        if (!value) {
+            setHandleOrder(orders);
+            return;
+        }
         const { data } = await getOrderShowroom(value);
         const handleOrder = data.map((order) => {
             return { ...order, key: order._id };
         });
-        console.log(handleOrder);
         setHandleOrder(handleOrder);
+    };
+    const handleRefresh = () => {
+        if (JwtDecode.showroomId) {
+            handleFilter({ showroomId: JwtDecode.showroomId });
+            return;
+        }
+        handleFilter();
+    };
+    const handleChangeFilter = (values = {}) => {
+        const showroomId = showroomIdSelected || jwtDecode.showroomId;
+        if (showroomId) {
+            handleFilter({ ...values, showroomId });
+            return;
+        }
+        handleFilter({ ...values });
     };
     return (
         <div className="banner-content">
@@ -168,7 +167,7 @@ const OrderManage = () => {
                 <div>
                     <div className="flex justify-between align-center pb-4">
                         <div>
-                            <button className="pr-6" onClick={() => handleFilter()}>
+                            <button className="pr-6" onClick={handleRefresh}>
                                 <Tooltip title="Làm mới đơn hàng">
                                     <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
                                 </Tooltip>
@@ -231,19 +230,18 @@ const OrderManage = () => {
                                         name: 'Thời gian sửa chữa',
                                     },
                                 ]}
-                                onFilter={handleFilter}
+                                onFilter={handleChangeFilter}
                             />
-                            {
-                                (jwtDecode.role == 'Admin' ? (
-                                    <>
-                                        <Select
-                                            defaultValue={'Mời bạn lựa chọn'}
-                                            options={options}
-                                            onChange={handleFilterShowroom}
-                                        />
-                                    </>
-                                ) : null)
-                            }
+                            {jwtDecode.role == 'Admin' ? (
+                                <>
+                                    <Select
+                                        className="pl-2"
+                                        defaultValue={''}
+                                        options={options}
+                                        onChange={handleFilterShowroom}
+                                    />
+                                </>
+                            ) : null}
                         </div>
                         <div>
                             <Button className="btn-primary text-white mr-5" type="primary">
@@ -253,12 +251,19 @@ const OrderManage = () => {
                                         { label: 'Tên khách hàng', key: 'name' },
                                         { label: 'Số điện thoại', key: 'number_phone' },
                                         { label: 'Email', key: 'email' },
-                                        { label: 'Trạng thái', key: 'status' },
+                                        { label: 'Loại xe', key: 'vehicleType' },
+                                        { label: 'Biển số xe', key: 'licensePlates' },
+                                        { label: 'Trạng thái đơn hàng', key: 'status' },
+                                        { label: 'Loại hình dịch vụ', key: 'serviceType' },
                                         { label: 'Thời gian sữa chữa', key: 'appointmentSchedule' },
+                                        { label: 'Thời gian trả xe', key: 'tg_tra_xe' },
                                         { label: 'Cửa hàng', key: 'showroomId' },
                                         { label: 'Tổng tiền đơn hàng', key: 'total' },
+                                        { label: 'Tổng tiền đơn hàng đã có VAT', key: 'totalWithVat' },
                                     ]}
+                                    asyncOnClick={true}
                                     separator={';'}
+                                    onClick={handleExport}
                                     filename={'Đơn hàng.csv'}
                                 >
                                     Xuất excel
@@ -290,7 +295,7 @@ const OrderManage = () => {
                     ) : (
                         <Table
                             scroll={{
-                                x: 3000,
+                                x: 1500,
                             }}
                             columns={columns}
                             dataSource={handleOrder}

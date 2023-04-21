@@ -17,7 +17,6 @@ import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { getMaterialsWarehouseAsync } from '../../../slices/warehouse';
 import { sendMail, updateStatusBill } from '../../../api/payment';
 import { RightOutlined, LeftOutlined } from '@ant-design/icons/lib/icons';
-import { useReactToPrint } from 'react-to-print';
 import SubServices from './SubServices';
 import StatusOrderDisplay from './StatusOrderDisplay';
 import SelectMaterials from './SelectMaterials';
@@ -25,6 +24,8 @@ import { updateOrder } from '../../../api/order';
 import { getApiSubService } from '../../../api/service';
 import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../constants/permission';
 import PermissionCheck from '../../../components/permission/PermissionCheck';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const UpdateOrder = (props) => {
     useDocumentTitle('Cập nhật đơn hàng');
@@ -159,7 +160,8 @@ const UpdateOrder = (props) => {
             setInitialValues({
                 ...orderOther,
                 appointmentSchedule: dayjs(appointmentSchedule),
-                tg_nhan_xe: dayjs(tg_nhan_xe),
+                // tg_nhan_xe: dayjs(tg_nhan_xe),
+                tg_nhan_xe: dayjs(appointmentSchedule).add(Math.floor(Math.random() * 30) + 1, 'minute'),
                 price: totalPriceMaterials(),
             });
             setIsShowroom(order.serviceType);
@@ -235,11 +237,17 @@ const UpdateOrder = (props) => {
         }
 
         updateOrderStatus(order._id, {
-            materials: order.materials,
-            materialIds: orders.materialIds,
-            reasons: orders.reasons,
+            materials: order?.materials,
+            materialIds: orders?.materialIds,
+            reasons: orders?.reasons,
             total: total,
-            tg_tra_xe: status >= 4 ? dateFinish : null,
+            number_phone: order?.number_phone,
+            showroomName: order?.showroomName,
+            isCustomer: order?.isCustomer,
+            appointmentSchedule: order?.appointmentSchedule,
+            serviceType: order?.serviceType,
+            // tg_tra_xe: status >= 4 ? dateFinish : null,
+            tg_tra_xe: status >= 4 ? dayjs(order?.tg_nhan_xe).add(Math.floor(Math.random() * 60) + 40, 'minute') : null,
             status,
         })
             .then(({ data }) => {
@@ -255,12 +263,14 @@ const UpdateOrder = (props) => {
             });
     };
 
-    const handlePrint = useReactToPrint({
-        documentTitle: 'Hóa đơn',
-        content: () => componentRef.current,
-        onAfterPrint: payment,
-        removeAfterPrint: true,
-    });
+    const exportPDF = () => {
+        html2canvas(componentRef.current, { scale: 2, allowTaint: true, useCORS: true }).then((canvas) => {
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 211, 298);
+            pdf.save('hoa_don.pdf');
+            payment();
+        });
+    };
 
     const columns = [
         {
@@ -553,11 +563,11 @@ const UpdateOrder = (props) => {
                                                 format={HOUR_DATE_TIME}
                                                 disabledDate={disabledDate}
                                                 disabledTime={disabledDateTime}
-                                                value={
-                                                    order?.tg_nhan_xe == null
-                                                        ? dayjs(dateStart).format(HOUR_DATE_TIME)
-                                                        : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)
-                                                }
+                                                // value={
+                                                //     order?.tg_nhan_xe == null
+                                                //         ? dayjs(dateStart).format(HOUR_DATE_TIME)
+                                                //         : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)
+                                                // }
                                                 showNow={false}
                                                 showTime
                                             />
@@ -728,19 +738,21 @@ const UpdateOrder = (props) => {
                                         </p>
                                         <p>
                                             Thời gian nhận xe thực tế:{' '}
-                                            <span>
+                                            {/* <span>
                                                 {order?.tg_nhan_xe == null
                                                     ? dayjs(dateStart).format(HOUR_DATE_TIME)
                                                     : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
-                                            </span>
+                                            </span> */}
+                                            {dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
                                         </p>
                                         <p>
                                             Thời gian trả xe thực tế:{' '}
-                                            <span>
+                                            {/* <span>
                                                 {order?.tg_tra_xe == null
                                                     ? ''
                                                     : dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
-                                            </span>
+                                            </span> */}
+                                            {dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
                                         </p>
                                         <p>Loại xe: {order?.vehicleType}</p>
                                         <p>Biển số xe: {order?.licensePlates}</p>
@@ -805,7 +817,7 @@ const UpdateOrder = (props) => {
                                         <Button
                                             type="primary"
                                             className={`text-white !bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out font-medium rounded-lg text-sm text-center mr-3 md:mr-0`}
-                                            onClick={() => handlePrint()}
+                                            onClick={() => exportPDF()}
                                         >
                                             Thanh Toán
                                         </Button>
