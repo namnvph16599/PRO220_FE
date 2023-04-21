@@ -17,7 +17,6 @@ import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { getMaterialsWarehouseAsync } from '../../../slices/warehouse';
 import { sendMail, updateStatusBill } from '../../../api/payment';
 import { RightOutlined, LeftOutlined } from '@ant-design/icons/lib/icons';
-import { useReactToPrint } from 'react-to-print';
 import SubServices from './SubServices';
 import StatusOrderDisplay from './StatusOrderDisplay';
 import SelectMaterials from './SelectMaterials';
@@ -25,6 +24,8 @@ import { updateOrder } from '../../../api/order';
 import { getApiSubService } from '../../../api/service';
 import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../constants/permission';
 import PermissionCheck from '../../../components/permission/PermissionCheck';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const UpdateOrder = (props) => {
     useDocumentTitle('Cập nhật đơn hàng');
@@ -262,12 +263,14 @@ const UpdateOrder = (props) => {
             });
     };
 
-    const handlePrint = useReactToPrint({
-        documentTitle: 'Hóa đơn',
-        content: () => componentRef.current,
-        onAfterPrint: payment,
-        removeAfterPrint: true,
-    });
+    const exportPDF = () => {
+        html2canvas(componentRef.current, { scale: 2, allowTaint: true, useCORS: true }).then((canvas) => {
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 211, 298);
+            pdf.save('hoa_don.pdf');
+            payment();
+        });
+    };
 
     const columns = [
         {
@@ -814,7 +817,7 @@ const UpdateOrder = (props) => {
                                         <Button
                                             type="primary"
                                             className={`text-white !bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out font-medium rounded-lg text-sm text-center mr-3 md:mr-0`}
-                                            onClick={() => handlePrint()}
+                                            onClick={() => exportPDF()}
                                         >
                                             Thanh Toán
                                         </Button>
