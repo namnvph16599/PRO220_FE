@@ -62,8 +62,9 @@ function App() {
         <Routes>
             <Route path="/" element={<MainLayout />}>
                 <Route index element={<HomePage />} />
-                <Route path="about" element={<AboutPage />} />
                 <Route path="dat-lich" element={<BookingPage />} />
+                <Route path="dich-vu-cua-chung-toi" element={<AboutPage />} />
+                <Route path="gioi-thieu" element={<AboutPage />} />
                 <Route path="tin-tuc" element={<Posts />} />
                 <Route path="tin-tuc/*" element={<Post />} />
                 <Route path="gioi-thieu" element={<AboutPage />} />
