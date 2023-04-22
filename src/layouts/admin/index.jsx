@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Link, Outlet, useNavigate, useNavigation } from 'react-router-dom';
-import { Layout, Menu, Dropdown, Space } from 'antd';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Layout, Menu } from 'antd';
 import { useSelector } from 'react-redux';
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     PieChartOutlined,
     ContactsOutlined,
-    FileTextOutlined,
     FileDoneOutlined,
+    HomeOutlined,
+    UsergroupDeleteOutlined,
+    ProfileOutlined,
+    ShopOutlined,
+    IdcardOutlined,
+    PictureOutlined,
     DashboardOutlined,
 } from '@ant-design/icons';
 import './admin-layout.css';
@@ -45,7 +50,7 @@ const siderBarItems = [
         label: PERMISSION_LABLEL.ORDER_MANAGE,
         key: 'Quản lý đơn hàng',
         code: PERMISSION_TYPE.NULL,
-        icon: <FileTextOutlined />,
+        icon: <ProfileOutlined />,
         children: [
             { key: 'Đơn hàng', code: PERMISSION_TYPE.SHOW, path: 'don-hang', label: 'Đơn hàng' },
             { key: 'Thêm đơn hàng', code: PERMISSION_TYPE.CREATE, path: 'them-don-hang', label: 'Thêm đơn hàng' },
@@ -62,7 +67,7 @@ const siderBarItems = [
         key: PERMISSION_LABLEL.BANNER_MANAGE,
         code: PERMISSION_TYPE.CONFIRM,
         path: 'quan-ly-banner',
-        icon: <FileDoneOutlined />,
+        icon: <PictureOutlined />,
         label: 'Quản Lý Banner',
     },
     {
@@ -79,7 +84,7 @@ const siderBarItems = [
         key: PERMISSION_LABLEL.ACCOUNT_MANAGE,
         path: 'quan-ly-tai-khoan',
         code: PERMISSION_TYPE.CONFIRM,
-        icon: <FileDoneOutlined />,
+        icon: <IdcardOutlined />,
         label: 'Quản Lý Thành Viên',
     },
     {
@@ -96,7 +101,7 @@ const siderBarItems = [
         label: 'Quản Lý Dịch Vụ Phát Sinh',
         key: PERMISSION_LABLEL.SERVICE_SUB_MANAGE,
         code: PERMISSION_TYPE.CONFIRM,
-        icon: <FileDoneOutlined />,
+        icon: <ProfileOutlined />,
         children: [
             { key: 'Danh sách dịch vụ phát sinh', path: 'quan-ly-sub-dich-vu', label: 'Danh sách dịch vụ phát sinh' },
             {
@@ -111,7 +116,7 @@ const siderBarItems = [
         key: PERMISSION_LABLEL.SHOWROOM_MANAGE,
         label: 'Quản Lý Cửa Hàng',
         code: PERMISSION_TYPE.NULL,
-        icon: <FileDoneOutlined />,
+        icon: <HomeOutlined />,
         children: [
             { key: 'Cửa hàng', path: 'quan-ly-cua-hang', code: PERMISSION_TYPE.SHOW, label: 'Cửa hàng' },
             { key: 'Thêm cửa hàng', path: 'them-cua-hang', code: PERMISSION_TYPE.CREATE, label: 'Thêm cửa hàng' },
@@ -127,7 +132,7 @@ const siderBarItems = [
     {
         key: PERMISSION_LABLEL.LOCATION_MANAGE,
         path: 'province',
-        icon: <FileDoneOutlined />,
+        icon: <ShopOutlined />,
         code: PERMISSION_TYPE.CONFIRM,
         label: 'Quản Lý Địa Chỉ',
     },
@@ -142,7 +147,7 @@ const siderBarItems = [
         key: 'Quản người dùng',
         path: 'quan-ly-nguoi-dung',
         code: PERMISSION_TYPE.CONFIRM,
-        icon: <FileDoneOutlined />,
+        icon: <UsergroupDeleteOutlined />,
         label: PERMISSION_LABLEL.USER_MANAGER,
     },
 ];

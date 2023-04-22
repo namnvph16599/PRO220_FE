@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import _, { isEmpty } from 'lodash';
 import { EditOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
@@ -18,11 +18,11 @@ import { PERMISSION_LABLEL, PERMISSION_TYPE } from '../../../constants/permissio
 
 const ShowRoom = () => {
     useDocumentTitle('Quản lý cửa hàng');
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const showrooms = useSelector((state) => state.showroom.showrooms.values);
     const loadding = useSelector((state) => state.showroom.showrooms.loading);
     const account = useSelector((state) => state.user.currentUser.values);
-    const roleAccount = account.role;
     const [zone, setZone] = useState([]);
     const [showroomAccount, setShowroomAccount] = useState();
     const [showroomsFilter, setShowroomsFilter] = useState([]);
@@ -204,10 +204,17 @@ const ShowRoom = () => {
                                     onFilter={handleFilter}
                                 />
                             </div>
-                            <p className="p-5">
-                                Số lượng: <span className="font-bold">{showroomAccount?.length}</span>
-                            </p>
+                            <Button
+                                onClick={() => navigate('/admin/them-cua-hang')}
+                                className="btn-primary text-white mr-5"
+                                type="primary"
+                            >
+                                Thêm cửa hàng
+                            </Button>
                         </div>
+                        <p className="p-5">
+                            Số lượng: <span className="font-bold">{showroomAccount?.length}</span>
+                        </p>
                     </PermissionCheck>
 
                     <Table columns={columns} dataSource={showroomAccount} rowKey="key" />

@@ -7,7 +7,6 @@ const PrivateDashboard = ({ children }) => {
     if (roleLogin.role == "Quản Lý") {
         return <Navigate to="/admin/thong-ke-doanh-thu" />;        
     }
-    console.log(roleLogin.role=="Nhân Viên Kho");
     if(roleLogin.role=="Nhân Viên Kho"){
         return <Navigate to="/admin/quan-ly-kho" />; 
     }

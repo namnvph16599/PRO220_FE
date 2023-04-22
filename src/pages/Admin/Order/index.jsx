@@ -8,7 +8,7 @@ import { getAllShowroomAsync } from '../../../slices/showroom';
 import { SyncOutlined } from '@ant-design/icons';
 import { Button, Select, Space, Table, Tag, Tooltip } from 'antd';
 import { HOUR_DATE_TIME } from '../../../constants/format';
-import { ORDER_STATUS } from '../../../constants/order';
+import { ORDER_STATUS, ORDER_STATUS_BY_TAG } from '../../../constants/order';
 import SpinCustomize from '../../../components/Customs/Spin';
 import Filter from '../../../components/Filter/Filter';
 import { CSVLink } from 'react-csv';
@@ -42,10 +42,10 @@ const OrderManage = () => {
         {
             title: 'Trạng thái',
             dataIndex: 'status',
-            render: (status, data) => ORDER_STATUS[status],
+            render: (status, data) => <Tag color={ORDER_STATUS_BY_TAG[status]}>{ORDER_STATUS[status]}</Tag>,
         },
         {
-            title: 'Tên khá ch hàng',
+            title: 'Tên khách hàng',
             dataIndex: 'name',
         },
         {
@@ -64,14 +64,7 @@ const OrderManage = () => {
         {
             title: 'Tổng tiền',
             dataIndex: 'total',
-            render: (value) =>
-                value > 0 ? (
-                    value.toLocaleString('en') + ' VNĐ'
-                ) : (
-                    <Tag color={'volcano'} key={'loser'}>
-                        chưa thanh toán
-                    </Tag>
-                ),
+            render: (value, data) => (value && value.toLocaleString('en') + ' VNĐ') || '',
         },
         {
             title: 'Cửa hàng sửa chữa',
@@ -147,8 +140,8 @@ const OrderManage = () => {
         setHandleOrder(handleOrder);
     };
     const handleRefresh = () => {
-        if (JwtDecode.showroomId) {
-            handleFilter({ showroomId: JwtDecode.showroomId });
+        if (jwtDecode.showroomId) {
+            handleFilter({ showroomId: jwtDecode.showroomId });
             return;
         }
         handleFilter();
@@ -244,31 +237,30 @@ const OrderManage = () => {
                             ) : null}
                         </div>
                         <div>
-                            <Button className="btn-primary text-white mr-5" type="primary">
-                                <CSVLink
-                                    data={csvData}
-                                    headers={[
-                                        { label: 'Tên khách hàng', key: 'name' },
-                                        { label: 'Số điện thoại', key: 'number_phone' },
-                                        { label: 'Email', key: 'email' },
-                                        { label: 'Loại xe', key: 'vehicleType' },
-                                        { label: 'Biển số xe', key: 'licensePlates' },
-                                        { label: 'Trạng thái đơn hàng', key: 'status' },
-                                        { label: 'Loại hình dịch vụ', key: 'serviceType' },
-                                        { label: 'Thời gian sữa chữa', key: 'appointmentSchedule' },
-                                        { label: 'Thời gian trả xe', key: 'tg_tra_xe' },
-                                        { label: 'Cửa hàng', key: 'showroomId' },
-                                        { label: 'Tổng tiền đơn hàng', key: 'total' },
-                                        { label: 'Tổng tiền đơn hàng đã có VAT', key: 'totalWithVat' },
-                                    ]}
-                                    asyncOnClick={true}
-                                    separator={';'}
-                                    onClick={handleExport}
-                                    filename={'Đơn hàng.csv'}
-                                >
-                                    Xuất excel
-                                </CSVLink>
-                            </Button>
+                            <CSVLink
+                                className="btn-primary text-white mr-5 px-6 py-1.5 border border-solid rounded"
+                                data={csvData}
+                                headers={[
+                                    { label: 'Tên khách hàng', key: 'name' },
+                                    { label: 'Số điện thoại', key: 'number_phone' },
+                                    { label: 'Email', key: 'email' },
+                                    { label: 'Loại xe', key: 'vehicleType' },
+                                    { label: 'Biển số xe', key: 'licensePlates' },
+                                    { label: 'Trạng thái đơn hàng', key: 'status' },
+                                    { label: 'Loại hình dịch vụ', key: 'serviceType' },
+                                    { label: 'Thời gian sữa chữa', key: 'appointmentSchedule' },
+                                    { label: 'Thời gian trả xe', key: 'tg_tra_xe' },
+                                    { label: 'Cửa hàng', key: 'showroomId' },
+                                    { label: 'Tổng tiền đơn hàng', key: 'total' },
+                                    { label: 'Tổng tiền đơn hàng đã có VAT', key: 'totalWithVat' },
+                                ]}
+                                asyncOnClick={true}
+                                separator={';'}
+                                onClick={handleExport}
+                                filename={'Đơn hàng.csv'}
+                            >
+                                Xuất excel
+                            </CSVLink>
                             <PermissionCheck
                                 permissionHas={{ label: PERMISSION_LABLEL.ORDER_MANAGE, code: PERMISSION_TYPE.CREATE }}
                             >

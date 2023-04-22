@@ -76,9 +76,6 @@ const index = () => {
         <div>
             <div className="flex justify-between">
                 <div>
-                    <Button onClick={() => OpenShowDrawer()} className="btn-primary text-white mr-5" type="primary">
-                        Thêm vai trò
-                    </Button>
                     <button className="pr-6" onClick={() => handleFilters()}>
                         <Tooltip title="Làm mới quyền">
                             <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
@@ -98,10 +95,13 @@ const index = () => {
                         onFilter={handleFilter}
                     />
                 </div>
-                <p className="p-5">
-                    Số lượng: <span className="font-bold">{data?.length}</span>
-                </p>
+                <Button onClick={() => OpenShowDrawer()} className="btn-primary text-white mr-5" type="primary">
+                    Thêm vai trò
+                </Button>
             </div>
+            <p className="p-5">
+                Số lượng: <span className="font-bold">{data?.length}</span>
+            </p>
             <>
                 <Spin spinning={Loading}>
                     <Table columns={columns} dataSource={data} />
