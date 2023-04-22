@@ -147,8 +147,8 @@ const OrderManage = () => {
         setHandleOrder(handleOrder);
     };
     const handleRefresh = () => {
-        if (JwtDecode.showroomId) {
-            handleFilter({ showroomId: JwtDecode.showroomId });
+        if (jwtDecode.showroomId) {
+            handleFilter({ showroomId: jwtDecode.showroomId });
             return;
         }
         handleFilter();
