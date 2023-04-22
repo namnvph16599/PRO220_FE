@@ -502,7 +502,7 @@ const UpdateOrder = (props) => {
                                             ]}
                                         >
                                             <Input
-                                                className="h-10 text-base border-[#02b875]"
+                                                className="h-10 text-base border-[#02b875] "
                                                 placeholder="30-F-23132"
                                             />
                                         </Form.Item>
@@ -622,7 +622,7 @@ const UpdateOrder = (props) => {
                                     code: PERMISSION_TYPE.UPDATE,
                                 }}
                             >
-                                <div className="flex gap-x-2 justify-end">
+                                <div className="flex gap-x-2 justify-end mb-3">
                                     {order.status == 1 && (
                                         <Button
                                             className="bg-red-500 text-white hover:!text-white"
