@@ -1,5 +1,6 @@
 import instance from './instance';
 const URL = '/warehouses';
+
 // /warehouses/update-one
 export const getWarehouseByShowroomId = (idShowroom) => {
     return instance.get(`${URL}/${idShowroom}`);
@@ -27,4 +28,20 @@ export const getExchangePart = (value) => {
 
 export const exchangePart = (value) => {
     return instance.patch(`/warehouse-exchange`, value);
+};
+
+export const generalPart = () => {
+    return instance.get(`/general-warehouse`);
+};
+
+export const updateGeneralPart = (data) => {
+    return instance.patch(`/general-warehouse`, data);
+};
+
+export const updatePartRequired = (data) => {
+    return instance.patch(`/required-part?`, data);
+};
+
+export const getOnePartRequired = (data) => {
+    return instance.get(`/required-part?`, { params: data });
 };

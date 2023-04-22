@@ -38,7 +38,6 @@ import Permission from './pages/Admin/Manage_Role/Permission';
 
 import DrawerUpdateShowroom from './pages/Admin/showRoom/DrawerUpdateShowroom';
 
-import OrderStatistical from './pages/Admin/Statistical/OrderStatistical';
 import RevenueOrderStatistical from './pages/Admin/Statistical/Order/RevenueOrderStatistical';
 import AccountManager from './pages/Admin/Account';
 import ManagerAccount from './pages/Admin/user_manager/index';
@@ -48,6 +47,13 @@ import Post from './pages/Post/Post';
 import ServiceManager from './pages/Admin/ServiceManage';
 import CreateService from './pages/Admin/ServiceManage/CreateService';
 import UpdateService from './pages/Admin/ServiceManage/UpdateService';
+import TotalOrderStatisticalByStatus from './pages/Admin/Statistical/Order/TotalOrderStatisticalByStatus';
+import TotalOrderStatistical from './pages/Admin/Statistical/Order/TotalOrderStatistical';
+import GeneralWarehouse from './pages/Admin/Warehouse/GeneralWarehouse';
+import PasswordRetrieval from './pages/Password';
+import SubServiceManager from './pages/Admin/subServiceManage';
+import CreateSubService from './pages/Admin/subServiceManage/CreateSubService';
+import UpdateSubService from './pages/Admin/subServiceManage/UpdateSubService';
 
 function App() {
     return (
@@ -59,6 +65,8 @@ function App() {
                 <Route path="gioi-thieu" element={<AboutPage />} />
                 <Route path="tin-tuc" element={<Posts />} />
                 <Route path="tin-tuc/*" element={<Post />} />
+                <Route path="gioi-thieu" element={<AboutPage />} />
+                <Route path="quen-mat-khau" element={<PasswordRetrieval />} />
                 <Route
                     path="dang-nhap"
                     element={
@@ -105,7 +113,8 @@ function App() {
                 }
             >
                 <Route path="dang-ky" element={<Register />} />
-                <Route path="thong-ke-don-hang" element={<OrderStatistical />} />
+                <Route path="thong-ke-don-hang" element={<TotalOrderStatistical />} />
+                <Route path="thong-ke-don-hang-theo-trang-thai" element={<TotalOrderStatisticalByStatus />} />
                 <Route path="thong-ke-doanh-thu" element={<RevenueOrderStatistical />} />
                 <Route path="quan-ly-banner" element={<BannerManage />} />
                 <Route path="quan-ly-cua-hang" element={<ShowRoom />} />
@@ -118,6 +127,7 @@ function App() {
                 <Route path="them-don-hang" element={<CreateOrder />} />
                 <Route path="don-hang/:id" element={<UpdateOrder />} />
                 <Route path="quan-ly-kho" element={<Warehouse />} />
+                <Route path="quan-ly-kho/general-warehouse" element={<GeneralWarehouse />} />
                 <Route path="province" element={<DistrictManage />} />
                 <Route path="province/them" element={<DrawerCreateDistrict />} />
                 <Route path="province/:id" element={<UpdateDistrict />} />
@@ -129,6 +139,9 @@ function App() {
                 <Route path="quan-ly-dich-vu" element={<ServiceManager />} />
                 <Route path="them-dich-vu" element={<CreateService />} />
                 <Route path="sua-dich-vu/:id" element={<UpdateService />} />
+                <Route path="quan-ly-sub-dich-vu" element={<SubServiceManager />} />
+                <Route path="them-sub-dich-vu" element={<CreateSubService />} />
+                <Route path="sua-sub-dich-vu/:id" element={<UpdateSubService />} />
                 <Route path="quan-ly-nguoi-dung" element={<ManagerAccount />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />

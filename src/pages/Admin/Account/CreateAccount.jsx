@@ -38,9 +38,7 @@ const CreateAccount = ({ open, onClose, onRefetch, checkShowroom }) => {
                     onRefetch();
                 }
             })
-            .catch((err) => {
-                console.log('create-acount', err);
-            })
+            .catch((err) => {})
             .finally(() => {
                 setLoading(false);
             });
@@ -123,7 +121,7 @@ const CreateAccount = ({ open, onClose, onRefetch, checkShowroom }) => {
                     >
                         <Select
                             className="h-10 text-base border-[#02b875]"
-                            placeholder="Chọn cửa hàng"
+                            placeholder="Chọn vai trò"
                             onChange={handleChange}
                         >
                             {role.map((role, index) => {

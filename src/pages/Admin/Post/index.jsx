@@ -54,7 +54,6 @@ const PostManager = () => {
             await getAllPost();
         })();
     }, []);
-    console.log('data', data);
 
     const handleRemoveAccount = (id) => {};
 
@@ -66,7 +65,7 @@ const PostManager = () => {
                 setData(newData);
             })
             .catch((err) => {
-                console.log('get posts err', err);
+                return;
             })
             .finally(() => setLoading(false));
     };
@@ -91,7 +90,7 @@ const PostManager = () => {
             <div className="flex justify-between align-center pb-4">
                 <div>
                     <button className="pr-6" onClick={() => handleFilter()}>
-                        <Tooltip title="Làm mới đơn hàng">
+                        <Tooltip title="Làm mới tin tức">
                             <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
                         </Tooltip>
                     </button>

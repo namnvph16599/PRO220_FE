@@ -1,23 +1,27 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button, Form, Input } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import useDocumentTitle from '../../hooks/useDocumentTitle';
-import app from './fisebase_config';
+import app from '../Register/fisebase_config';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 import { Notification } from '../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../constants/status';
 import { register } from '../../api/auth';
 import { R_NUMBER_PHONE } from '../../constants/regex';
+import { checkPhoneinSystem } from '../../api/order';
+import _ from 'lodash';
+import { updatePassword } from '../../api/account';
 const auth = getAuth(app);
-const Register = () => {
-    useDocumentTitle('Đăng ký tài khoản');
+const ChangePassword = () => {
+    useDocumentTitle('Quên Mật Khẩu');
     const [otp, setOtp] = useState('');
-    const [isVerify, setIsVerify] = useState(false);
+    const [isVerify, setIsVerify] = useState(false  );
     const [sendOTP, setSendOTP] = useState(false);
     const [loadingSendOTP, setLoadingSendOTP] = useState(false);
     const [loadingVerify, setLoadingVerify] = useState(false);
     const [loadingCreatingAccount, setLoadingCreatingAccount] = useState(false);
     const navigate = useNavigate();
+    const id = useRef('')
 
     const formatErrorMessageSendOTP = (message) => {
         switch (message) {
@@ -75,7 +79,6 @@ const Register = () => {
         window.confirmationResult
             .confirm(otp)
             .then((result) => {
-                // User signed in successfully.
                 setIsVerify(true);
                 Notification(NOTIFICATION_TYPE.WARNING, 'Xác thực thành công!', 'Vui lòng nhập các trường còn thiếu.');
             })
@@ -93,29 +96,27 @@ const Register = () => {
             });
     };
 
-    const onFinish = (values) => {
+    const onFinish = async (values) => {
         if (!isVerify) {
-            setLoadingSendOTP(true);
-            return onSignInSubmit(values.number_phone);
+            const { data } = await checkPhoneinSystem({ number_phone: values.number_phone });
+            if (data.isPhoneInSystem) {
+                id.current = data.accountId
+                setLoadingSendOTP(true);
+                return onSignInSubmit(values.number_phone);
+            } else {
+                Notification(NOTIFICATION_TYPE.ERROR, 'không tồn tại trong hệ thống!');
+            }
+        }else{  
+            const datas ={
+                _id:id.current,
+                ..._.omit(values, ['confirm'])
+            }
+            const { data } = await updatePassword(datas);
+            if (data) {
+                Notification(NOTIFICATION_TYPE.SUCCESS, 'Cập nhập mật khẩu thành công!');
+                navigate('/dang-nhap')
+            }
         }
-        setLoadingCreatingAccount(true);
-        register(values)
-            .then(({ data }) => {
-                Notification(NOTIFICATION_TYPE.WARNING, data.message);
-                setTimeout(() => {
-                    navigate('/dang-nhap');
-                }, 500);
-            })
-            .catch((err) => {
-                Notification(NOTIFICATION_TYPE.ERROR, err.message);
-                setOtp('');
-                setIsVerify(false);
-                setSendOTP(false);
-                setLoadingSendOTP(false);
-            })
-            .finally(() => {
-                setLoadingCreatingAccount(false);
-            });
     };
 
     return (
@@ -123,17 +124,7 @@ const Register = () => {
             <div className="register-content items-center font-sans font-semibold text-2xl">
                 <div id="sign-in-button"></div>
                 <Form name="normal_login" className="login-form w-[380px] m-auto" onFinish={onFinish}>
-                    <h1 className="title-login">Đăng ký tài khoản</h1>
-                    {isVerify ? (
-                        <Form.Item name="name" rules={[{ required: true, message: 'Vui lòng nhập Họ và tên!' }]}>
-                            <Input className="py-2 text-base" placeholder="Họ và tên" />
-                        </Form.Item>
-                    ) : null}
-                    {isVerify ? (
-                        <Form.Item name="email">
-                            <Input className="py-2 text-base" placeholder="Email" />
-                        </Form.Item>
-                    ) : null}
+                    <h1 className="title-login">Quên Mật Khẩu</h1>
                     <Form.Item
                         name="number_phone"
                         rules={[
@@ -181,40 +172,60 @@ const Register = () => {
                         </div>
                     ) : null}
                     {isVerify ? (
-                        <Form.Item
-                            name="password"
-                            rules={[
-                                { required: true, message: 'Vui lòng nhập Mật khẩu!' },
-                                { min: 8, message: 'Mật khẩu phải đủ 8 ký tự!' },
-                            ]}
-                        >
-                            <Input.Password className="py-2 text-base" type="password" placeholder="Mật khẩu" />
-                        </Form.Item>
+                        <>
+                            {' '}
+                            <Form.Item
+                                name="password" 
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng không bỏ trống!',
+                                    },
+                                    { min: 8, message: 'Mật khẩu phải đủ 8 ký tự!' },
+                                ]}
+                                hasFeedback
+                            >
+                                <Input.Password placeholder="Mật khẩu mới"/>
+                            </Form.Item>
+                            <Form.Item
+                                name="confirm"
+                                dependencies={['password']}
+                                hasFeedback
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Xác nhận mật khẩu!',
+                                    },
+                                    { min: 8, message: 'Mật khẩu phải đủ 8 ký tự!' },
+                                    ({ getFieldValue }) => ({
+                                        validator(_, value) {
+                                            if (!value || getFieldValue('password') === value) {
+                                                return Promise.resolve();
+                                            }
+                                            return Promise.reject(
+                                                new Error('Mật khẩu không khớp!'),
+                                            );
+                                        },
+                                    }),
+                                ]}
+                            >
+                                <Input.Password placeholder="Nhập lại mật khẩu mới"/>
+                            </Form.Item>
+                        </>
                     ) : null}
-                    <p>
-                        Bằng việc bấm nút Đăng ký bên dưới, tôi xác nhận đã đọc, hiểu và đồng ý với các{' '}
-                        <span className="underline text-[#02b875]">Điều kiện và Điều khoản</span> của Dodoris.
-                    </p>
-
                     {isVerify ? (
                         <Form.Item>
                             <Button
                                 type="primary"
                                 htmlType="submit"
-                                // disabled={!isVerify}
                                 loading={loadingCreatingAccount}
                                 className="login-form-button btn-primary w-full h-10 font-medium mt-4 text-base"
                             >
-                                Đăng ký
+                                Cập nhập
                             </Button>
                         </Form.Item>
                     ) : null}
                     <p className="my-5 pb-14 text-center">
-                        Đã có tài khoản?
-                        <Link to="/dang-nhap" className="text-base rounded text-[#02b875] text-underline">
-                            {' '}
-                            Đăng nhập
-                        </Link>
                     </p>
                 </Form>
             </div>
@@ -222,4 +233,4 @@ const Register = () => {
     );
 };
 
-export default Register;
+export default ChangePassword;

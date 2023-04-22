@@ -24,8 +24,13 @@ const siderBarItems = [
         code: PERMISSION_TYPE.CONFIRM,
         icon: <PieChartOutlined />,
         children: [
-            { key: 'Thống kê đơn hàng', path: 'thong-ke-don-hang', label: 'Thống kê đơn hàng' },
-            { key: 'Thống kê doanh thu', path: 'thong-ke-doanh-thu', label: 'Thống kê doanh thu' },
+            { key: 'Thống kê đơn hàng', path: 'thong-ke-don-hang', label: 'Đơn hàng' },
+            {
+                key: 'Thống kê trạng thái đơn hàng',
+                path: 'thong-ke-don-hang-theo-trang-thai',
+                label: 'Trạng thái đơn hàng',
+            },
+            { key: 'Thống kê doanh thu', path: 'thong-ke-doanh-thu', label: 'Doanh thu' },
         ],
     },
     {
@@ -75,8 +80,18 @@ const siderBarItems = [
         code: PERMISSION_TYPE.CONFIRM,
         icon: <FileDoneOutlined />,
         children: [
-            { key: 'danh sach dịch vụ', path: 'quan-ly-dich-vu', label: 'Danh sách dịch vụ' },
+            { key: 'Danh sách dịch vụ', path: 'quan-ly-dich-vu', label: 'Danh sách dịch vụ' },
             { key: 'Thêm dịch vụ', path: 'them-dich-vu', code: PERMISSION_TYPE.CREATE, label: 'Thêm dịch vụ' },
+        ],
+    },
+    {
+        label: 'Quản Lý Dịch Vụ Phát Sinh',
+        key: PERMISSION_LABLEL.SERVICE_SUB_MANAGE,
+        code: PERMISSION_TYPE.CONFIRM,
+        icon: <FileDoneOutlined />,
+        children: [
+            { key: 'Danh sách dịch vụ phát sinh', path: 'quan-ly-sub-dich-vu', label: 'Danh sách dịch vụ phát sinh' },
+            { key: 'Thêm dịch vụ phát sinh', path: 'them-sub-dich-vu', code: PERMISSION_TYPE.CREATE, label: 'Thêm dịch vụ dịch vụ' },
         ],
     },
     {

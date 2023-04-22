@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Space, Table, Tag, Spin, Button, Tooltip } from 'antd';
-import { EditOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
+import { Space, Table, Spin, Button, Tooltip } from 'antd';
+import { EditOutlined, SyncOutlined } from '@ant-design/icons';
 import DrawerCreateRole from './DrawerCreateRole';
 import { getAllRoleAsync } from '../../../../slices/role';
 import { isEmpty } from 'lodash';
@@ -57,10 +57,9 @@ const index = () => {
                     tags: ['cool', 'teacher'],
                 };
             });
-            const newData = showdata.filter((item) => item.name !== 'Admin');
-            datas.current = newData;
-            setData(newData);
-            setShowroomsFilter(newData.map((item) => ({ label: item.name, value: item.key })));
+            datas.current = showdata;
+            setData(showdata);
+            setShowroomsFilter(showdata.map((item) => ({ label: item.name, value: item.key })));
         })();
     }, [Role]);
     const handleFilter = (values) => {
@@ -81,7 +80,7 @@ const index = () => {
                         Thêm vai trò
                     </Button>
                     <button className="pr-6" onClick={() => handleFilters()}>
-                        <Tooltip title="Làm mới đơn hàng">
+                        <Tooltip title="Làm mới quyền">
                             <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
                         </Tooltip>
                     </button>

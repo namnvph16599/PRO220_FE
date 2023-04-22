@@ -51,7 +51,7 @@ const Header = () => {
                                     Trang chủ
                                 </Link>
                             </li>
-                            {a.role == 'Quản Lý' || a.role == 'Admin' ? (
+                            {a.role == 'Quản Lý' || a.role == 'Admin' ||a.role == 'Nhân Viên Kho' ? (
                                 <></>
                             ) : (
                                 <li>
