@@ -19,7 +19,7 @@ const ShowformModal = (props) => {
                         props.onValue(0);
                         setValidate({
                             validateStatus: NOTIFICATION_TYPE.ERROR,
-                            help: 'số điện thoại không hợp lệ ! Lưu ý : phải đủ 12 chữ số',
+                            help: 'số điện thoại không hợp lệ ! Lưu ý : phải đủ 10 chữ số',
                         });
                     }
                     numberPhone.current = item.target.value;

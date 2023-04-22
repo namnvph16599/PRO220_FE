@@ -51,6 +51,8 @@ import TotalOrderStatisticalByStatus from './pages/Admin/Statistical/Order/Total
 import TotalOrderStatistical from './pages/Admin/Statistical/Order/TotalOrderStatistical';
 import GeneralWarehouse from './pages/Admin/Warehouse/GeneralWarehouse';
 import PasswordRetrieval from './pages/Password';
+import Dashboard from './pages/Admin/Dashboard/Dashboard';
+import PrivateDashboard from './components/Private/PrivateDashboard';
 import SubServiceManager from './pages/Admin/subServiceManage';
 import CreateSubService from './pages/Admin/subServiceManage/CreateSubService';
 import UpdateSubService from './pages/Admin/subServiceManage/UpdateSubService';
@@ -111,6 +113,14 @@ function App() {
                     </PrivateLayout>
                 }
             >
+                <Route
+                    index
+                    element={
+                        <PrivateDashboard>
+                            <Dashboard />
+                        </PrivateDashboard>
+                    }
+                />
                 <Route path="dang-ky" element={<Register />} />
                 <Route path="thong-ke-don-hang" element={<TotalOrderStatistical />} />
                 <Route path="thong-ke-don-hang-theo-trang-thai" element={<TotalOrderStatisticalByStatus />} />
