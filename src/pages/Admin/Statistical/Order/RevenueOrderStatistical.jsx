@@ -42,7 +42,7 @@ const defaultSeries = [
 ];
 const RevenueOrderStatistical = () => {
     useDocumentTitle('Thống kê doanh thu');
-    const [time, setTime] = useState(dayjs());
+    const [time, setTime] = useState(dayjs().add(-1, 'day'));
     const [type, setType] = useState('date');
     const [categories, setCategories] = useState([]);
     const [series, setSeries] = useState(defaultSeries);
@@ -443,23 +443,22 @@ const RevenueOrderStatistical = () => {
                 </Col>
                 <Col>
                     {(type === 'week' || type === 'month' || type === 'year') && (
-                        <Button className="btn-primary text-white mr-5" type="primary" disabled={data.length === 0}>
-                            <CSVLink
-                                data={csvData}
-                                headers={[
-                                    { label: 'Thời gian', key: 'time' },
-                                    { label: 'Chi phí', key: 'expense' },
-                                    { label: 'Lợi nhuận', key: 'profit' },
-                                    { label: 'Doanh thu', key: 'revenue' },
-                                ]}
-                                asyncOnClick={true}
-                                separator={';'}
-                                filename={'Thống kê doanh thu.csv'}
-                                onClick={handleExport}
-                            >
-                                Xuất excel
-                            </CSVLink>
-                        </Button>
+                        <CSVLink
+                            className="btn-primary text-white mr-5 px-6 py-1.5 border border-solid rounded"
+                            data={csvData}
+                            headers={[
+                                { label: 'Thời gian', key: 'time' },
+                                { label: 'Chi phí', key: 'expense' },
+                                { label: 'Lợi nhuận', key: 'profit' },
+                                { label: 'Doanh thu', key: 'revenue' },
+                            ]}
+                            asyncOnClick={true}
+                            separator={';'}
+                            filename={'Thống kê doanh thu.csv'}
+                            onClick={handleExport}
+                        >
+                            Xuất excel
+                        </CSVLink>
                     )}
                 </Col>
             </Row>
@@ -471,7 +470,11 @@ const RevenueOrderStatistical = () => {
                                 <h3 className="font-bold text-lg">Thống kê doanh thu</h3>
                             </div>
                             <div span={12}>
-                                <DatePickerByOptions onChange={setTime} setType={setType} />
+                                <DatePickerByOptions
+                                    onChange={setTime}
+                                    setType={setType}
+                                    initialTime={dayjs().add(-1, 'day')}
+                                />
                             </div>
                         </div>
                         <div>
