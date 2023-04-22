@@ -9,6 +9,7 @@ import {
     ContactsOutlined,
     FileTextOutlined,
     FileDoneOutlined,
+    DashboardOutlined,
 } from '@ant-design/icons';
 import './admin-layout.css';
 import User from '../User';
@@ -18,6 +19,13 @@ import { PERMISSION_TYPE, PERMISSION_LABLEL } from '../../constants/permission';
 const { Header, Sider, Content } = Layout;
 
 const siderBarItems = [
+    {
+        key: PERMISSION_LABLEL.DASHBOARD,
+        code: PERMISSION_TYPE.CONFIRM,
+        path: '',
+        icon: <DashboardOutlined />,
+        label: 'Dashboard',
+    },
     {
         label: PERMISSION_LABLEL.STATISTICS,
         key: 'thong-ke',
@@ -91,7 +99,12 @@ const siderBarItems = [
         icon: <FileDoneOutlined />,
         children: [
             { key: 'Danh sách dịch vụ phát sinh', path: 'quan-ly-sub-dich-vu', label: 'Danh sách dịch vụ phát sinh' },
-            { key: 'Thêm dịch vụ phát sinh', path: 'them-sub-dich-vu', code: PERMISSION_TYPE.CREATE, label: 'Thêm dịch vụ dịch vụ' },
+            {
+                key: 'Thêm dịch vụ phát sinh',
+                path: 'them-sub-dich-vu',
+                code: PERMISSION_TYPE.CREATE,
+                label: 'Thêm dịch vụ dịch vụ',
+            },
         ],
     },
     {

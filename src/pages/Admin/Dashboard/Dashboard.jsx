@@ -1,4 +1,4 @@
-import { ArrowUpOutlined, ShopOutlined, TeamOutlined, UserAddOutlined } from '@ant-design/icons';
+import { ShopOutlined, TeamOutlined, UserAddOutlined } from '@ant-design/icons';
 import { Card, Col, Row, Statistic, DatePicker, Select, Space, TimePicker, Spin } from 'antd';
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
@@ -6,50 +6,62 @@ import Chart from 'react-apexcharts';
 import CountUp from 'react-countup';
 import { getAllUser } from '../../../api/account';
 import dayjs from 'dayjs';
-import { JwtDecode } from '../../../utils/auth';
+import { useRef } from 'react';
 const { Option } = Select;
 const formatter = (value) => <CountUp end={value} separator="," />;
 const Dashboard = () => {
     const [medal, setMedal] = useState([]);
     const [type, setType] = useState('month');
     const [loading, setLoading] = useState(true);
-    const [countUser,setCountUser] = useState(0)
-    const [month,setMonth] = useState()
+    const [countUser, setCountUser] = useState(0);
+    const [month, setMonth] = useState();
+    const [year, setYear] = useState();
+    const years = useRef();
     useEffect(() => {
         (async () => {
-            const countryname = [];
-            const getmedal = [];
-            const start = new Date();
-            const a = await filterData(String(start.getMonth() + 1),'month');
             const { data } = await getAllUser();
-            setMonth(new Date().getMonth() + 1)
-            setCountUser(data.length)
-            setLoading(false);
-            setMedal(a);
+            setCountUser(data.length);
         })();
     }, []);
     const valueChage = async (value) => {
-        console.log(value);
-        setMonth(value.$M + 1)
         setLoading(true);
-        const a = await filterData(String(value.$M + 1),'month');
+        let a = 0;
+        if (type == 'month') {
+            a = await filterData(String(value.$M + 1), 'month', String(value.$y));
+            setMonth(value.$M + 1);
+            if (value.$y !== years.current) {
+                setYear(value.$y);
+                years.current = value.$y;
+            }
+        } else {
+            a = await filterData('', 'year', String(value.$y));
+            setYear(value.$y);
+        }
         setLoading(false);
         setMedal(a);
     };
-    useEffect(()=>{
-        (async()=>{
-            if(type=='year'){
-                const a = await filterData(String(dayjs().$y),'year');
+    useEffect(() => {
+        (async () => {
+            if (type == 'year') {
+                setLoading(true);
+                const a = await filterData('', 'year', String(dayjs().$y));
+                setYear(new Date().getFullYear());
+                setLoading(false);
+                setMedal(a);
+            } else if (type == 'month') {
+                const start = new Date();
+                setLoading(true);
+                const a = await filterData(String(start.getMonth() + 1), 'month', String(start.getFullYear()));
+                setMonth(new Date().getMonth() + 1);
+                setYear(String(new Date().getFullYear()));
+                years.current = String(new Date().getFullYear());
+                setLoading(false);
+                setMedal(a);
             }
-        })()
-    },[type])
-    // useEffect(()=>{
-    //     if(JwtDecode.role == "Quản "){
-
-    //     }
-    // },[])
-    const filterData = async (start,status) => {
-        console.log(status);
+        })();
+    }, [type]);
+    const filterData = async (start, status, year) => {
+        console.log('start', start, status, year);
         const Datas = [];
         const showroomId = [
             '640063b3393e2aa18a790374',
@@ -59,12 +71,17 @@ const Dashboard = () => {
             '640efce444a5320d4809e8c9',
         ];
         const { data } = await axios.post('http://localhost:8080/api/orders-filter');
+
         const respon = data.filter((element) => {
             if (element.status == 5) {
-                if (element.tg_tra_xe && status =='month' && element.tg_tra_xe.split('-')[1] == '0' + start) {
+                if (
+                    element.tg_tra_xe &&
+                    status == 'month' &&
+                    element.tg_tra_xe.split('-')[1] == '0' + start &&
+                    element.tg_tra_xe.split('-')[0] == year
+                ) {
                     return element;
-                }else if(element.tg_tra_xe && status =='year' && element.tg_tra_xe.split('-')[0] == '2023'){
-                    console.log('year',element);
+                } else if (element.tg_tra_xe && status == 'year' && element.appointmentSchedule.split('-')[0] == year) {
                     return element;
                 }
             }
@@ -73,7 +90,7 @@ const Dashboard = () => {
         for (let i = 0; i < showroomId.length; i++) {
             for (let j = 0; j < respon.length; j++) {
                 if (respon[j].showroomId == showroomId[i]) {
-                    total += respon[j].totalWithVat;
+                    total += respon[j].total;
                 }
             }
             Datas.push(total);
@@ -121,15 +138,49 @@ const Dashboard = () => {
                     </Card>
                 </Col>
             </Row>
+            <h2>
+                {type == 'month' ? (
+                    <span className="flex">
+                        Doanh Thu theo tháng của năm{' '}
+                        <span>
+                            <Statistic
+                                className="20px"
+                                value={year}
+                                precision={2}
+                                formatter={(value) => <CountUp end={value} separator="" />}
+                            />
+                        </span>
+                    </span>
+                ) : (
+                    <span className='flex'>
+                        Doanh Thu của năm
+                        <Statistic
+                            className="20px"
+                            value={year}
+                            precision={2}
+                            formatter={(value) => <CountUp end={value} separator="" />}
+                        />
+                    </span>
+                )}
+            </h2>
             <React.Fragment>
                 <div className="container-fluid mt-3 mb-3">
-                    <h2 className="text-left">{`Doanh thu theo tháng của năm ${String(new Date().getFullYear())}`} </h2>
                     <Space>
                         <Select value={type} onChange={setType}>
                             <Option value="month">Month</Option>
                             <Option value="year">Year</Option>
                         </Select>
-                         <DatePicker type={type} defaultValue={type=='year'?dayjs(`${String(dayjs().$y)}`, 'YYYY'):dayjs(`${String(dayjs().$y)}/0${String(dayjs().$M+1)}`, 'YYYY/MM')} format={type=='year'?'YYYY':'YYYY/MM'} picker={type} onChange={(value) => valueChage(value)}/>
+                        <DatePicker
+                            type={type}
+                            defaultValue={
+                                type == 'year'
+                                    ? dayjs(`${String(dayjs().$y)}`, 'YYYY')
+                                    : dayjs(`${String(dayjs().$y)}/0${String(dayjs().$M + 1)}`, 'YYYY/MM')
+                            }
+                            format={type == 'year' ? 'YYYY' : 'YYYY/MM'}
+                            picker={type}
+                            onChange={(value) => valueChage(value)}
+                        />
                     </Space>
                     {loading ? (
                         <div className="w-[50%] h-[300px] flex justify-center items-center">
@@ -150,7 +201,7 @@ const Dashboard = () => {
                                     'Dodoris Lê Trong Tấn',
                                 ],
                                 title: {
-                                    text: `Doanh thu tháng : ${month}`,
+                                    text: `${type == 'month' ? `Doanh thu theo tháng ${month}` : ''}`,
                                 },
 
                                 plotOptions: {

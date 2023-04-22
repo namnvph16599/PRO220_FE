@@ -130,7 +130,7 @@ const OrderDetail = () => {
         const valuePayment = {
             idOrder: id,
             amount: dataOrderDetail?.total,
-            bankCode: 'NCB',
+            bankCode: '',
             orderInfo: 'Sửa Xe Tại Cửa Hàng Dodoris',
             orderType: 'billpayment',
         };

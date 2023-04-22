@@ -117,3 +117,7 @@ button:disabled {
 .ant-input:focus {
     border-color: var(--primary-color) !important;
 }
+.ant-statistic>.ant-statistic-content{
+    margin-left: 10px;
+    font-size: 20px;
+}
