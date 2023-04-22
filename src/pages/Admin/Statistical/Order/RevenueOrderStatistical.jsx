@@ -42,7 +42,7 @@ const defaultSeries = [
 ];
 const RevenueOrderStatistical = () => {
     useDocumentTitle('Thống kê doanh thu');
-    const [time, setTime] = useState(dayjs());
+    const [time, setTime] = useState(dayjs().add(-1, 'day'));
     const [type, setType] = useState('date');
     const [categories, setCategories] = useState([]);
     const [series, setSeries] = useState(defaultSeries);
@@ -471,7 +471,11 @@ const RevenueOrderStatistical = () => {
                                 <h3 className="font-bold text-lg">Thống kê doanh thu</h3>
                             </div>
                             <div span={12}>
-                                <DatePickerByOptions onChange={setTime} setType={setType} />
+                                <DatePickerByOptions
+                                    onChange={setTime}
+                                    setType={setType}
+                                    initialTime={dayjs().add(-1, 'day')}
+                                />
                             </div>
                         </div>
                         <div>
