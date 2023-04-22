@@ -14,6 +14,7 @@ import {
     ShopOutlined,
     IdcardOutlined,
     PictureOutlined,
+    DashboardOutlined,
 } from '@ant-design/icons';
 import './admin-layout.css';
 import User from '../User';
@@ -23,6 +24,13 @@ import { PERMISSION_TYPE, PERMISSION_LABLEL } from '../../constants/permission';
 const { Header, Sider, Content } = Layout;
 
 const siderBarItems = [
+    {
+        key: PERMISSION_LABLEL.DASHBOARD,
+        code: PERMISSION_TYPE.CONFIRM,
+        path: '',
+        icon: <DashboardOutlined />,
+        label: 'Dashboard',
+    },
     {
         label: PERMISSION_LABLEL.STATISTICS,
         key: 'thong-ke',

@@ -32,6 +32,7 @@ export const dataPermission = [
 export const arrayPermission = [111, 112, 113, 114, 115];
 
 export const PERMISSION_LABLEL = {
+    DASHBOARD: 'Dashboard',
     STATISTICS: 'Thống Kê',
     ORDER_MANAGE: 'Quản Lý Đơn Hàng',
     WAREHOUSE_MANAGE: 'Quản Lý Kho',
