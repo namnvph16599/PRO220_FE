@@ -8,7 +8,7 @@ import { getAllShowroomAsync } from '../../../slices/showroom';
 import { SyncOutlined } from '@ant-design/icons';
 import { Button, Select, Space, Table, Tag, Tooltip } from 'antd';
 import { HOUR_DATE_TIME } from '../../../constants/format';
-import { ORDER_STATUS } from '../../../constants/order';
+import { ORDER_STATUS, ORDER_STATUS_BY_TAG } from '../../../constants/order';
 import SpinCustomize from '../../../components/Customs/Spin';
 import Filter from '../../../components/Filter/Filter';
 import { CSVLink } from 'react-csv';
@@ -42,7 +42,7 @@ const OrderManage = () => {
         {
             title: 'Trạng thái',
             dataIndex: 'status',
-            render: (status, data) => ORDER_STATUS[status],
+            render: (status, data) => <Tag color={ORDER_STATUS_BY_TAG[status]}>{ORDER_STATUS[status]}</Tag>,
         },
         {
             title: 'Tên khách hàng',
@@ -64,14 +64,7 @@ const OrderManage = () => {
         {
             title: 'Tổng tiền',
             dataIndex: 'total',
-            render: (value) =>
-                value > 0 ? (
-                    value.toLocaleString('en') + ' VNĐ'
-                ) : (
-                    <Tag color={'volcano'} key={'loser'}>
-                        chưa thanh toán
-                    </Tag>
-                ),
+            render: (value, data) => (value && value.toLocaleString('en') + ' VNĐ') || '',
         },
         {
             title: 'Cửa hàng sửa chữa',

@@ -36,6 +36,15 @@ export const ORDER_STATUS = {
     4: 'Thanh toán',
     5: 'Hoàn thành',
 };
+
+export const ORDER_STATUS_BY_TAG = {
+    0: 'error',
+    1: 'warning',
+    2: 'purple',
+    3: 'processing',
+    4: 'cyan',
+    5: 'success',
+};
 export const SEVICE_TYPE = {
     RESCUE: 0,
     SHOWROOM: 1,
