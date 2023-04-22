@@ -171,9 +171,6 @@ const AccountManager = () => {
         <div className="banner-content">
             <div className="flex justify-between align-center pb-4">
                 <div>
-                    <Button onClick={() => setOpen(true)} className="btn-primary text-white mr-5" type="primary">
-                        Thêm thành viên
-                    </Button>
                     <button className="pr-6" onClick={() => handleFilter()}>
                         <Tooltip title="Làm mới tài khoản">
                             <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
@@ -216,12 +213,13 @@ const AccountManager = () => {
                         onFilter={handleFilter}
                     />
                 </div>
-                <>
-                    <p className="p-5">
-                        Số lượng: <span className="font-bold">{data?.length}</span>
-                    </p>
-                </>
+                <Button onClick={() => setOpen(true)} className="btn-primary text-white mr-5" type="primary">
+                    Thêm thành viên
+                </Button>
             </div>
+            <p className="p-5">
+                Số lượng: <span className="font-bold">{data?.length}</span>
+            </p>
             <Table columns={columns} dataSource={data} rowKey="key" />
             {open && (
                 <CreateAccount open={open} onClose={setOpen} onRefetch={handleRefetch} checkShowroom={checkShowroom} />
