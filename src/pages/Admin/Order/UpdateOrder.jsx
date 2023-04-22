@@ -502,7 +502,7 @@ const UpdateOrder = (props) => {
                                             ]}
                                         >
                                             <Input
-                                                className="h-10 text-base border-[#02b875]"
+                                                className="h-10 text-base border-[#02b875] "
                                                 placeholder="30-F-23132"
                                             />
                                         </Form.Item>
