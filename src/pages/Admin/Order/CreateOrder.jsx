@@ -19,10 +19,14 @@ const CreateOrder = () => {
     const [date, setDate] = useState(new Date());
     const [loading, setLoading] = useState(false);
     const [isShowroom, setIsShowroom] = useState(true);
+    const [initialValues, setInitialValues] = useState({});
     const [service_type, setService_type] = useState([]);
     const [services, setServices] = useState([]);
     const serviceSelect = useRef('');
     const [isPhone, setIsPhone] = useState(false);
+    const [isValidatePhone, setIsValidatePhone] = useState(false);
+    const [isTyping, setIsisTyping] = useState(false);
+    const [disable, setDisable] = useState(false);
 
     const handleService = (data_id) => {
         const dataFind = services.find((service) => service._id == data_id);
@@ -56,29 +60,63 @@ const CreateOrder = () => {
     }, []);
 
     const validatePhone = (phone) => {
-        console.log('check phone');
+        if (phone.match(R_NUMBER_PHONE)) {
+            setIsValidatePhone(true);
+        } else {
+            setIsValidatePhone(false);
+            setIsisTyping(true);
+        }
     };
 
     const fetchIsPhone = async (phoneNumber) => {
-        const checkIsPhone = await checkPhoneinSystem({ number_phone: phoneNumber });
-        console.log(checkIsPhone);
+        setLoading(true);
+        const { data } = await checkPhoneinSystem({ number_phone: phoneNumber });
+        setLoading(false);
+        setIsPhone(true);
+        if (data.isPhoneInSystem) {
+            setDisable(true);
+            setInitialValues({
+                name: data.name,
+                number_phone: data.number_phone,
+                email: data.email,
+            });
+        } else {
+            setInitialValues({
+                number_phone: phoneNumber,
+            });
+        }
     };
 
     return (
         <div>
             {isPhone || (
-                <div>
-                    <Input
-                        placeholder="Nhập vào số điện thoại của khách hàng"
-                        className="w-[50%]"
-                        onChange={(e) => validatePhone(e.target.value)}
-                        onPressEnter={(e) => fetchIsPhone(e.target.value)}
-                    />
-                </div>
+                <>
+                    <div>
+                        <Input
+                            placeholder="Nhập vào số điện thoại của khách hàng"
+                            className="w-[50%]"
+                            onChange={(e) => validatePhone(e.target.value)}
+                            onPressEnter={(e) => fetchIsPhone(e.target.value)}
+                        />
+                    </div>
+                    {isTyping && (
+                        <>
+                            {isValidatePhone || (
+                                <span className="py-2 text-red-600">Lỗi không đúng định dạng số điện thoại</span>
+                            )}
+                        </>
+                    )}
+                </>
             )}
 
             {isPhone && (
-                <Form layout={'vertical'} name="nest-messages" onFinish={onFinish} disabled={!showroomId}>
+                <Form
+                    layout={'vertical'}
+                    name="nest-messages"
+                    onFinish={onFinish}
+                    disabled={!showroomId}
+                    initialValues={initialValues}
+                >
                     <Row className="pt-8 font-mono" gutter={[8, 16]} wrap>
                         <Col span={12}>
                             <Col span={24}>
@@ -101,7 +139,11 @@ const CreateOrder = () => {
                                             },
                                         ]}
                                     >
-                                        <Input className="h-10 text-base border-[#02b875]" placeholder="Nguyen Van A" />
+                                        <Input
+                                            className="h-10 text-base border-[#02b875]"
+                                            placeholder="Nguyen Van A"
+                                            disabled={disable}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={24}>
@@ -119,7 +161,7 @@ const CreateOrder = () => {
                                             },
                                         ]}
                                     >
-                                        <Input className="h-10 text-base border-[#02b875]" />
+                                        <Input className="h-10 text-base border-[#02b875]" disabled={disable} />
                                     </Form.Item>
                                 </Col>
                                 <Col span={24}>
@@ -137,6 +179,7 @@ const CreateOrder = () => {
                                             type="email"
                                             className="h-10 text-base border-[#02b875]"
                                             placeholder="vidu@gmail.com"
+                                            disabled={disable}
                                         />
                                     </Form.Item>
                                 </Col>
