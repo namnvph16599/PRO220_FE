@@ -83,7 +83,7 @@ const ShowroomModal = ({ setSelectShowroom }) => {
                 <Select
                     size="large"
                     className="h-10 w-full text-base border-[#02b875]"
-                    defaultValue="----chọn tất cả----"
+                    // defaultValue="----chọn tất cả----"
                     onSelect={(value) => setSelectZone(value)}
                     value={selectZone}
                 >
@@ -106,9 +106,9 @@ const ShowroomModal = ({ setSelectShowroom }) => {
                             {district.name}
                         </Button>
                     ))}
-                    <Button type="primary" onClick={() => findUserLocation()}>
+                    {/* <Button type="primary" onClick={() => findUserLocation()}>
                         Cửa Hàng Gần Nhất ( 1km )
-                    </Button>
+                    </Button> */}
                 </div>
             </div>
             <div>
