@@ -443,23 +443,22 @@ const RevenueOrderStatistical = () => {
                 </Col>
                 <Col>
                     {(type === 'week' || type === 'month' || type === 'year') && (
-                        <Button className="btn-primary text-white mr-5" type="primary" disabled={data.length === 0}>
-                            <CSVLink
-                                data={csvData}
-                                headers={[
-                                    { label: 'Thời gian', key: 'time' },
-                                    { label: 'Chi phí', key: 'expense' },
-                                    { label: 'Lợi nhuận', key: 'profit' },
-                                    { label: 'Doanh thu', key: 'revenue' },
-                                ]}
-                                asyncOnClick={true}
-                                separator={';'}
-                                filename={'Thống kê doanh thu.csv'}
-                                onClick={handleExport}
-                            >
-                                Xuất excel
-                            </CSVLink>
-                        </Button>
+                        <CSVLink
+                            className="btn-primary text-white mr-5 px-6 py-1.5 border border-solid rounded"
+                            data={csvData}
+                            headers={[
+                                { label: 'Thời gian', key: 'time' },
+                                { label: 'Chi phí', key: 'expense' },
+                                { label: 'Lợi nhuận', key: 'profit' },
+                                { label: 'Doanh thu', key: 'revenue' },
+                            ]}
+                            asyncOnClick={true}
+                            separator={';'}
+                            filename={'Thống kê doanh thu.csv'}
+                            onClick={handleExport}
+                        >
+                            Xuất excel
+                        </CSVLink>
                     )}
                 </Col>
             </Row>

@@ -45,7 +45,7 @@ const OrderManage = () => {
             render: (status, data) => ORDER_STATUS[status],
         },
         {
-            title: 'Tên khá ch hàng',
+            title: 'Tên khách hàng',
             dataIndex: 'name',
         },
         {
@@ -244,31 +244,30 @@ const OrderManage = () => {
                             ) : null}
                         </div>
                         <div>
-                            <Button className="btn-primary text-white mr-5" type="primary">
-                                <CSVLink
-                                    data={csvData}
-                                    headers={[
-                                        { label: 'Tên khách hàng', key: 'name' },
-                                        { label: 'Số điện thoại', key: 'number_phone' },
-                                        { label: 'Email', key: 'email' },
-                                        { label: 'Loại xe', key: 'vehicleType' },
-                                        { label: 'Biển số xe', key: 'licensePlates' },
-                                        { label: 'Trạng thái đơn hàng', key: 'status' },
-                                        { label: 'Loại hình dịch vụ', key: 'serviceType' },
-                                        { label: 'Thời gian sữa chữa', key: 'appointmentSchedule' },
-                                        { label: 'Thời gian trả xe', key: 'tg_tra_xe' },
-                                        { label: 'Cửa hàng', key: 'showroomId' },
-                                        { label: 'Tổng tiền đơn hàng', key: 'total' },
-                                        { label: 'Tổng tiền đơn hàng đã có VAT', key: 'totalWithVat' },
-                                    ]}
-                                    asyncOnClick={true}
-                                    separator={';'}
-                                    onClick={handleExport}
-                                    filename={'Đơn hàng.csv'}
-                                >
-                                    Xuất excel
-                                </CSVLink>
-                            </Button>
+                            <CSVLink
+                                className="btn-primary text-white mr-5 px-6 py-1.5 border border-solid rounded"
+                                data={csvData}
+                                headers={[
+                                    { label: 'Tên khách hàng', key: 'name' },
+                                    { label: 'Số điện thoại', key: 'number_phone' },
+                                    { label: 'Email', key: 'email' },
+                                    { label: 'Loại xe', key: 'vehicleType' },
+                                    { label: 'Biển số xe', key: 'licensePlates' },
+                                    { label: 'Trạng thái đơn hàng', key: 'status' },
+                                    { label: 'Loại hình dịch vụ', key: 'serviceType' },
+                                    { label: 'Thời gian sữa chữa', key: 'appointmentSchedule' },
+                                    { label: 'Thời gian trả xe', key: 'tg_tra_xe' },
+                                    { label: 'Cửa hàng', key: 'showroomId' },
+                                    { label: 'Tổng tiền đơn hàng', key: 'total' },
+                                    { label: 'Tổng tiền đơn hàng đã có VAT', key: 'totalWithVat' },
+                                ]}
+                                asyncOnClick={true}
+                                separator={';'}
+                                onClick={handleExport}
+                                filename={'Đơn hàng.csv'}
+                            >
+                                Xuất excel
+                            </CSVLink>
                             <PermissionCheck
                                 permissionHas={{ label: PERMISSION_LABLEL.ORDER_MANAGE, code: PERMISSION_TYPE.CREATE }}
                             >
