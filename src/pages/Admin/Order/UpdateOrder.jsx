@@ -743,7 +743,9 @@ const UpdateOrder = (props) => {
                                                     ? dayjs(dateStart).format(HOUR_DATE_TIME)
                                                     : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
                                             </span> */}
-                                            {dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
+                                            {order?.tg_nhan_xe == null
+                                                ? ''
+                                                : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
                                         </p>
                                         <p>
                                             Thời gian trả xe thực tế:{' '}
@@ -752,7 +754,9 @@ const UpdateOrder = (props) => {
                                                     ? ''
                                                     : dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
                                             </span> */}
-                                            {dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
+                                            {order?.tg_tra_xe == null
+                                                ? ''
+                                                : dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
                                         </p>
                                         <p>Loại xe: {order?.vehicleType}</p>
                                         <p>Biển số xe: {order?.licensePlates}</p>
