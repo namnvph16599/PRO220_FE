@@ -40,7 +40,14 @@ const CreateOrder = () => {
 
     const onFinish = (data) => {
         setLoading(true);
-        createOrder({ ...data, isCustomer: false, serviceType: serviceSelect.current, showroomId, status: 2 })
+        createOrder({
+            ...data,
+            isCustomer: false,
+            seen: true,
+            serviceType: serviceSelect.current,
+            showroomId,
+            status: 2,
+        })
             .then(() => {
                 Notification(NOTIFICATION_TYPE.SUCCESS, 'Thêm đơn hàng thành công!');
                 navigate('/admin/don-hang');
@@ -209,7 +216,7 @@ const CreateOrder = () => {
                                     >
                                         <Select
                                             size="large"
-                                            placeholder="Sửa chữa tại..."
+                                            placeholder="dịch vụ sửa chữa..."
                                             className="h-10 text-base border-[#02b875]"
                                             onSelect={(value) => handleService(value)}
                                         >
