@@ -346,6 +346,7 @@ const UpdateOrder = (props) => {
                     form={form}
                     disabled={order.status === 5}
                 >
+                    {/* thong tin khach hang + thong tin thoi gian sua chua */}
                     <Row gutter={16}>
                         <Col span={12}>
                             <Col span={24} className="pb-6">
@@ -441,6 +442,26 @@ const UpdateOrder = (props) => {
                                         />
                                     </Form.Item>
                                 )}
+                                <Form.Item
+                                    label={<p className="text-base font-semibold">Thời gian nhận xe thực tế</p>}
+                                    name="tg_nhan_xe"
+                                >
+                                    <DatePicker
+                                        disabled
+                                        size="large"
+                                        className="w-full"
+                                        format={HOUR_DATE_TIME}
+                                        disabledDate={disabledDate}
+                                        disabledTime={disabledDateTime}
+                                        // value={
+                                        //     order?.tg_nhan_xe == null
+                                        //         ? dayjs(dateStart).format(HOUR_DATE_TIME)
+                                        //         : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)
+                                        // }
+                                        showNow={false}
+                                        showTime
+                                    />
+                                </Form.Item>
                             </Col>
 
                             <Col span={24}>
@@ -457,141 +478,101 @@ const UpdateOrder = (props) => {
                                 </Form.Item>
                             </Col>
                         </Col>
-                        {order.status == 3 && (
-                            <>
-                                <Col span={12}>
-                                    <Col span={24} className="pb-6">
-                                        <Avatar
-                                            size={34}
-                                            icon={<p className="text-base font-semibold leading-8"></p>}
-                                            style={{ backgroundColor: '#17274e' }}
-                                        />
-                                        <span className="text-base pl-4 font-medium">Thông tin xe</span>
-                                    </Col>
-                                    <Col span={24}>
-                                        <Form.Item
-                                            label={<p className="text-base font-semibold">Loại xe</p>}
-                                            name="vehicleType"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Vui lòng không để trống trường thông tin này.',
-                                                },
-                                            ]}
-                                        >
-                                            <Input
-                                                className="h-10 text-base border-[#02b875]"
-                                                placeholder="Wave, Excitor ..."
-                                            />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={24}>
-                                        <Form.Item
-                                            label={<p className="text-base font-semibold">Biển số xe</p>}
-                                            name="licensePlates"
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Vui lòng không để trống trường thông tin này.',
-                                                },
-                                                {
-                                                    pattern: R_VEHICLE_NUMBER,
-                                                    message:
-                                                        'Biển số xe không đúng định dạng. Vidu 30-A-3222, 29-B-42323',
-                                                },
-                                            ]}
-                                        >
-                                            <Input
-                                                className="h-10 text-base border-[#02b875] "
-                                                placeholder="30-F-23132"
-                                            />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={24}>
-                                        <Form.Item
-                                            label={<p className="text-base font-semibold">Số khung</p>}
-                                            name="soKhung"
-                                        >
-                                            <Input
-                                                type="text"
-                                                className="h-10 text-base border-[#02b875]"
-                                                placeholder="ví dụ: 4234141243414324244"
-                                            />
-                                        </Form.Item>
-
-                                        <Form.Item
-                                            label={<p className="text-base font-semibold">Số máy</p>}
-                                            name="vehicleNumber"
-                                        >
-                                            <Input
-                                                type="text"
-                                                className="h-10 text-base border-[#02b875]"
-                                                placeholder="ví dụ: 4234141243414324244"
-                                            />
-                                        </Form.Item>
-                                        <Form.Item label={<p className="text-base font-semibold">Số Km</p>} name="km">
-                                            <Input type="text" className="h-10 text-base border-[#02b875]" />
-                                        </Form.Item>
-                                        <Form.Item label={<p className="text-base font-semibold">Xăng</p>} name="gas">
-                                            <Input
-                                                type="text"
-                                                placeholder="E,F"
-                                                className="h-10 text-base border-[#02b875]"
-                                            />
-                                        </Form.Item>
-                                    </Col>
-                                </Col>
-                                <Col span={12}>
-                                    <Col span={24} className="pb-6">
-                                        <Avatar
-                                            size={34}
-                                            icon={<p className="text-base font-semibold leading-8"></p>}
-                                            style={{ backgroundColor: '#17274e' }}
-                                        />
-                                        <span className="text-base pl-4 font-medium">Thông tin khác</span>
-                                    </Col>
-
-                                    <Col span={24}>
-                                        <Form.Item
-                                            label={<p className="text-base font-semibold">thời gian nhận xe thực tế</p>}
-                                            name="tg_nhan_xe"
-                                        >
-                                            <DatePicker
-                                                disabled
-                                                size="large"
-                                                className="w-full"
-                                                format={HOUR_DATE_TIME}
-                                                disabledDate={disabledDate}
-                                                disabledTime={disabledDateTime}
-                                                // value={
-                                                //     order?.tg_nhan_xe == null
-                                                //         ? dayjs(dateStart).format(HOUR_DATE_TIME)
-                                                //         : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)
-                                                // }
-                                                showNow={false}
-                                                showTime
-                                            />
-                                        </Form.Item>
-                                    </Col>
-                                    <PermissionCheck
-                                        permissionHas={{
-                                            label: PERMISSION_LABLEL.ORDER_MANAGE,
-                                            code: PERMISSION_TYPE.UPDATE,
-                                        }}
-                                    >
-                                        <Button
-                                            // type="primary"
-                                            htmlType="submit"
-                                            className="btn-primary text-white bg-[#02b875] w-full mb-8 mt-8 h-12 hover:out
-                        font-medium rounded-lg text-sm text-center mr-3 md:mr-0"
-                                        >
-                                            Cập nhật
-                                        </Button>
-                                    </PermissionCheck>
-                                </Col>
-                            </>
-                        )}
                     </Row>
+                    {/* thong tin xe */}
+                    {order.status == 3 && (
+                        <div className="px-2">
+                            <Row gutter={16}>
+                                <Col span={24} className="pb-6">
+                                    <Avatar
+                                        size={34}
+                                        icon={<p className="text-base font-semibold leading-8"></p>}
+                                        style={{ backgroundColor: '#17274e' }}
+                                    />
+                                    <span className="text-base pl-4 font-medium">Thông tin xe</span>
+                                </Col>
+                                <Col span={12}>
+                                    <Form.Item
+                                        label={<p className="text-base font-semibold">Loại xe</p>}
+                                        name="vehicleType"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Vui lòng không để trống trường thông tin này.',
+                                            },
+                                        ]}
+                                    >
+                                        <Input
+                                            className="h-10 text-base border-[#02b875]"
+                                            placeholder="Wave, Excitor ..."
+                                        />
+                                    </Form.Item>
+                                    <Form.Item
+                                        label={<p className="text-base font-semibold">Biển số xe</p>}
+                                        name="licensePlates"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Vui lòng không để trống trường thông tin này.',
+                                            },
+                                            {
+                                                pattern: R_VEHICLE_NUMBER,
+                                                message: 'Biển số xe không đúng định dạng. Vidu 30-A-3222, 29-B-42323',
+                                            },
+                                        ]}
+                                    >
+                                        <Input className="h-10 text-base border-[#02b875] " placeholder="30-F-23132" />
+                                    </Form.Item>
+                                    <Form.Item label={<p className="text-base font-semibold">Xăng</p>} name="gas">
+                                        <Input
+                                            type="text"
+                                            placeholder="E,F"
+                                            className="h-10 text-base border-[#02b875]"
+                                        />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={12}>
+                                    <Form.Item
+                                        label={<p className="text-base font-semibold">Số khung</p>}
+                                        name="soKhung"
+                                    >
+                                        <Input
+                                            type="text"
+                                            className="h-10 text-base border-[#02b875]"
+                                            placeholder="ví dụ: 4234141243414324244"
+                                        />
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        label={<p className="text-base font-semibold">Số máy</p>}
+                                        name="vehicleNumber"
+                                    >
+                                        <Input
+                                            type="text"
+                                            className="h-10 text-base border-[#02b875]"
+                                            placeholder="ví dụ: 4234141243414324244"
+                                        />
+                                    </Form.Item>
+                                    <Form.Item label={<p className="text-base font-semibold">Số Km</p>} name="km">
+                                        <Input type="text" className="h-10 text-base border-[#02b875]" />
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                            <PermissionCheck
+                                permissionHas={{
+                                    label: PERMISSION_LABLEL.ORDER_MANAGE,
+                                    code: PERMISSION_TYPE.UPDATE,
+                                }}
+                            >
+                                <Button
+                                    htmlType="submit"
+                                    className="block btn-primary bg-[#02b875] mb-8 mt-2 h-12 mx-auto"
+                                >
+                                    Cập nhật thông tin đơn hàng
+                                </Button>
+                            </PermissionCheck>
+                        </div>
+                    )}
                     <Form.Item
                         name="status"
                         label={
@@ -672,6 +653,7 @@ const UpdateOrder = (props) => {
                                                 <div className="flex gap-x-2 pb-6">
                                                     {_.size(order.materials) > 0 && (
                                                         <Button
+                                                            className="btn-primary my-4"
                                                             type="primary"
                                                             onClick={() => {
                                                                 setShowModal(true);
@@ -683,6 +665,7 @@ const UpdateOrder = (props) => {
                                                     )}
                                                     {_.size(order.materials) == 0 && (
                                                         <Button
+                                                            className="btn-primary my-4"
                                                             type="primary"
                                                             onClick={() => {
                                                                 setShowModal(true);
@@ -719,51 +702,59 @@ const UpdateOrder = (props) => {
                                 <Col span={12}>
                                     <Col span={24} className="pb-6">
                                         <Avatar size={34} style={{ backgroundColor: '#17274e' }} />
-                                        <span className="text-base pl-4 font-medium">Phiếu Sửa Chữa</span>
+                                        <span className="text-base pl-4 font-medium">Hóa đơn</span>
                                     </Col>
                                     <div ref={componentRef} className="p-5">
                                         <p className="w-full font-bold text-red-600 text-[30px] text-center">
-                                            Phiếu Sửa Chữa
+                                            Phiếu Sửa Chữa - Bảo Dưỡng
                                         </p>
                                         <p className="text-center font-bold text-[16px]">{order?.showroomName}</p>
                                         <p className="text-center py-2">Địa chỉ: {order?.showroomAddress}</p>
-                                        <p>
-                                            khách hàng: <span className="font-bold">{order?.name}</span>
-                                        </p>
-                                        <p>Số DT: {order?.number_phone}</p>
-                                        <p>Dịch vụ: {order?.serviceType}</p>
-                                        <p>
-                                            Thời gian đặt lịch:{' '}
-                                            <span>{dayjs(order?.appointmentSchedule).format(HOUR_DATE_TIME)}</span>
-                                        </p>
-                                        <p>
-                                            Thời gian nhận xe thực tế:{' '}
-                                            {/* <span>
+                                        <Row>
+                                            <Col span={12}>
+                                                <p>
+                                                    Khách hàng: <span className="font-bold">{order?.name}</span>
+                                                </p>
+                                                <p>SĐT: {order?.number_phone}</p>
+                                                <p>Dịch vụ: {order?.serviceType}</p>
+                                                <p>
+                                                    Thời gian đặt lịch:{' '}
+                                                    <span>
+                                                        {dayjs(order?.appointmentSchedule).format(HOUR_DATE_TIME)}
+                                                    </span>
+                                                </p>
+                                                <p>
+                                                    Thời gian nhận xe thực tế:{' '}
+                                                    {/* <span>
                                                 {order?.tg_nhan_xe == null
                                                     ? dayjs(dateStart).format(HOUR_DATE_TIME)
                                                     : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
                                             </span> */}
-                                            {order?.tg_nhan_xe == null
-                                                ? ''
-                                                : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
-                                        </p>
-                                        <p>
-                                            Thời gian trả xe thực tế:{' '}
-                                            {/* <span>
+                                                    {order?.tg_nhan_xe == null
+                                                        ? ''
+                                                        : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
+                                                </p>
+                                                <p>
+                                                    Thời gian trả xe thực tế:{' '}
+                                                    {/* <span>
                                                 {order?.tg_tra_xe == null
                                                     ? ''
                                                     : dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
                                             </span> */}
-                                            {order?.tg_tra_xe == null
-                                                ? ''
-                                                : dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
-                                        </p>
-                                        <p>Loại xe: {order?.vehicleType}</p>
-                                        <p>Biển số xe: {order?.licensePlates}</p>
-                                        <p>Số máy: {order?.vehicleNumber}</p>
-                                        <p>Số khung: {order?.soKhung}</p>
-                                        <p>Số Km: {order?.km}</p>
-                                        <p className="mb-4">Nhiên liệu: {order?.gas}</p>
+                                                    {order?.tg_tra_xe == null
+                                                        ? ''
+                                                        : dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
+                                                </p>
+                                            </Col>
+                                            <Col span={12}>
+                                                <p>Loại xe: {order?.vehicleType}</p>
+                                                <p>Biển số xe: {order?.licensePlates}</p>
+                                                <p>Số máy: {order?.vehicleNumber}</p>
+                                                <p>Số khung: {order?.soKhung}</p>
+                                                <p>Số Km: {order?.km}</p>
+                                                <p className="mb-4">Nhiên liệu: {order?.gas}</p>
+                                            </Col>
+                                        </Row>
                                         <Table
                                             rowKey="_id"
                                             columns={columns}
@@ -792,16 +783,22 @@ const UpdateOrder = (props) => {
                                 onCancel={handleCancel}
                                 footer={[
                                     <Button key="back" onClick={handleCancel}>
-                                        Cancel
+                                        Hủy
                                     </Button>,
-                                    <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
+                                    <Button
+                                        key="submit"
+                                        type="primary"
+                                        className="btn-primary"
+                                        loading={loading}
+                                        onClick={handleOk}
+                                    >
                                         Xác Nhận
                                     </Button>,
                                 ]}
                             >
                                 <Alert
-                                    message="Notes :"
-                                    description={`Xác nhận khách đã thanh toán ${
+                                    message="Xác nhận:"
+                                    description={`Khách hàng đã thanh toán: ${
                                         Math.round(order.total * 0.1 + order.total).toLocaleString('en') + ' VNĐ'
                                     }.`}
                                     type="info"
@@ -815,8 +812,7 @@ const UpdateOrder = (props) => {
                                     code: PERMISSION_TYPE.UPDATE,
                                 }}
                             >
-                                {' '}
-                                <Form.Item wrapperCol={{ offset: 8, span: 8 }} name="print">
+                                <Form.Item wrapperCol={{ offset: 2, span: 8 }} name="print">
                                     {order.status == 4 && (
                                         <Button
                                             type="primary"

@@ -12,6 +12,14 @@ export const disabledDate = (current) => {
     return current && current < dayjs().endOf('day').subtract(1, 'days');
 };
 
+export const disabledDateBooking = (current) => {
+    const hourPresent = dayjs().format('HH');
+    if (!+hourPresent || +hourPresent >= 17) {
+        return dayjs() >= current;
+    }
+    return dayjs().add(-1, 'days') >= current;
+};
+
 export const disabledDateTime = () => ({
     disabledHours: () => [...range(0, 7), ...range(12, 13), ...range(18, 24)],
     disabledMinutes: () => range(0),
