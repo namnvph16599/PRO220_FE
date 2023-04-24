@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Radio, Table } from 'antd';
+import { Button, Radio, Table, Tag } from 'antd';
 import OrderProcessing from './StatusOrder/OrderProcessing';
 import OrderCancel from './StatusOrder/OrderCancel';
 import { useGetParam } from '../../../utils/param';
 import { getOrderById } from '../../../api/order';
 import { useParams } from 'react-router-dom';
-import { ORDER_STATUS, SEVICE_TYPE_ODERDETAIL } from '../../../constants/order';
+import { ORDER_STATUS, ORDER_STATUS_BY_TAG, SEVICE_TYPE_ODERDETAIL } from '../../../constants/order';
 import { Link } from 'react-router-dom';
 import { HOUR_DATE_TIME } from '../../../constants/format';
 import moment from 'moment';
@@ -100,6 +100,7 @@ const OrderDetail = () => {
         description: '',
         total: 0,
     });
+    console.log('dataOrderDetail', dataOrderDetail);
     const currentOrder = useRef();
     const [opentpayment, setOpentpayment] = useState(false);
     useEffect(() => {
@@ -181,61 +182,60 @@ const OrderDetail = () => {
                 {dataOrderDetail.status === 0 && <OrderCancel status={dataOrderDetail.status} />}
             </div>
             <div className="grid grid-cols-3 gap-4">
-                <div className=" border rounded-lg  ">
-                    <div className=" font-bold  my-1 text-[#02b875]	ml-3 text-center	">
+                <div className="border rounded-lg">
+                    <div className="font-bold  my-1 text-[#02b875] ml-3 text-center">
                         <div>Thời gian đặt lịch:</div>
                         <div>{dayjs(dataOrderDetail?.appointmentSchedule).format(HOUR_DATE_TIME)}</div>
                     </div>
                     <div>
-                        <div className="">
-                            <div className="my-px text-lg uppercase ml-3 mb-1 flex		">
-                                <div>
-                                    <UserOutlined className="mr-2" />
-                                </div>
-                                <div>{dataOrderDetail?.name}</div>
-                            </div>
-                            <div className="my-px text-lg flex ml-3  mb-1	">
-                                <SettingOutlined />
-                                <div className="text-orange-500 ml-2  mb-1	">
-                                    {ORDER_STATUS[dataOrderDetail.status]}
-                                </div>{' '}
-                            </div>
+                        <div className="pl-2 text-base">
+                            <span>Cửa hàng:</span>
+                            <span className="ml-2  mb-1	">{dataOrderDetail.showroomName}</span>
                         </div>
-                        <div>
-                            <div className="my-px text-lg  flex	ml-3  mb-1">
-                                <WhatsAppOutlined />
-                                <div className="ml-2">{dataOrderDetail?.number_phone} </div>
-                            </div>
-                            <div className="my-px text-lg  flex	ml-3  mb-1">
-                                <SettingOutlined />
-                                <div className="ml-2">Sửa chữa</div>
-                            </div>
-                            <div className="my-px text-lg 	ml-3">
-                                <TagOutlined className="mr-2" />
-                                {dataOrderDetail?.reasons}
-                            </div>
-                            <div className="my-px text-lg 	ml-3">
-                                <p>
-                                    Thời gian nhận xe thực tế:{' '}
-                                    {dataOrderDetail?.tg_nhan_xe == null
-                                        ? ''
-                                        : dayjs(dataOrderDetail?.tg_nhan_xe).format(HOUR_DATE_TIME)}
-                                </p>
-                            </div>
-                            <div className="my-px text-lg 	ml-3">
-                                <p>
-                                    Thời gian trả xe thực tế:{' '}
-                                    {dataOrderDetail?.tg_tra_xe == null
-                                        ? ''
-                                        : dayjs(dataOrderDetail?.tg_tra_xe).format(HOUR_DATE_TIME)}
-                                </p>
-                            </div>
-                            <div className="my-px text-lg 	ml-3">
-                                <p>Loại xe: {dataOrderDetail?.vehicleType}</p>
-                            </div>
-                            <div className="my-px text-lg 	ml-3">
-                                <p>Biển Số: {dataOrderDetail?.licensePlates}</p>
-                            </div>
+                        <div className="pl-2 text-base">
+                            <span>Trạng thái đơn hàng:</span>
+                            <span className="ml-2  mb-1	">
+                                <Tag color={ORDER_STATUS_BY_TAG[dataOrderDetail.status]}>
+                                    {ORDER_STATUS[dataOrderDetail.status]}
+                                </Tag>
+                            </span>{' '}
+                        </div>
+                        <div className="pl-2 text-base">
+                            <span>Dịch vụ:</span> <span className="">{dataOrderDetail.serviceType}</span>
+                        </div>
+                        <div className="pl-2 text-base">
+                            <span>Thời gian nhận xe thực tế:</span>{' '}
+                            <span className="">
+                                {dataOrderDetail?.tg_nhan_xe == null
+                                    ? ''
+                                    : dayjs(dataOrderDetail?.tg_nhan_xe).format(HOUR_DATE_TIME)}
+                            </span>
+                        </div>
+                        <div className="pl-2 text-base">
+                            <span>Thời gian trả xe thực tế:</span>{' '}
+                            <span className="">
+                                {dataOrderDetail?.tg_tra_xe == null
+                                    ? ''
+                                    : dayjs(dataOrderDetail?.tg_tra_xe).format(HOUR_DATE_TIME)}
+                            </span>
+                        </div>
+                        <div className="pl-2 text-base">
+                            <span>Loại xe:</span> <span className="">{dataOrderDetail?.vehicleType}</span>
+                        </div>
+                        <div className="pl-2 text-base">
+                            <span>Biển số:</span> <span className="">{dataOrderDetail?.licensePlates}</span>
+                        </div>
+                        <div className="pl-2 text-base">
+                            <span>Số khung:</span> <span className="">{dataOrderDetail?.soKhung}</span>
+                        </div>
+                        <div className="pl-2 text-base">
+                            <span>Số máy:</span> <span className="">{dataOrderDetail?.vehicleNumber}</span>
+                        </div>
+                        <div className="pl-2 text-base">
+                            <span>Số km:</span> <span className="">{dataOrderDetail?.km}</span>
+                        </div>
+                        <div className="pl-2 text-base">
+                            <span>Nhiên liệu:</span> <span className="">{dataOrderDetail?.gas}</span>
                         </div>
                     </div>
                 </div>
@@ -253,26 +253,23 @@ const OrderDetail = () => {
                         </div>
                     )}
                 </div>
-                {opentpayment && (
-                    <div className=" border rounded-lg  ">
-                        <div className=" font-bold  my-1 text-[#02b875] ml-[10px]	">
-                            <div>Thanh Toán:</div>
-                        </div>
+            </div>
+            {opentpayment && (
+                <div className="border rounded-lg mt-2 text-right">
+                    <div>
                         <div>
-                            <div>
-                                <div className="my-px text-lg 	ml-[0px]">
-                                    <div className="font-bold mt-2 text-red-600	text-[14px] ml-[10px]">
-                                        Tổng tiền: {dataOrderDetail?.totalWithVat.toLocaleString('en') + ' VNĐ'}{' '}
-                                    </div>
-                                    <Button type="primary" className="btn-primary m-[10px]" onClick={() => Payment()}>
-                                        Thanh Toán
-                                    </Button>
+                            <div className="my-px text-lg 	ml-[0px]">
+                                <div className="font-bold mt-2 text-red-600	text-[14px] mr-[10px]">
+                                    Tổng tiền: {dataOrderDetail?.totalWithVat.toLocaleString('en') + ' VNĐ'}{' '}
                                 </div>
+                                <Button type="primary" className="btn-primary m-[10px]" onClick={() => Payment()}>
+                                    Thanh Toán
+                                </Button>
                             </div>
                         </div>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 };
