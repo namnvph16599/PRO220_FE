@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Popconfirm, Table, message, Row, Menu, theme } from 'antd';
+import { Button, Popconfirm, Table, message, Row, Menu, theme, Tag } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import { getAllShowroomAsync } from '../../../slices/showroom';
-import { ORDER_STATUS } from '../../../constants/order';
+import { ORDER_STATUS, ORDER_STATUS_BY_TAG } from '../../../constants/order';
 import { HOUR_DATE_TIME } from '../../../constants/format';
 import moment from 'moment';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -44,7 +44,7 @@ const ListOrder = (props) => {
     }, [showrooms]);
 
     const confirm = async (data) => {
-        await updateOrderUser(data);
+        await updateOrderUser({ ...data, reasons: ['Hủy bỏ bởi khách hàng'] });
         message.info('Đơn hàng đã bị hủy');
         setTimeout(() => fetchOrderUser(user._id), 1000);
     };
@@ -67,7 +67,7 @@ const ListOrder = (props) => {
             title: 'Trạng thái',
             dataIndex: 'status',
             width: 150,
-            render: (status) => ORDER_STATUS[status],
+            render: (status) => <Tag color={ORDER_STATUS_BY_TAG[status]}>{ORDER_STATUS[status]}</Tag>,
         },
         {
             title: '',
@@ -76,7 +76,9 @@ const ListOrder = (props) => {
                 return (
                     <Row>
                         <Link to={`${data.idOrder}`}>
-                            <Button className="bg-[#02b875] text-white w-20	">Chi tiết</Button>
+                            <Button type="primary" className="btn-primary">
+                                Chi tiết
+                            </Button>
                         </Link>
                         <Popconfirm
                             placement="top"

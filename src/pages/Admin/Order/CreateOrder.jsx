@@ -3,20 +3,22 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
 import _ from 'lodash';
-import { SEVICE_TYPE, VEHICLE_TYPE } from '../../../constants/order';
-import { HOUR_DATE_TIME } from '../../../constants/format';
+import dayjs from 'dayjs';
+import { DATE_FORMAT, HOUR_DATE_TIME } from '../../../constants/format';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../../constants/regex';
 import { checkPhoneinSystem, createOrder } from '../../../api/order';
-import { disabledDate, disabledDateTime } from '../../../utils/date';
+import { disabledDate, disabledDateTime, setHourISODate } from '../../../utils/date';
 import { Notification } from '../../../utils/notifications';
 import { getApiService } from '../../../api/service';
 import SpinCustomize from '../../../components/Customs/Spin';
+import HourPicker from '../../../components/HourPicker';
 
 const CreateOrder = () => {
     const navigate = useNavigate();
     const { showroomId } = useSelector((state) => state.user.currentUser.values);
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(dayjs().add(1, 'day'));
+    const [hour, setHour] = useState('8:00');
     const [loading, setLoading] = useState(false);
     const [isShowroom, setIsShowroom] = useState(true);
     const [initialValues, setInitialValues] = useState({});
@@ -27,6 +29,7 @@ const CreateOrder = () => {
     const [isValidatePhone, setIsValidatePhone] = useState(false);
     const [isTyping, setIsisTyping] = useState(false);
     const [disable, setDisable] = useState(false);
+    const [numberPhone, setNumberPhone] = useState();
 
     const handleService = (data_id) => {
         const dataFind = services.find((service) => service._id == data_id);
@@ -40,8 +43,11 @@ const CreateOrder = () => {
 
     const onFinish = (data) => {
         setLoading(true);
+        const appointmentSchedule = setHourISODate(date, hour);
+
         createOrder({
             ...data,
+            appointmentSchedule,
             isCustomer: false,
             seen: true,
             serviceType: serviceSelect.current,
@@ -54,8 +60,10 @@ const CreateOrder = () => {
             })
             .catch((error) => {
                 Notification(NOTIFICATION_TYPE.ERROR, 'Thêm đơn hàng thất bại!', error.message || '');
+            })
+            .finally(() => {
+                setLoading(false);
             });
-        setLoading(false);
     };
 
     const handleChangeSelect = (value) => {
@@ -67,6 +75,7 @@ const CreateOrder = () => {
     }, []);
 
     const validatePhone = (phone) => {
+        setNumberPhone(phone);
         if (phone.match(R_NUMBER_PHONE)) {
             setIsValidatePhone(true);
         } else {
@@ -105,6 +114,9 @@ const CreateOrder = () => {
                             onChange={(e) => validatePhone(e.target.value)}
                             onPressEnter={(e) => fetchIsPhone(e.target.value)}
                         />
+                        <Button type="primary" className="ml-2 btn-primary" onClick={() => fetchIsPhone(numberPhone)}>
+                            Tiếp tục
+                        </Button>
                     </div>
                     {isTyping && (
                         <>
@@ -206,7 +218,7 @@ const CreateOrder = () => {
                                 <Col span={24}>
                                     <Form.Item
                                         name="serviceType"
-                                        label={<p className="text-base font-semibold">dịch vụ sửa chữa</p>}
+                                        label={<p className="text-base font-semibold">Dịch vụ sửa chữa</p>}
                                         rules={[
                                             {
                                                 required: true,
@@ -216,7 +228,7 @@ const CreateOrder = () => {
                                     >
                                         <Select
                                             size="large"
-                                            placeholder="dịch vụ sửa chữa..."
+                                            placeholder="Dịch vụ sửa chữa..."
                                             className="h-10 text-base border-[#02b875]"
                                             onSelect={(value) => handleService(value)}
                                         >
@@ -276,34 +288,44 @@ const CreateOrder = () => {
                                     )}
                                 </Col>
                                 {!isShowroom ? null : (
-                                    <Col span={24}>
-                                        <Form.Item
-                                            name="appointmentSchedule"
-                                            label={<p className="text-base font-semibold">Thời gian</p>}
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: 'Quý khách vui lòng không để trống trường thông tin này.',
-                                                },
-                                            ]}
-                                        >
-                                            <DatePicker
-                                                size="large"
-                                                className="w-full border-[#02b875]"
-                                                placeholder="Vui lòng chọn thời gian"
-                                                format={HOUR_DATE_TIME}
-                                                disabledDate={disabledDate}
-                                                disabledTime={disabledDateTime}
-                                                value={date}
-                                                showNow={false}
-                                                onChange={(date, dateString) => {
-                                                    const dateStringConvert = new Date(dateString);
-                                                    setDate(dateStringConvert);
-                                                }}
-                                                showTime
-                                            />
-                                        </Form.Item>
-                                    </Col>
+                                    <Row gutter={16}>
+                                        <Col span={12}>
+                                            <Form.Item
+                                                label={
+                                                    <p className="text-base font-semibold">
+                                                        <span className="text-[#ff4d4f] text-base">* </span>Ngày
+                                                    </p>
+                                                }
+                                            >
+                                                <DatePicker
+                                                    size="large"
+                                                    defaultValue={date}
+                                                    format={DATE_FORMAT}
+                                                    mode="date"
+                                                    disabledDate={(current) => disabledDateBooking(current)}
+                                                    className="w-full border-[#02b875]"
+                                                    placeholder="Ngày"
+                                                    showToday
+                                                    onChange={(dateValue, dateString) => setDate(dateValue)}
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col span={12}>
+                                            <Form.Item
+                                                label={
+                                                    <p className="text-base font-semibold">
+                                                        <span className="text-[#ff4d4f] text-base">* </span>Giờ
+                                                    </p>
+                                                }
+                                            >
+                                                <HourPicker
+                                                    datePicker={date}
+                                                    onChange={(value) => setHour(value)}
+                                                    format={'HH'}
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                    </Row>
                                 )}
 
                                 <Col span={24}>

@@ -11,7 +11,7 @@ import { Notification } from '../../utils/notifications';
 import { NOTIFICATION_TYPE } from '../../constants/status';
 import { getAllShowroomAsync } from '../../slices/showroom';
 import { R_NUMBER_PHONE } from '../../constants/regex';
-import { disabledDate, disabledDateTime, setHourISODate } from '../../utils/date';
+import { disabledDate, disabledDateBooking, disabledDateTime, setHourISODate } from '../../utils/date';
 import ModalCustomize from '../../components/Customs/ModalCustomize';
 import ShowformModal from './showformModal';
 import ShowroomModal from './showroomModal';
@@ -409,13 +409,8 @@ const BookingPage = () => {
                                                         size="large"
                                                         defaultValue={date}
                                                         format={DATE_FORMAT}
-                                                        // mode="date"
-                                                        // disabledDate={(current) => {
-                                                        //     const hourPresent = dayjs().format('HH');
-                                                        //     if (!+hourPresent || +hourPresent >= 17)
-                                                        //         return dayjs().add(1, 'days') >= current;
-                                                        //     return dayjs().add(-1, 'days') >= current;
-                                                        // }}
+                                                        mode="date"
+                                                        disabledDate={(current) => disabledDateBooking(current)}
                                                         className="w-full border-[#02b875]"
                                                         placeholder="Ngày"
                                                         showToday

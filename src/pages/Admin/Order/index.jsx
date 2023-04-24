@@ -42,7 +42,17 @@ const OrderManage = () => {
         {
             title: 'Trạng thái',
             dataIndex: 'status',
-            render: (status, data) => <Tag color={ORDER_STATUS_BY_TAG[status]}>{ORDER_STATUS[status]}</Tag>,
+            render: (status, data) => {
+                if (!status)
+                    return (
+                        <div>
+                            <Tag color={ORDER_STATUS_BY_TAG[status]}>{ORDER_STATUS[status]}</Tag>
+                            <p className="pt-2">{data.reasons[0] ? 'Hủy bởi khách hàng' : 'Hủy bởi quản lý'}</p>
+                        </div>
+                    );
+                return <Tag color={ORDER_STATUS_BY_TAG[status]}>{ORDER_STATUS[status]}</Tag>;
+            },
+            align: 'center',
         },
         {
             title: 'Tên khách hàng',
