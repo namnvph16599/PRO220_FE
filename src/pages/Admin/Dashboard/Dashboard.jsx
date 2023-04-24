@@ -8,7 +8,6 @@ import { getAllUser } from '../../../api/account';
 import dayjs from 'dayjs';
 import { useRef } from 'react';
 import { getShowrooms } from '../../../api/showroom';
-import { indexOf } from 'lodash';
 const { Option } = Select;
 const formatter = (value) => <CountUp end={value} separator="," />;
 const Dashboard = () => {
