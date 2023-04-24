@@ -395,9 +395,9 @@ const Warehouse = () => {
                 const isSuccess = await updateQuantityOnePart(saveDataToDB);
                 if (isSuccess.data.success) {
                     Notification(NOTIFICATION_TYPE.SUCCESS, 'Cập nhật số lượng thành công');
-                    setTimeout(() => {
-                        navigate('/admin');
-                    }, 3000);
+                    // setTimeout(() => {
+                    //     navigate('/admin');
+                    // }, 3000);
                 } else {
                     Notification(NOTIFICATION_TYPE.WARNING, 'Số lượng hiện tại trong kho tổng không đủ!');
                     return;

@@ -502,7 +502,7 @@ const UpdateOrder = (props) => {
                                             ]}
                                         >
                                             <Input
-                                                className="h-10 text-base border-[#02b875]"
+                                                className="h-10 text-base border-[#02b875] "
                                                 placeholder="30-F-23132"
                                             />
                                         </Form.Item>
@@ -622,7 +622,7 @@ const UpdateOrder = (props) => {
                                     code: PERMISSION_TYPE.UPDATE,
                                 }}
                             >
-                                <div className="flex gap-x-2 justify-end">
+                                <div className="flex gap-x-2 justify-end mb-3">
                                     {order.status == 1 && (
                                         <Button
                                             className="bg-red-500 text-white hover:!text-white"
@@ -743,7 +743,9 @@ const UpdateOrder = (props) => {
                                                     ? dayjs(dateStart).format(HOUR_DATE_TIME)
                                                     : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
                                             </span> */}
-                                            {dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
+                                            {order?.tg_nhan_xe == null
+                                                ? ''
+                                                : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
                                         </p>
                                         <p>
                                             Thời gian trả xe thực tế:{' '}
@@ -752,7 +754,9 @@ const UpdateOrder = (props) => {
                                                     ? ''
                                                     : dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
                                             </span> */}
-                                            {dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
+                                            {order?.tg_tra_xe == null
+                                                ? ''
+                                                : dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
                                         </p>
                                         <p>Loại xe: {order?.vehicleType}</p>
                                         <p>Biển số xe: {order?.licensePlates}</p>

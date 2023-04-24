@@ -7,6 +7,7 @@ import CountUp from 'react-countup';
 import { getAllUser } from '../../../api/account';
 import dayjs from 'dayjs';
 import { useRef } from 'react';
+import { getShowrooms } from '../../../api/showroom';
 const { Option } = Select;
 const formatter = (value) => <CountUp end={value} separator="," />;
 const Dashboard = () => {
@@ -61,15 +62,12 @@ const Dashboard = () => {
         })();
     }, [type]);
     const filterData = async (start, status, year) => {
-        console.log('start', start, status, year);
         const Datas = [];
-        const showroomId = [
-            '640063b3393e2aa18a790374',
-            '640efa1a44a5320d4809e85d',
-            '640efaa144a5320d4809e879',
-            '640efb7544a5320d4809e895',
-            '640efce444a5320d4809e8c9',
-        ];
+        const showroo = await getShowrooms();
+        const dataShowroom = showroo.data.map((item)=>{
+            return item._id
+        })
+        const showroomId = dataShowroom
         const { data } = await axios.post('http://localhost:8080/api/orders-filter');
 
         const respon = data.filter((element) => {
@@ -152,7 +150,7 @@ const Dashboard = () => {
                         </span>
                     </span>
                 ) : (
-                    <span className='flex'>
+                    <span className="flex">
                         Doanh Thu của năm
                         <Statistic
                             className="20px"
@@ -201,7 +199,7 @@ const Dashboard = () => {
                                     'Dodoris Lê Trong Tấn',
                                 ],
                                 title: {
-                                    text: `${type == 'month' ? `Doanh thu theo tháng ${month}` : ''}`,
+                                    text: `${type == 'month' ? `Doanh thu tháng ${month}` : ''}`,
                                 },
 
                                 plotOptions: {
