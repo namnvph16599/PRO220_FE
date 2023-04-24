@@ -44,7 +44,7 @@ const ListOrder = (props) => {
     }, [showrooms]);
 
     const confirm = async (data) => {
-        await updateOrderUser(data);
+        await updateOrderUser({ ...data, reasons: ['Hủy bỏ bởi khách hàng'] });
         message.info('Đơn hàng đã bị hủy');
         setTimeout(() => fetchOrderUser(user._id), 1000);
     };
