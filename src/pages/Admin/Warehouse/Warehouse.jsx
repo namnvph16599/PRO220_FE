@@ -304,10 +304,10 @@ const Warehouse = () => {
                                 marginRight: 8,
                             }}
                         >
-                            Save
+                            Lưu
                         </Typography.Link>
                         <Popconfirm title="Xác nhận hủy?" onConfirm={cancel}>
-                            <a>Cancel</a>
+                            <a>Hủy</a>
                         </Popconfirm>
                     </span>
                 ) : (
@@ -316,25 +316,37 @@ const Warehouse = () => {
                             permissionHas={{ label: PERMISSION_LABLEL.WAREHOUSE_MANAGE, code: PERMISSION_TYPE.UPDATE }}
                         >
                             <div className="flex justify-center items-center gap-x-4">
-                                <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                                    Cập nhật số lượng
-                                </Typography.Link>
-                                {data.length == 1 || (
-                                    <div
-                                        onClick={() => {
-                                            setOpenModal(true);
-                                            setKeyChange({ id: record.key });
-                                            dispatch({
-                                                type: 'UPDATE_ID_PART',
-                                                payload: { idPart: record.key, quantityCurrent: record.quantity },
-                                            });
-                                        }}
+                                <Tooltip title="Lấy vật tư từ kho tổng">
+                                    <Button
+                                        type="primary"
+                                        className="btn-primary"
+                                        disabled={editingKey !== ''}
+                                        onClick={() => edit(record)}
                                     >
-                                        <img
-                                            src="/images/exchangeswap.png"
-                                            alt="logo-exchange"
-                                            className="bg-black cursor-pointer rounded-sm p-1 active:bg-slate-300"
-                                        />
+                                        Cập nhật số lượng
+                                    </Button>
+                                </Tooltip>
+                                {data.length == 1 || (
+                                    <div>
+                                        <Tooltip title="Lấy vật tư từ cửa hàng khác">
+                                            <Button
+                                                type="primary"
+                                                className="btn-primary"
+                                                onClick={() => {
+                                                    setOpenModal(true);
+                                                    setKeyChange({ id: record.key });
+                                                    dispatch({
+                                                        type: 'UPDATE_ID_PART',
+                                                        payload: {
+                                                            idPart: record.key,
+                                                            quantityCurrent: record.quantity,
+                                                        },
+                                                    });
+                                                }}
+                                            >
+                                                Lấy vật tư
+                                            </Button>
+                                        </Tooltip>
                                     </div>
                                 )}
                             </div>
@@ -467,45 +479,46 @@ const Warehouse = () => {
     };
     return (
         <>
-            <div className="my-3 flex gap-5">
-                <PermissionCheck
-                    permissionHas={{
-                        label: PERMISSION_LABLEL.WAREHOUSE_MANAGE,
-                        code: PERMISSION_TYPE.UPDATE,
-                    }}
-                >
-                    <Link to={'/admin/quan-ly-kho/general-warehouse'}>
-                        <Button className="btn-primary text-white" type="primary">
-                            Tổng kho
+            <div className="my-3 flex justify-between item-center">
+                <div className="flex items-center">
+                    <button className="pr-6" onClick={() => handleFilter()}>
+                        <Tooltip title="Làm mới vật tư">
+                            <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
+                        </Tooltip>
+                    </button>
+                    <PermissionCheck
+                        permissionHas={{
+                            label: PERMISSION_LABLEL.WAREHOUSE_MANAGE,
+                            code: PERMISSION_TYPE.UPDATE,
+                        }}
+                    >
+                        <Link to={'/admin/quan-ly-kho/general-warehouse'}>
+                            <Button className="btn-primary text-white mr-4" type="primary">
+                                Kho Tổng
+                            </Button>
+                        </Link>
+                    </PermissionCheck>
+                    {_.isEmpty(queryParams) && (
+                        <>
+                            <div>
+                                {!showroomId ? <ListShowroom options={listShowroom} selectShowroom={dispatch} /> : ''}
+                            </div>
+                        </>
+                    )}
+                </div>
+                {data.length > 0 && (
+                    <div className="flex items-center">
+                        <Button onClick={handleChange} className="btn-primary text-white" type="primary">
+                            Lọc sản phẩm đã hết
                         </Button>
-                    </Link>
-                </PermissionCheck>
-                {_.isEmpty(queryParams) && (
-                    <>
-                        <div>
-                            {!showroomId ? <ListShowroom options={listShowroom} selectShowroom={dispatch} /> : ''}
-                        </div>
-
-                        {data.length > 0 && (
-                            <>
-                                <button className="pr-6" onClick={() => handleFilter()}>
-                                    <Tooltip title="Làm Vật tư">
-                                        <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
-                                    </Tooltip>
-                                </button>
-                                <Button onClick={handleChange} className="btn-primary text-white" type="primary">
-                                    lọc sản phẩm đã hết
-                                </Button>
-                                <div className="flex justify-end pr-4">
-                                    <p className="text-[18px]">
-                                        Số lượng: <span className="font-bold">{data?.length}</span>
-                                    </p>
-                                </div>
-                            </>
-                        )}
-                    </>
+                    </div>
                 )}
             </div>
+            {data.length > 0 && (
+                <p className="text-sm py-2">
+                    Số lượng: <span className="font-bold">{data?.length}</span>
+                </p>
+            )}
 
             <Form form={form} component={false}>
                 <Table

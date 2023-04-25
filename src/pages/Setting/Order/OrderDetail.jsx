@@ -203,7 +203,7 @@ const OrderDetail = () => {
                         <div className="pl-2 text-base">
                             <span>Dịch vụ:</span> <span className="">{dataOrderDetail.serviceType}</span>
                         </div>
-                        <div className="pl-2 text-base">
+                        {/* <div className="pl-2 text-base">
                             <span>Thời gian nhận xe thực tế:</span>{' '}
                             <span className="">
                                 {dataOrderDetail?.tg_nhan_xe == null
@@ -218,7 +218,7 @@ const OrderDetail = () => {
                                     ? ''
                                     : dayjs(dataOrderDetail?.tg_tra_xe).format(HOUR_DATE_TIME)}
                             </span>
-                        </div>
+                        </div> */}
                         <div className="pl-2 text-base">
                             <span>Loại xe:</span> <span className="">{dataOrderDetail?.vehicleType}</span>
                         </div>

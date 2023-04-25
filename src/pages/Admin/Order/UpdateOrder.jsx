@@ -38,7 +38,7 @@ const UpdateOrder = (props) => {
     const [order, setOrder] = useState({});
     const [initialValues, setInitialValues] = useState({});
     const [isShowroom, setIsShowroom] = useState(true);
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(dayjs());
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
@@ -52,10 +52,9 @@ const UpdateOrder = (props) => {
     const [isChangeMaterials, setIsChangeMaterials] = useState(false);
     const [showModal, setShowModal] = useState(null);
     const [total, setTotal] = useState(0);
-    const [dateStart, setDateStart] = useState(new Date());
-    const [dateFinish, setDateFinish] = useState(new Date());
+    const [dateStart, setDateStart] = useState(dayjs());
+    const [dateFinish, setDateFinish] = useState(dayjs());
     const [dataSubService, setDataSubService] = useState([]);
-
     const payment = async () => {
         setOpenModal(true);
     };
@@ -94,7 +93,6 @@ const UpdateOrder = (props) => {
         };
         const { data } = await updateStatusBill(value);
         if (data) {
-            setStatusPayment(true);
             setOrder(data);
             if (data.email) {
                 const valueEmail = _.omit(data, [
@@ -160,8 +158,8 @@ const UpdateOrder = (props) => {
             setInitialValues({
                 ...orderOther,
                 appointmentSchedule: dayjs(appointmentSchedule),
-                // tg_nhan_xe: dayjs(tg_nhan_xe),
-                tg_nhan_xe: dayjs(appointmentSchedule).add(Math.floor(Math.random() * 30) + 1, 'minute'),
+                tg_nhan_xe: tg_nhan_xe !== null ? dayjs(tg_nhan_xe) : dayjs(appointmentSchedule),
+                // tg_nhan_xe: dayjs(appointmentSchedule).add(Math.floor(Math.random() * 30) + 1, 'minute'),
                 price: totalPriceMaterials(),
             });
             setIsShowroom(order.serviceType);
@@ -246,8 +244,8 @@ const UpdateOrder = (props) => {
             isCustomer: order?.isCustomer,
             appointmentSchedule: order?.appointmentSchedule,
             serviceType: order?.serviceType,
-            // tg_tra_xe: status >= 4 ? dateFinish : null,
-            tg_tra_xe: status >= 4 ? dayjs(order?.tg_nhan_xe).add(Math.floor(Math.random() * 60) + 40, 'minute') : null,
+            tg_tra_xe: status >= 4 ? dateFinish : null,
+            // tg_tra_xe: status >= 4 ? dayjs(order?.tg_nhan_xe).add(Math.floor(Math.random() * 60) + 40, 'minute') : null,
             status,
         })
             .then(({ data }) => {
@@ -442,23 +440,22 @@ const UpdateOrder = (props) => {
                                         />
                                     </Form.Item>
                                 )}
-                                {order.status !== 0 && order.status !== 1 && (
+                                {order.status >= 3 && (
                                     <Form.Item
                                         label={<p className="text-base font-semibold">Thời gian nhận xe thực tế</p>}
                                         name="tg_nhan_xe"
+                                        className="hidden"
                                     >
                                         <DatePicker
                                             disabled
                                             size="large"
                                             className="w-full"
                                             format={HOUR_DATE_TIME}
-                                            disabledDate={disabledDate}
-                                            disabledTime={disabledDateTime}
-                                            // value={
-                                            //     order?.tg_nhan_xe == null
-                                            //         ? dayjs(dateStart).format(HOUR_DATE_TIME)
-                                            //         : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)
-                                            // }
+                                            value={
+                                                order?.tg_nhan_xe == null
+                                                    ? dayjs(dateStart).format(HOUR_DATE_TIME)
+                                                    : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)
+                                            }
                                             showNow={false}
                                             showTime
                                         />
@@ -727,25 +724,25 @@ const UpdateOrder = (props) => {
                                                 </p>
                                                 <p>
                                                     Thời gian nhận xe thực tế:{' '}
-                                                    {/* <span>
-                                                {order?.tg_nhan_xe == null
-                                                    ? dayjs(dateStart).format(HOUR_DATE_TIME)
-                                                    : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
-                                            </span> */}
-                                                    {order?.tg_nhan_xe == null
-                                                        ? ''
-                                                        : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
+                                                    <span>
+                                                        {order?.tg_nhan_xe == null
+                                                            ? dayjs(dateStart).format(HOUR_DATE_TIME)
+                                                            : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)}
+                                                    </span>
+                                                    {/* {order?.tg_nhan_xe == null */}
+                                                    {/* ? '' */}
+                                                    {/* : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)} */}
                                                 </p>
                                                 <p>
                                                     Thời gian trả xe thực tế:{' '}
-                                                    {/* <span>
-                                                {order?.tg_tra_xe == null
-                                                    ? ''
-                                                    : dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
-                                            </span> */}
-                                                    {order?.tg_tra_xe == null
+                                                    <span>
+                                                        {order?.tg_tra_xe == null
+                                                            ? ''
+                                                            : dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
+                                                    </span>
+                                                    {/* {order?.tg_tra_xe == null
                                                         ? ''
-                                                        : dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)}
+                                                        : dayjs(order?.tg_tra_xe).format(HOUR_DATE_TIME)} */}
                                                 </p>
                                             </Col>
                                             <Col span={12}>

@@ -8,10 +8,9 @@ import { DATE_FORMAT, HOUR_DATE_TIME } from '../../../constants/format';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { R_EMAIL, R_NUMBER, R_NUMBER_PHONE } from '../../../constants/regex';
 import { checkPhoneinSystem, createOrder } from '../../../api/order';
-import { disabledDate, disabledDateTime, setHourISODate } from '../../../utils/date';
+import { disabledDate, disabledDateBooking, disabledDateTime, setHourISODate } from '../../../utils/date';
 import { Notification } from '../../../utils/notifications';
 import { getApiService } from '../../../api/service';
-import SpinCustomize from '../../../components/Customs/Spin';
 import HourPicker from '../../../components/HourPicker';
 
 const CreateOrder = () => {

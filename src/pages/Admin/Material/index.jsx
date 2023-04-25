@@ -204,21 +204,16 @@ const MaterialManage = () => {
         <>
             <div className="flex items-center justify-between mb-4 ">
                 <div className="flex">
-                    <button
-                        type="button"
-                        onClick={() => navigate('/admin/them-vat-tu')}
-                        className="focus:outline-none p-2 text-white bg-[#02b875] hover:bg-[#09915f] focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-base px-2"
-                    >
-                        <PlusOutlined className="pr-2 text-white " />
-                        Thêm
-                    </button>
+                    <Button type="primary" className="btn-primary" onClick={() => navigate('/admin/them-vat-tu')}>
+                        Thêm vật tư
+                    </Button>
                     <div className="px-3">
                         <Select
                             showSearch
                             style={{
                                 width: 300,
                             }}
-                            size={'large'}
+                            size={'middle'}
                             placeholder="bộ lọc theo giá"
                             optionFilterProp="children"
                             filterOption={(input, option) => (option?.label ?? '').includes(input)}
@@ -230,10 +225,10 @@ const MaterialManage = () => {
                         />
                     </div>
                 </div>
-                <p>
-                    Số lượng: <span className="font-bold">{data.length}</span>
-                </p>
             </div>
+            <p>
+                Số lượng: <span className="font-bold">{data.length}</span>
+            </p>
             <Table columns={columns} dataSource={data} />
         </>
     );

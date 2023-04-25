@@ -6,12 +6,13 @@ import MockUp from './MockUp';
 import { generalPart, updateGeneralPart } from '../../../api/warehouse';
 import { NOTIFICATION_TYPE } from '../../../constants/status';
 import { Notification } from '../../../utils/notifications';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const GeneralWarehouse = () => {
+    const navigate = useNavigate();
     const [open, setOpenModal] = useState(false);
     const [isChange, setIsChange] = useState(false);
-    const data = useRef([])
+    const data = useRef([]);
     const [dataChange, setDataChange] = useState({
         idMaterial: '',
         quantity: 0,
@@ -33,7 +34,7 @@ const GeneralWarehouse = () => {
                 return { key: data._id, ...data };
             });
             setDataWarehouse(handleKey);
-            data.current =handleKey
+            data.current = handleKey;
         } catch (error) {
             Notification(NOTIFICATION_TYPE.ERROR, 'Không thể lấy dữ liệu, thử tải lại!');
         }
@@ -79,6 +80,7 @@ const GeneralWarehouse = () => {
             render: (value) => (
                 <Button
                     type="primary"
+                    className="btn-primary"
                     onClick={() => {
                         setPartSelect(value);
                         setOpenModal(true);
@@ -102,21 +104,28 @@ const GeneralWarehouse = () => {
         <>
             <div className="my-4 flex justify-between items-center">
                 <div>
-                    <Link to={'/admin/quan-ly-kho'} className="m-4">
-                        <ArrowLeftOutlined className="px-2" />
-                        Quay Lại
-                    </Link>
                     <button className="pr-6" onClick={() => handleFilter()}>
-                            <Tooltip title="Làm Vật tư">
-                                <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
-                            </Tooltip>
-                        </button>
-                    <Button onClick={handleChange} className="btn-primary text-white" type="primary">
-                        lọc sản phẩm đã hết
+                        <Tooltip title="Làm mới vật tư">
+                            <SyncOutlined style={{ fontSize: '18px', color: '#000' }} />
+                        </Tooltip>
+                    </button>
+                    <Button
+                        type="primary"
+                        className="btn-primary"
+                        onClick={() => {
+                            navigate('/admin/quan-ly-kho');
+                        }}
+                    >
+                        Kho cửa hàng
                     </Button>
                 </div>
-                <p className='mx4'>số lượng : {dataWarehouse.length}</p>
+                <Button onClick={handleChange} className="btn-primary text-white" type="primary">
+                    Lọc sản phẩm đã hết
+                </Button>
             </div>
+            <p>
+                Số lượng : <span className="font-bold">{dataWarehouse.length}</span>
+            </p>
             <Table columns={columns} dataSource={dataWarehouse} />
             <ModalCustomize
                 showModal={open}
