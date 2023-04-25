@@ -12,21 +12,21 @@ import PermissionCheck from '../../../components/permission/PermissionCheck';
 
 const ServiceManager = () => {
     useDocumentTitle('Quản lý dịch vụ');
-    const navigate = useNavigate()
-    const [service, setService] = useState([])
-   
-    useEffect(() => {
-        (async() => {
-           const serviceData = await getApiService()
-           setService(serviceData.data)
-        })()
-    }, [])
+    const navigate = useNavigate();
+    const [service, setService] = useState([]);
 
-    const Remove = (i)=>{
-        removeApiServiceById(i.key)
-        Notification(NOTIFICATION_TYPE.SUCCESS, 'Xóa service thành công!')
-        window.location.href = '/admin/quan-ly-dich-vu'
-    }
+    useEffect(() => {
+        (async () => {
+            const serviceData = await getApiService();
+            setService(serviceData.data);
+        })();
+    }, []);
+
+    const Remove = (i) => {
+        removeApiServiceById(i.key);
+        Notification(NOTIFICATION_TYPE.SUCCESS, 'Xóa service thành công!');
+        window.location.href = '/admin/quan-ly-dich-vu';
+    };
     const columns = [
         { title: 'Dịch vụ', dataIndex: 'name', key: 'name' },
         {
@@ -35,19 +35,23 @@ const ServiceManager = () => {
             render: (record, index) => {
                 return (
                     <Space size="middle">
-                        <PermissionCheck permissionHas={{ label: PERMISSION_LABLEL.SERVICE_MANAGE, code: PERMISSION_TYPE.UPDATE }}>
-                            <Link to={`/admin/sua-dich-vu/${record.key}`}>Update</Link>
+                        <PermissionCheck
+                            permissionHas={{ label: PERMISSION_LABLEL.SERVICE_MANAGE, code: PERMISSION_TYPE.UPDATE }}
+                        >
+                            <Link to={`/admin/sua-dich-vu/${record.key}`}>Cập nhật</Link>
                         </PermissionCheck>
 
-                        <PermissionCheck permissionHas={{ label: PERMISSION_LABLEL.SERVICE_MANAGE, code: PERMISSION_TYPE.DELETE }}>
+                        <PermissionCheck
+                            permissionHas={{ label: PERMISSION_LABLEL.SERVICE_MANAGE, code: PERMISSION_TYPE.DELETE }}
+                        >
                             <Button
                                 type="primary"
-                                onClick={()=>{
-                                    Remove(record)
+                                onClick={() => {
+                                    Remove(record);
                                 }}
                                 danger
                             >
-                                Delete
+                                Xóa
                             </Button>
                         </PermissionCheck>
                     </Space>
