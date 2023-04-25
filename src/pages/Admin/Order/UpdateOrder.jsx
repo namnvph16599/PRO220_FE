@@ -442,26 +442,28 @@ const UpdateOrder = (props) => {
                                         />
                                     </Form.Item>
                                 )}
-                                <Form.Item
-                                    label={<p className="text-base font-semibold">Thời gian nhận xe thực tế</p>}
-                                    name="tg_nhan_xe"
-                                >
-                                    <DatePicker
-                                        disabled
-                                        size="large"
-                                        className="w-full"
-                                        format={HOUR_DATE_TIME}
-                                        disabledDate={disabledDate}
-                                        disabledTime={disabledDateTime}
-                                        // value={
-                                        //     order?.tg_nhan_xe == null
-                                        //         ? dayjs(dateStart).format(HOUR_DATE_TIME)
-                                        //         : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)
-                                        // }
-                                        showNow={false}
-                                        showTime
-                                    />
-                                </Form.Item>
+                                {order.status !== 0 && order.status !== 1 && (
+                                    <Form.Item
+                                        label={<p className="text-base font-semibold">Thời gian nhận xe thực tế</p>}
+                                        name="tg_nhan_xe"
+                                    >
+                                        <DatePicker
+                                            disabled
+                                            size="large"
+                                            className="w-full"
+                                            format={HOUR_DATE_TIME}
+                                            disabledDate={disabledDate}
+                                            disabledTime={disabledDateTime}
+                                            // value={
+                                            //     order?.tg_nhan_xe == null
+                                            //         ? dayjs(dateStart).format(HOUR_DATE_TIME)
+                                            //         : dayjs(order?.tg_nhan_xe).format(HOUR_DATE_TIME)
+                                            // }
+                                            showNow={false}
+                                            showTime
+                                        />
+                                    </Form.Item>
+                                )}
                             </Col>
 
                             <Col span={24}>
