@@ -19,7 +19,7 @@ const ShowformModal = (props) => {
                         props.onValue(0);
                         setValidate({
                             validateStatus: NOTIFICATION_TYPE.ERROR,
-                            help: 'số điện thoại không hợp lệ ! Lưu ý : phải đủ 10 chữ số',
+                            help: 'Số điện thoại không đúng định dạng.',
                         });
                     }
                     numberPhone.current = item.target.value;
@@ -40,7 +40,7 @@ const ShowformModal = (props) => {
                 <span className="font-bold py-2">{props.title}</span>
             </label>
             <Form.Item {...validate}>
-                <Input onBlur={(item) => hanldChange(item)} />
+                <Input onBlur={(item) => hanldChange(item)} onPressEnter={(e) => props.onPressEnter(e.target.value)} />
             </Form.Item>
         </div>
     );

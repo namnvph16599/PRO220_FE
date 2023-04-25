@@ -74,7 +74,7 @@ const OrderManage = () => {
         {
             title: 'Tổng tiền',
             dataIndex: 'total',
-            render: (value, data) => (value && value.toLocaleString('en') + ' VNĐ') || '',
+            render: (value) => (value && value.toLocaleString('en') + ' VNĐ') || 'Chưa có',
         },
         {
             title: 'Cửa hàng sửa chữa',

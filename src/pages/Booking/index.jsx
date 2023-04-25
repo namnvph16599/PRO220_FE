@@ -180,12 +180,13 @@ const BookingPage = () => {
 
     const handlCheckedtext = () => {};
 
-    const handlChecked = async () => {
-        if (numberPhone !== 0) {
-            const { data } = await checkPhoneinSystem({ number_phone: numberPhone });
+    const handlChecked = async (value) => {
+        const number_phone = value || numberPhone;
+        if (number_phone !== 0) {
+            const { data } = await checkPhoneinSystem({ number_phone });
             if (!data.isPhoneInSystem) {
                 setOpentModal(false);
-                onSignInSubmit(numberPhone);
+                onSignInSubmit(number_phone);
             } else {
                 setOpentModal(false);
                 setInitialValues(_.omit(data, ['isPhoneInSystem']));
@@ -471,6 +472,7 @@ const BookingPage = () => {
                                             onValue={(item) => handlOk(item)}
                                             title={'Nhập số điện thoại'}
                                             status={'phone'}
+                                            onPressEnter={handlChecked}
                                         />
                                     </ModalCustomize>
                                 )}
