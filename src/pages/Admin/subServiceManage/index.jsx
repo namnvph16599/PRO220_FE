@@ -26,7 +26,12 @@ const SubServiceManager = () => {
     };
     const columns = [
         { title: 'Dịch vụ phát sinh', dataIndex: 'name', key: 'name' },
-        { title: 'Giá', dataIndex: 'fee', key: 'fee' },
+        {
+            title: 'Giá',
+            dataIndex: 'fee',
+            key: 'fee',
+            render: (value) => (value && value.toLocaleString('en') + ' VNĐ') || '',
+        },
         {
             title: 'Action',
             key: 'operation',
