@@ -87,8 +87,8 @@ const CreateOrder = () => {
         setLoading(true);
         const { data } = await checkPhoneinSystem({ number_phone: phoneNumber });
         setLoading(false);
-        setIsPhone(true);
         if (data.isPhoneInSystem) {
+            setIsPhone(true);
             setDisable(true);
             setInitialValues({
                 name: data.name,
@@ -96,9 +96,12 @@ const CreateOrder = () => {
                 email: data.email,
             });
         } else {
-            setInitialValues({
-                number_phone: phoneNumber,
-            });
+            if (phoneNumber.match(R_NUMBER_PHONE)) {
+                setIsPhone(true);
+                setInitialValues({
+                    number_phone: phoneNumber,
+                });
+            }
         }
     };
 
