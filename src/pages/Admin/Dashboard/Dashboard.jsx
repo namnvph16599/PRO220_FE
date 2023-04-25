@@ -17,6 +17,7 @@ const Dashboard = () => {
     const [countUser, setCountUser] = useState(0);
     const [month, setMonth] = useState();
     const [year, setYear] = useState();
+    const [nameShowroom, setNameShowroom] = useState([]);
     const years = useRef();
     useEffect(() => {
         (async () => {
@@ -64,10 +65,20 @@ const Dashboard = () => {
     const filterData = async (start, status, year) => {
         const Datas = [];
         const showroo = await getShowrooms();
-        const dataShowroom = showroo.data.map((item)=>{
-            return item._id
-        })
-        const showroomId = dataShowroom
+        const dataShowroom = showroo.data.map((item) => {
+            return item._id;
+        });
+        const nameShowroom = showroo.data.map((item, index) => {
+            console.log(item.name.split(' ')[0]);
+            const dataName = item.name.split(' ');
+            let name =''
+            for (let i = 1; i < dataName.length; i++) {
+                name += ' ' + dataName[i]
+            }
+            return name.trim();
+        });
+        setNameShowroom(nameShowroom);
+        const showroomId = dataShowroom;
         const { data } = await axios.post('http://localhost:8080/api/orders-filter');
 
         const respon = data.filter((element) => {
@@ -191,13 +202,7 @@ const Dashboard = () => {
                             height={550}
                             series={medal}
                             options={{
-                                labels: [
-                                    'Cửa hàng Hoàng Quốc Việt',
-                                    'Cửa hàng Dodoris Trịnh Văn Bô',
-                                    'cửa hàng Dodoris Phạm Văn Đồng',
-                                    'cửa hàng Dodoris Thái Hà',
-                                    'Dodoris Lê Trong Tấn',
-                                ],
+                                labels: nameShowroom,
                                 title: {
                                     text: `${type == 'month' ? `Doanh thu tháng ${month}` : ''}`,
                                 },
